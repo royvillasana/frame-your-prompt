@@ -201,6 +201,14 @@ Asegúrate de que todas las recomendaciones estén alineadas con las mejores pr�
                   <Copy className="mr-2 h-4 w-4" />
                   Copiar
                 </Button>
+                <Button 
+                  onClick={generateAIResponse} 
+                  disabled={isGeneratingAI}
+                  className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
+                >
+                  <Sparkles className="mr-2 h-4 w-4" />
+                  {isGeneratingAI ? "Generando..." : "Usar Prompt"}
+                </Button>
                 <Button onClick={() => generatePrompt(selectedTool)} variant="outline" size="sm">
                   <RefreshCw className="mr-2 h-4 w-4" />
                   Regenerar
@@ -218,6 +226,31 @@ Asegúrate de que todas las recomendaciones estén alineadas con las mejores pr�
                   Nuevo Prompt
                 </Button>
               </div>
+
+              {aiResponse && (
+                <div className="mt-6 p-4 bg-gradient-to-br from-primary/5 to-accent/5 rounded-lg border">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Sparkles className="h-5 w-5 text-primary" />
+                    <h3 className="font-semibold text-lg">Respuesta de IA</h3>
+                    <Button 
+                      onClick={() => navigate('/chat', { 
+                        state: { 
+                          initialPrompt: generatedPrompt, 
+                          initialResponse: aiResponse,
+                          projectContext 
+                        } 
+                      })}
+                      size="sm"
+                      className="ml-auto"
+                    >
+                      Continuar en Chat
+                    </Button>
+                  </div>
+                  <div className="bg-background/50 p-4 rounded-md max-h-96 overflow-y-auto">
+                    <div className="whitespace-pre-wrap text-sm">{aiResponse}</div>
+                  </div>
+                </div>
+              )}
 
               <div className="pt-4">
                 <div className="flex flex-wrap gap-2">

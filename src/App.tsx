@@ -11,6 +11,7 @@ import Pricing from "./pages/Pricing";
 import Learn from "./pages/Learn";
 import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
+import Chat from "./pages/Chat";
 import NotFound from "./pages/NotFound";
 import { AuthProvider } from "./hooks/useAuth";
 
@@ -32,6 +33,7 @@ const App = () => (
               <Route path="/learn" element={<Learn />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="/chat" element={<Chat />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
