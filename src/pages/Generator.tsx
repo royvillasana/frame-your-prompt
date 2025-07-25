@@ -73,12 +73,32 @@ const Generator = () => {
         }
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase function error:', error);
+        throw new Error(error.message || 'Error en la función de Supabase');
+      }
+
+      if (data?.error) {
+        console.error('OpenAI API error:', data.error);
+        throw new Error(data.error);
+      }
       
       setAiResponse(data.aiResponse);
       sonnerToast.success("¡Respuesta generada con IA!");
     } catch (error: any) {
-      sonnerToast.error(error.message || "Error al generar respuesta con IA");
+      console.error('Full error:', error);
+      const errorMessage = error.message || "Error al generar respuesta con IA";
+      
+      // Check for specific OpenAI errors and provide helpful messages
+      if (errorMessage.includes("exceeded your current quota")) {
+        sonnerToast.error("Tu API key de OpenAI ha excedido la cuota. Revisa tu plan y facturación en OpenAI.");
+      } else if (errorMessage.includes("API key de OpenAI no configurada")) {
+        sonnerToast.error("Configura tu API key de OpenAI en tu perfil primero.");
+      } else if (errorMessage.includes("Incorrect API key")) {
+        sonnerToast.error("Tu API key de OpenAI es incorrecta. Verifica en tu perfil.");
+      } else {
+        sonnerToast.error(errorMessage);
+      }
     } finally {
       setIsGeneratingAI(false);
     }
