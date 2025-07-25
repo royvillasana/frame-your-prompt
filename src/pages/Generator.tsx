@@ -1,10 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Copy, RefreshCw, Save, Download, Sparkles, RotateCcw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { toast as sonnerToast } from "sonner";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 import { ProjectContextStep, ProjectContext } from "@/components/generator/ProjectContextStep";
 import { ProjectStageStep } from "@/components/generator/ProjectStageStep";
 import { FrameworkStep } from "@/components/generator/FrameworkStep";
@@ -14,6 +18,8 @@ type Step = "context" | "stage" | "framework" | "tool" | "result";
 
 const Generator = () => {
   const { toast } = useToast();
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState<Step>("context");
   const [projectContext, setProjectContext] = useState<ProjectContext | null>(null);
   const [projectStage, setProjectStage] = useState("");
@@ -21,6 +27,14 @@ const Generator = () => {
   const [frameworkStage, setFrameworkStage] = useState("");
   const [selectedTool, setSelectedTool] = useState("");
   const [generatedPrompt, setGeneratedPrompt] = useState("");
+  const [aiResponse, setAiResponse] = useState("");
+  const [isGeneratingAI, setIsGeneratingAI] = useState(false);
+
+  useEffect(() => {
+    if (!user) {
+      navigate("/auth");
+    }
+  }, [user, navigate]);
 
   const handleContextComplete = (context: ProjectContext) => {
     setProjectContext(context);
@@ -42,6 +56,32 @@ const Generator = () => {
     setSelectedTool(tool);
     generatePrompt(tool);
     setCurrentStep("result");
+  };
+
+  const generateAIResponse = async () => {
+    if (!generatedPrompt) return;
+    
+    setIsGeneratingAI(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-ai-response', {
+        body: {
+          prompt: generatedPrompt,
+          projectContext,
+          selectedFramework,
+          frameworkStage,
+          selectedTool,
+        }
+      });
+
+      if (error) throw error;
+      
+      setAiResponse(data.aiResponse);
+      sonnerToast.success("¡Respuesta generada con IA!");
+    } catch (error: any) {
+      sonnerToast.error(error.message || "Error al generar respuesta con IA");
+    } finally {
+      setIsGeneratingAI(false);
+    }
   };
 
   const generatePrompt = (tool: string) => {
