@@ -78,6 +78,34 @@ const getRecommendationText = (projectStage: string) => {
   }
 };
 
+const getFrameworkStageMapping = (projectStage: string, frameworkId: string): string => {
+  const mappings: { [key: string]: { [key: string]: string } } = {
+    "design-thinking": {
+      "research": "Empatizar",
+      "ideation": "Idear", 
+      "design": "Prototipar",
+      "testing": "Testear",
+      "implementation": "Testear"
+    },
+    "lean-ux": {
+      "research": "Pensar",
+      "ideation": "Pensar",
+      "design": "Hacer",
+      "testing": "Verificar",
+      "implementation": "Verificar"
+    },
+    "double-diamond": {
+      "research": "Descubrir",
+      "ideation": "Definir",
+      "design": "Desarrollar",
+      "testing": "Desarrollar", 
+      "implementation": "Entregar"
+    }
+  };
+
+  return mappings[frameworkId]?.[projectStage] || "";
+};
+
 export const FrameworkStep = ({ context, projectStage, onNext, onBack }: FrameworkStepProps) => {
   const [selectedFramework, setSelectedFramework] = useState("");
   const [selectedStage, setSelectedStage] = useState("");
@@ -87,7 +115,14 @@ export const FrameworkStep = ({ context, projectStage, onNext, onBack }: Framewo
 
   const handleFrameworkSelect = (frameworkId: string) => {
     setSelectedFramework(frameworkId);
-    setSelectedStage(""); // Reset stage when framework changes
+    
+    // Auto-select the corresponding framework stage based on project stage
+    if (frameworkId !== "none") {
+      const mappedStage = getFrameworkStageMapping(projectStage, frameworkId);
+      setSelectedStage(mappedStage);
+    } else {
+      setSelectedStage(""); // Reset stage when framework changes to "none"
+    }
   };
 
   const handleNext = () => {
@@ -139,6 +174,9 @@ export const FrameworkStep = ({ context, projectStage, onNext, onBack }: Framewo
         {currentFramework && currentFramework.stages.length > 0 && (
           <div>
             <h3 className="font-semibold mb-3">¿En qué etapa del {currentFramework.name} estás?</h3>
+            <p className="text-sm text-muted-foreground mb-3">
+              Basado en tu etapa de proyecto ({projectStage}), hemos preseleccionado la etapa más apropiada.
+            </p>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
               {currentFramework.stages.map((stage, index) => (
                 <OptionCard
