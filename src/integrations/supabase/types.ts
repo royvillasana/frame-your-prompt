@@ -14,7 +14,66 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      generated_prompts: {
+        Row: {
+          ai_response: string | null
+          created_at: string
+          framework_stage: string
+          id: string
+          original_prompt: string
+          project_context: Json
+          selected_framework: string
+          selected_tool: string
+          user_id: string
+        }
+        Insert: {
+          ai_response?: string | null
+          created_at?: string
+          framework_stage: string
+          id?: string
+          original_prompt: string
+          project_context: Json
+          selected_framework: string
+          selected_tool: string
+          user_id: string
+        }
+        Update: {
+          ai_response?: string | null
+          created_at?: string
+          framework_stage?: string
+          id?: string
+          original_prompt?: string
+          project_context?: Json
+          selected_framework?: string
+          selected_tool?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
