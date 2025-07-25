@@ -56,6 +56,8 @@ const Profile = () => {
           user_id: user.id,
           display_name: displayName,
           openai_api_key: openaiApiKey,
+        }, {
+          onConflict: 'user_id'
         });
 
       if (error) throw error;
