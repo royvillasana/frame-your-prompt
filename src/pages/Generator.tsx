@@ -47,20 +47,39 @@ const Generator = () => {
   const generatePrompt = (tool: string) => {
     if (!projectContext) return;
 
-    let basePrompt = `Genera 5 prompts específicos para ${tool.toLowerCase()}`;
+    // Determine framework and stage text
+    let frameworkText = "";
+    let stageText = "";
     
     if (selectedFramework !== "none" && frameworkStage) {
-      basePrompt += ` en la etapa ${frameworkStage} del framework ${selectedFramework}`;
+      frameworkText = selectedFramework;
+      stageText = frameworkStage;
     } else {
-      basePrompt += ` para la etapa de ${projectStage} del proyecto`;
+      frameworkText = "metodología libre";
+      stageText = projectStage;
     }
-    
-    basePrompt += `. Esto es para una empresa ${projectContext.companySize.toLowerCase()} en el sector ${projectContext.industry}`;
-    basePrompt += `, desarrollando un ${projectContext.productType.toLowerCase()}`;
-    basePrompt += `. Los prompts deben ser específicos, accionables y listos para usar con herramientas de IA como ChatGPT o Claude.`;
-    basePrompt += ` Incluye contexto específico de la industria y tipo de producto. Cada prompt debe generar resultados únicos y valiosos.`;
 
-    setGeneratedPrompt(basePrompt);
+    // Build the structured prompt
+    const structuredPrompt = `Como UX Designer trabajando en la etapa de "${stageText}" del framework ${frameworkText}, necesito ayuda con ${tool}.
+
+Contexto del proyecto:
+- Industria: ${projectContext.industry}
+- Tipo de empresa: ${projectContext.companySize}
+- Producto: ${projectContext.productType}
+- Alcance: ${projectContext.productScope}
+- Audiencia objetivo: ${projectContext.userProfile}
+
+Utilizando capacidades de IA (análisis de datos, síntesis de información, generación de contenido), ayúdame a:
+
+1. Generar 5 preguntas específicas para guiar mi proceso de ${tool} en este contexto
+2. Sugerir 3 enfoques innovadores que aprovechen las características únicas de mi industria
+3. Identificar 4 métricas clave que debería considerar para evaluar el éxito
+4. Recomendar 2 herramientas complementarias que potencien este proceso
+5. Proporcionar un checklist de 6 puntos críticos a validar antes de avanzar a la siguiente etapa
+
+Asegúrate de que todas las recomendaciones estén alineadas con las mejores prácticas de ${frameworkText} y sean aplicables a ${projectContext.companySize} en ${projectContext.industry} que desarrolla ${projectContext.productType} con alcance ${projectContext.productScope}.`;
+
+    setGeneratedPrompt(structuredPrompt);
     
     toast({
       title: "¡Prompt Generado!",
