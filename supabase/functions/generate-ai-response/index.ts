@@ -257,6 +257,8 @@ serve(async (req) => {
       throw new Error('Modelo de IA no soportado');
     }
 
+    console.log('Checking AI usage limits...');
+
     // Check usage limits using the database function
     const { data: usageCheck, error: usageError } = await supabaseClient.rpc(
       'check_and_update_ai_usage',
@@ -268,12 +270,16 @@ serve(async (req) => {
     );
 
     if (usageError) {
+      console.error('Usage check failed:', usageError);
       throw new Error(`Error checking usage: ${usageError.message}`);
     }
 
     if (!usageCheck.can_use) {
+      console.error('Usage limit exceeded:', usageCheck);
       throw new Error(`Has alcanzado el límite diario para ${aiModel}. Límite: ${usageCheck.daily_limit}, usado: ${usageCheck.current_usage}. Prueba con otro modelo.`);
     }
+
+    console.log('Usage check passed, proceeding with AI call');
 
     // Check if model is free (doesn't require API key)
     const isFreeModel = aiModel === 'llama-3.1-8b';
