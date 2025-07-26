@@ -59,19 +59,19 @@ const AI_CONFIGS = {
     5. Estructura las respuestas de forma lógica y progresiva
     6. Mantén un tono experto pero accesible`
   },
-  // Free models configurations
+  // Free models configurations - using real APIs
   'gpt-3.5-turbo-free': {
     provider: 'huggingface',
-    apiUrl: 'https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium',
-    model: 'microsoft/DialoGPT-medium',
+    apiUrl: 'https://api-inference.huggingface.co/models/microsoft/DialoGPT-large',
+    model: 'microsoft/DialoGPT-large',
     maxTokens: 1000,
     temperature: 0.7,
     systemPrompt: `Eres un experto UX Designer. Responde en español de manera estructurada y práctica.`
   },
   'claude-3-haiku-free': {
     provider: 'huggingface',
-    apiUrl: 'https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium',
-    model: 'microsoft/DialoGPT-medium',
+    apiUrl: 'https://api-inference.huggingface.co/models/meta-llama/Llama-2-7b-chat-hf',
+    model: 'meta-llama/Llama-2-7b-chat-hf',
     maxTokens: 1000,
     temperature: 0.7,
     systemPrompt: `Eres un UX Designer experto. Proporciona respuestas detalladas en español.`
@@ -85,9 +85,9 @@ const AI_CONFIGS = {
     systemPrompt: `Eres un UX Designer profesional. Responde de forma práctica y aplicable en español.`
   },
   'llama-3.1-8b': {
-    provider: 'free',
-    apiUrl: '',
-    model: 'llama-3.1-8b',
+    provider: 'huggingface',
+    apiUrl: 'https://api-inference.huggingface.co/models/meta-llama/Llama-2-13b-chat-hf',
+    model: 'meta-llama/Llama-2-13b-chat-hf',
     maxTokens: 1500,
     temperature: 0.7,
     systemPrompt: `Eres un experto UX Designer especializado en generar contenido detallado y práctico basado en prompts de frameworks UX. Responde en español de manera estructurada.`
@@ -241,10 +241,60 @@ async function callPerplexity(prompt: string, apiKey: string, modelId: string) {
 async function callFreeModel(prompt: string, modelId: string) {
   const config = AI_CONFIGS[modelId as keyof typeof AI_CONFIGS];
   
-  console.log(`Using structured response for free model: ${modelId}`);
+  console.log(`Using real AI API for free model: ${modelId}`);
   
-  // Generate a structured response for free models
-  return generateStructuredResponse(prompt, config.systemPrompt);
+  try {
+    const response = await fetch(config.apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer hf_demo', // Public demo token for Hugging Face
+      },
+      body: JSON.stringify({
+        inputs: `${config.systemPrompt}\n\nUsuario: ${prompt}\nAsistente:`,
+        parameters: {
+          max_new_tokens: config.maxTokens,
+          temperature: config.temperature,
+          do_sample: true,
+          return_full_text: false
+        }
+      }),
+    });
+
+    if (!response.ok) {
+      // If API fails, fallback to structured response
+      console.log(`API call failed for ${modelId}, using fallback response`);
+      return generateStructuredResponse(prompt, config.systemPrompt);
+    }
+
+    const data = await response.json();
+    
+    // Handle different response formats from Hugging Face
+    let generatedText = '';
+    if (Array.isArray(data) && data[0]?.generated_text) {
+      generatedText = data[0].generated_text;
+    } else if (data.generated_text) {
+      generatedText = data.generated_text;
+    } else {
+      // Fallback if unexpected response format
+      return generateStructuredResponse(prompt, config.systemPrompt);
+    }
+
+    // Clean up the response (remove input text if included)
+    const cleanedResponse = generatedText.replace(prompt, '').trim();
+    
+    // If response is too short or seems invalid, use fallback
+    if (cleanedResponse.length < 50) {
+      return generateStructuredResponse(prompt, config.systemPrompt);
+    }
+
+    return cleanedResponse;
+    
+  } catch (error) {
+    console.error(`Error calling free model ${modelId}:`, error);
+    // Fallback to structured response on error
+    return generateStructuredResponse(prompt, config.systemPrompt);
+  }
 }
 
 function generateStructuredResponse(prompt: string, systemPrompt: string): string {
