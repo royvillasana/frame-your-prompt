@@ -67,9 +67,10 @@ const Generator = () => {
       setSelectedFramework(framework);
       if (stage) {
         setFrameworkStage(stage);
-        setCurrentStep("tool");
+        // When coming from existing project, start with context step instead of jumping to tools
+        setCurrentStep("context");
       } else {
-        setCurrentStep("framework");
+        setCurrentStep("context"); // Always start with context when coming from project
       }
     }
 
