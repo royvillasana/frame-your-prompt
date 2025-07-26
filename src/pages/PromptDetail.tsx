@@ -102,23 +102,23 @@ const PromptDetail = () => {
       if (updateError) throw updateError;
 
       setPrompt({ ...prompt, ai_response: data.aiResponse });
-      toast.success("¡Respuesta generada con IA!");
+      toast.success("AI response generated!");
     } catch (error: any) {
       console.error('Full error:', error);
-      const errorMessage = error.message || "Error al generar respuesta con IA";
+      const errorMessage = error.message || "Error generating AI response";
       
-      if (errorMessage.includes("No se pudo generar respuesta con IA")) {
-        toast.error("⚠️ Servicios de IA temporalmente no disponibles", {
-          description: "Los servicios gratuitos de IA están ocupados. Intenta con un modelo premium (requiere API key) o prueba más tarde.",
+      if (errorMessage.includes("Could not generate AI response")) {
+        toast.error("⚠️ AI services temporarily unavailable", {
+          description: "Free AI services are busy. Try with a premium model (requires API key) or try again later.",
           action: {
-            label: "Configurar API Key",
+            label: "Configure API Key",
             onClick: () => navigate('/profile')
           }
         });
-      } else if (errorMessage.includes("API key no configurada")) {
-        toast.error("Debes configurar una API key en tu perfil para usar esta función.", {
+      } else if (errorMessage.includes("API key not configured")) {
+        toast.error("You must configure an API key in your profile to use this function.", {
           action: {
-            label: "Ir a Perfil",
+            label: "Go to Profile",
             onClick: () => navigate('/profile')
           }
         });

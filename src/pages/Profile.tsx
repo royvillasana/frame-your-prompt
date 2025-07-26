@@ -42,7 +42,7 @@ const Profile = () => {
         setOpenaiApiKey(data.openai_api_key || "");
       }
     } catch (error: any) {
-      toast.error("Error al cargar el perfil");
+      toast.error("Error loading profile");
       console.error(error);
     } finally {
       setProfileLoading(false);
@@ -67,9 +67,9 @@ const Profile = () => {
 
       if (error) throw error;
 
-      toast.success("Perfil actualizado exitosamente");
+      toast.success("Profile updated successfully");
     } catch (error: any) {
-      toast.error("Error al actualizar el perfil");
+      toast.error("Error updating profile");
       console.error(error);
     } finally {
       setLoading(false);
@@ -90,7 +90,7 @@ const Profile = () => {
       if (error) throw error;
       setProjects(data || []);
     } catch (error: any) {
-      toast.error("Error al cargar los proyectos");
+      toast.error("Error loading projects");
       console.error(error);
     } finally {
       setProjectsLoading(false);
@@ -103,7 +103,7 @@ const Profile = () => {
         <div className="max-w-2xl mx-auto">
           <Card>
             <CardHeader>
-              <CardTitle>Cargando perfil...</CardTitle>
+              <CardTitle>Loading profile...</CardTitle>
             </CardHeader>
           </Card>
         </div>
@@ -116,9 +116,9 @@ const Profile = () => {
       <div className="max-w-2xl mx-auto">
         <Card>
           <CardHeader>
-            <CardTitle>Mi Perfil</CardTitle>
+            <CardTitle>My Profile</CardTitle>
             <CardDescription>
-              Configura tu información personal y API key de OpenAI
+              Configure your personal information and OpenAI API key
             </CardDescription>
           </CardHeader>
           
@@ -135,20 +135,20 @@ const Profile = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="displayName">Nombre para mostrar</Label>
+                <Label htmlFor="displayName">Display Name</Label>
                 <Input
                   id="displayName"
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
-                  placeholder="Tu nombre completo"
+                  placeholder="Your full name"
                 />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="openaiApiKey">
-                  API Key de OpenAI
+                  OpenAI API Key
                   <span className="text-sm text-muted-foreground ml-2">
-                    (Requerida para generar respuestas con IA)
+                    (Required to generate AI responses)
                   </span>
                 </Label>
                 <div className="relative">
@@ -175,7 +175,7 @@ const Profile = () => {
                   </Button>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Obtén tu API key en{" "}
+                  Get your API key at{" "}
                   <a 
                     href="https://platform.openai.com/api-keys" 
                     target="_blank" 
@@ -188,20 +188,20 @@ const Profile = () => {
               </div>
 
               <Button type="submit" disabled={loading} className="w-full">
-                {loading ? "Guardando..." : "Guardar Cambios"}
+                {loading ? "Saving..." : "Save Changes"}
               </Button>
             </form>
           </CardContent>
         </Card>
 
-        {/* Sección de Proyectos */}
+        {/* Projects Section */}
         <Card className="mt-8">
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle>Mis Proyectos</CardTitle>
+                <CardTitle>My Projects</CardTitle>
                 <CardDescription>
-                  Gestiona todos tus proyectos de UX y sus prompts generados
+                  Manage all your UX projects and their generated prompts
                 </CardDescription>
               </div>
               <Button 
@@ -209,7 +209,7 @@ const Profile = () => {
                 className="gap-2"
               >
                 <Plus className="h-4 w-4" />
-                Nuevo Proyecto
+                New Project
               </Button>
             </div>
           </CardHeader>
@@ -217,19 +217,19 @@ const Profile = () => {
           <CardContent>
             {projectsLoading ? (
               <div className="text-center py-8">
-                <p className="text-muted-foreground">Cargando proyectos...</p>
+                <p className="text-muted-foreground">Loading projects...</p>
               </div>
             ) : projects.length === 0 ? (
               <div className="text-center py-8">
                 <FolderOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <p className="text-muted-foreground mb-4">No tienes proyectos creados aún</p>
+                <p className="text-muted-foreground mb-4">You don't have any projects created yet</p>
                 <Button 
                   onClick={() => navigate('/generator')}
                   variant="outline"
                   className="gap-2"
                 >
                   <Plus className="h-4 w-4" />
-                  Crear mi primer proyecto
+                  Create my first project
                 </Button>
               </div>
             ) : (

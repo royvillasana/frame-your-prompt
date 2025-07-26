@@ -77,7 +77,7 @@ const PromptLibrary = () => {
       setPrompts(data || []);
     } catch (error) {
       console.error('Error fetching prompts:', error);
-      toast.error("Error al cargar los prompts");
+      toast.error("Error loading prompts");
     } finally {
       setLoading(false);
     }
@@ -93,10 +93,10 @@ const PromptLibrary = () => {
       if (error) throw error;
       
       setPrompts(prev => prev.filter(p => p.id !== id));
-      toast.success("Prompt eliminado correctamente");
+      toast.success("Prompt deleted successfully");
     } catch (error) {
       console.error('Error deleting prompt:', error);
-      toast.error("Error al eliminar el prompt");
+      toast.error("Error deleting prompt");
     } finally {
       setDeletingId(null);
     }
@@ -105,9 +105,9 @@ const PromptLibrary = () => {
   const handleCopyPrompt = async (prompt: string) => {
     try {
       await navigator.clipboard.writeText(prompt);
-      toast.success("Prompt copiado al portapapeles");
+      toast.success("Prompt copied to clipboard");
     } catch (error) {
-      toast.error("Error al copiar el prompt");
+      toast.error("Error copying prompt");
     }
   };
 
@@ -145,16 +145,16 @@ const PromptLibrary = () => {
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <Library className="h-6 w-6 text-primary" />
-            <h1 className="text-3xl font-bold">Biblioteca de Prompts</h1>
+            <h1 className="text-3xl font-bold">Prompt Library</h1>
           </div>
           <p className="text-muted-foreground">
-            Gestiona todos tus prompts generados y respuestas de IA
+            Manage all your generated prompts and AI responses
           </p>
         </div>
         
         <Button onClick={handleNewPrompt} className="gap-2">
           <Plus className="h-4 w-4" />
-          Nuevo Prompt
+          New Prompt
         </Button>
       </div>
 
@@ -162,14 +162,14 @@ const PromptLibrary = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Total de Prompts</CardDescription>
+            <CardDescription>Total Prompts</CardDescription>
             <CardTitle className="text-2xl">{prompts.length}</CardTitle>
           </CardHeader>
         </Card>
         
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Con Respuesta de IA</CardDescription>
+            <CardDescription>With AI Response</CardDescription>
             <CardTitle className="text-2xl">
               {prompts.filter(p => p.ai_response).length}
             </CardTitle>
@@ -178,7 +178,7 @@ const PromptLibrary = () => {
         
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Este Mes</CardDescription>
+            <CardDescription>This Month</CardDescription>
             <CardTitle className="text-2xl">
               {prompts.filter(p => {
                 const promptDate = new Date(p.created_at);
@@ -196,13 +196,13 @@ const PromptLibrary = () => {
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-16">
             <Library className="h-16 w-16 text-muted-foreground mb-4" />
-            <h3 className="text-xl font-semibold mb-2">No hay prompts generados</h3>
+            <h3 className="text-xl font-semibold mb-2">No generated prompts</h3>
             <p className="text-muted-foreground text-center mb-6">
-              Comienza creando tu primer prompt UX con nuestro generador
+              Start by creating your first UX prompt with our generator
             </p>
             <Button onClick={handleNewPrompt} className="gap-2">
               <Plus className="h-4 w-4" />
-              Crear Primer Prompt
+              Create First Prompt
             </Button>
           </CardContent>
         </Card>
@@ -240,11 +240,11 @@ const PromptLibrary = () => {
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem onClick={() => handleIteratePrompt(prompt)}>
                         <Edit className="h-4 w-4 mr-2" />
-                        Iterar Prompt
+                        Iterate Prompt
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => handleCopyPrompt(prompt.original_prompt)}>
                         <Copy className="h-4 w-4 mr-2" />
-                        Copiar Prompt
+                        Copy Prompt
                       </DropdownMenuItem>
                       <Separator className="my-1" />
                       <AlertDialog>
@@ -254,23 +254,23 @@ const PromptLibrary = () => {
                             onSelect={(e) => e.preventDefault()}
                           >
                             <Trash2 className="h-4 w-4 mr-2" />
-                            Eliminar
+                            Delete
                           </DropdownMenuItem>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader>
-                            <AlertDialogTitle>¿Eliminar prompt?</AlertDialogTitle>
+                            <AlertDialogTitle>Delete prompt?</AlertDialogTitle>
                             <AlertDialogDescription>
-                              Esta acción no se puede deshacer. El prompt y su respuesta de IA se eliminarán permanentemente.
+                              This action cannot be undone. The prompt and its AI response will be permanently deleted.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
-                            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
                             <AlertDialogAction
                               onClick={() => handleDeletePrompt(prompt.id)}
                               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                             >
-                              Eliminar
+                              Delete
                             </AlertDialogAction>
                           </AlertDialogFooter>
                         </AlertDialogContent>
@@ -283,7 +283,7 @@ const PromptLibrary = () => {
               <CardContent className="space-y-4">
                 {/* Original Prompt */}
                 <div>
-                  <h4 className="font-medium mb-2">Prompt Original</h4>
+                  <h4 className="font-medium mb-2">Original Prompt</h4>
                   <ScrollArea className="h-24 w-full rounded border bg-muted/50 p-3">
                     <p className="text-sm text-muted-foreground whitespace-pre-wrap">
                       {prompt.original_prompt}
@@ -296,7 +296,7 @@ const PromptLibrary = () => {
                   <>
                     <Separator />
                     <div>
-                      <h4 className="font-medium mb-2">Respuesta de IA</h4>
+                      <h4 className="font-medium mb-2">AI Response</h4>
                       <ScrollArea className="h-32 w-full rounded border bg-background p-3">
                         <p className="text-sm whitespace-pre-wrap">
                           {prompt.ai_response}
@@ -315,7 +315,7 @@ const PromptLibrary = () => {
                     className="gap-2"
                   >
                     <ArrowRight className="h-4 w-4" />
-                    Iterar
+                    Iterate
                   </Button>
                   <Button 
                     variant="outline" 
@@ -324,7 +324,7 @@ const PromptLibrary = () => {
                     className="gap-2"
                   >
                     <Copy className="h-4 w-4" />
-                    Copiar
+                    Copy
                   </Button>
                 </div>
               </CardContent>

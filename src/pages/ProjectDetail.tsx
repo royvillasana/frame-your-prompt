@@ -24,7 +24,7 @@ const ProjectDetail = () => {
 
   const loadProjectDetails = async () => {
     try {
-      // Cargar proyecto
+      // Load project
       const { data: projectData, error: projectError } = await supabase
         .from('projects')
         .select('*')
@@ -35,7 +35,7 @@ const ProjectDetail = () => {
       if (projectError) throw projectError;
       setProject(projectData);
 
-      // Cargar prompts del proyecto
+      // Load project prompts
       const { data: promptsData, error: promptsError } = await supabase
         .from('generated_prompts')
         .select('*')
@@ -45,7 +45,7 @@ const ProjectDetail = () => {
       if (promptsError) throw promptsError;
       setPrompts(promptsData || []);
     } catch (error: any) {
-      toast.error("Error al cargar los detalles del proyecto");
+      toast.error("Error loading project details");
       console.error(error);
       navigate('/profile');
     } finally {
@@ -54,7 +54,7 @@ const ProjectDetail = () => {
   };
 
   const deleteProject = async () => {
-    if (!window.confirm('¿Estás seguro de que quieres eliminar este proyecto? Esta acción no se puede deshacer.')) {
+    if (!window.confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
       return;
     }
 
@@ -67,10 +67,10 @@ const ProjectDetail = () => {
 
       if (error) throw error;
 
-      toast.success("Proyecto eliminado exitosamente");
+      toast.success("Project deleted successfully");
       navigate('/profile');
     } catch (error: any) {
-      toast.error("Error al eliminar el proyecto");
+      toast.error("Error deleting project");
       console.error(error);
     }
   };
@@ -81,7 +81,7 @@ const ProjectDetail = () => {
         <div className="max-w-4xl mx-auto">
           <Card>
             <CardHeader>
-              <CardTitle>Cargando proyecto...</CardTitle>
+              <CardTitle>Loading project...</CardTitle>
             </CardHeader>
           </Card>
         </div>
@@ -93,10 +93,10 @@ const ProjectDetail = () => {
     return (
       <div className="container mx-auto py-8">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-2xl font-bold mb-4">Proyecto no encontrado</h1>
+          <h1 className="text-2xl font-bold mb-4">Project not found</h1>
           <Button onClick={() => navigate('/profile')}>
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Volver al perfil
+            Back to profile
           </Button>
         </div>
       </div>
@@ -114,7 +114,7 @@ const ProjectDetail = () => {
             className="mb-4"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Volver al perfil
+            Back to profile
           </Button>
           
           <div className="flex items-start justify-between">
@@ -126,7 +126,7 @@ const ProjectDetail = () => {
               <div className="flex items-center gap-4 text-sm text-muted-foreground">
                 <div className="flex items-center gap-1">
                   <Calendar className="h-4 w-4" />
-                  Última actualización: {new Date(project.updated_at).toLocaleDateString()}
+                  Last update: {new Date(project.updated_at).toLocaleDateString()}
                 </div>
                 <Badge variant="secondary">{project.selected_framework}</Badge>
               </div>
@@ -143,7 +143,7 @@ const ProjectDetail = () => {
                 className="gap-2"
               >
                 <Plus className="h-4 w-4" />
-                Nuevo Prompt
+                New Prompt
               </Button>
               <Button variant="outline" size="sm">
                 <Edit className="h-4 w-4" />
@@ -160,9 +160,9 @@ const ProjectDetail = () => {
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle>Prompts Generados</CardTitle>
+                <CardTitle>Generated Prompts</CardTitle>
                 <CardDescription>
-                  {prompts.length} prompt{prompts.length !== 1 ? 's' : ''} creado{prompts.length !== 1 ? 's' : ''} en este proyecto
+                  {prompts.length} prompt{prompts.length !== 1 ? 's' : ''} created in this project
                 </CardDescription>
               </div>
             </div>
@@ -172,7 +172,7 @@ const ProjectDetail = () => {
             {prompts.length === 0 ? (
               <div className="text-center py-8">
                 <MessageSquare className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <p className="text-muted-foreground mb-4">No hay prompts creados en este proyecto aún</p>
+                <p className="text-muted-foreground mb-4">No prompts created in this project yet</p>
                 <Button 
                   onClick={() => navigate('/generator', { 
                     state: { 
@@ -184,7 +184,7 @@ const ProjectDetail = () => {
                   className="gap-2"
                 >
                   <Plus className="h-4 w-4" />
-                  Crear primer prompt
+                  Create first prompt
                 </Button>
               </div>
             ) : (
@@ -214,7 +214,7 @@ const ProjectDetail = () => {
                       {prompt.ai_response && (
                         <div className="flex items-center gap-2 text-xs text-muted-foreground">
                           <MessageSquare className="h-3 w-3" />
-                          <span>Incluye respuesta de IA</span>
+                          <span>Includes AI response</span>
                         </div>
                       )}
                     </CardContent>

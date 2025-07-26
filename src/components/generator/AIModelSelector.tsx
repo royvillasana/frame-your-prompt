@@ -20,9 +20,9 @@ export const AI_MODELS: AIModel[] = [
   // Free models that actually work
   {
     id: "llama-3.1-8b",
-    name: "Llama 3.1 8B (Gratuito)",
+    name: "Llama 3.1 8B (Free)",
     provider: "Groq",
-    description: "Modelo gratuito rápido y confiable para UX",
+    description: "Fast and reliable free model for UX",
     freeLimit: 50,
     registeredLimit: 100,
     icon: <Zap className="h-4 w-4" />,
@@ -33,7 +33,7 @@ export const AI_MODELS: AIModel[] = [
     id: "gpt-4o-mini",
     name: "GPT-4o Mini",
     provider: "OpenAI",
-    description: "Modelo premium rápido y eficiente (Requiere API Key de OpenAI)",
+    description: "Fast and efficient premium model (Requires OpenAI API Key)",
     freeLimit: 0,
     registeredLimit: 999,
     icon: <Sparkles className="h-4 w-4" />,
@@ -43,7 +43,7 @@ export const AI_MODELS: AIModel[] = [
     id: "llama-3.1-sonar-small-128k-online",
     name: "Perplexity Sonar Small",
     provider: "Perplexity AI",
-    description: "Modelo con acceso a internet (Requiere API Key de Perplexity)",
+    description: "Model with internet access (Requires Perplexity API Key)",
     freeLimit: 0,
     registeredLimit: 50,
     icon: <Brain className="h-4 w-4" />,
@@ -66,11 +66,11 @@ export const AIModelSelector = ({ selectedModel, onModelSelect, disabled }: AIMo
     <div className="space-y-4">
       <div>
         <label className="text-sm font-medium mb-2 block">
-          Seleccionar Modelo de IA
+          Select AI Model
         </label>
         <Select value={selectedModel} onValueChange={onModelSelect} disabled={disabled}>
           <SelectTrigger className="w-full">
-            <SelectValue placeholder="Selecciona un modelo de IA" />
+            <SelectValue placeholder="Select an AI model" />
           </SelectTrigger>
           <SelectContent>
             {AI_MODELS.map((model) => {
@@ -117,17 +117,17 @@ export const AIModelSelector = ({ selectedModel, onModelSelect, disabled }: AIMo
           <CardContent className="pt-0">
             <div className="space-y-2">
               <div className="flex justify-between items-center text-sm">
-                <span>Estado de uso hoy:</span>
+                <span>Usage status today:</span>
                 <div className="flex items-center gap-2">
                   {loading ? (
-                    <Badge variant="outline">Cargando...</Badge>
+                    <Badge variant="outline">Loading...</Badge>
                   ) : (
                     <>
                       <Badge variant={getModelUsage(selectedModel).can_use ? "secondary" : "destructive"}>
-                        {getModelUsage(selectedModel).current_usage}/{getModelUsage(selectedModel).daily_limit} usados
+                        {getModelUsage(selectedModel).current_usage}/{getModelUsage(selectedModel).daily_limit} used
                       </Badge>
                       {!getModelUsage(selectedModel).can_use && (
-                        <span className="text-destructive text-xs">Sin usos restantes</span>
+                        <span className="text-destructive text-xs">No uses remaining</span>
                       )}
                     </>
                   )}
@@ -136,7 +136,7 @@ export const AIModelSelector = ({ selectedModel, onModelSelect, disabled }: AIMo
               
               {!isRegistered && (
                 <div className="text-xs text-muted-foreground bg-muted/50 p-2 rounded">
-                  💡 Regístrate para obtener límites mayores: hasta {selectedModelData.registeredLimit} prompts diarios
+                  💡 Register to get higher limits: up to {selectedModelData.registeredLimit} daily prompts
                 </div>
               )}
             </div>

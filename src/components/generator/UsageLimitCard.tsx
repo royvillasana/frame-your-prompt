@@ -101,10 +101,10 @@ export const UsageLimitCard = () => {
       case 'guest':
         return {
           icon: <AlertTriangle className="h-4 w-4" />,
-          label: "Invitado",
+          label: "Guest",
           color: "text-orange-600",
           bgColor: "bg-orange-50 border-orange-200",
-          description: "2 prompts mensuales para usuarios no registrados"
+          description: "2 monthly prompts for unregistered users"
         };
     }
   };
@@ -142,7 +142,7 @@ export const UsageLimitCard = () => {
         {usageData.user_type !== 'registered_premium' ? (
           <div className="space-y-3">
             <div className="flex items-center justify-between text-sm">
-              <span>Prompts usados este mes</span>
+              <span>Prompts used this month</span>
               <Badge variant={usageData.can_use ? "secondary" : "destructive"}>
                 {usageData.current_usage} / {usageData.monthly_limit}
               </Badge>
