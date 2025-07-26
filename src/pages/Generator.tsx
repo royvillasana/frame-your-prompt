@@ -16,6 +16,7 @@ import { ToolSelectionStep } from "@/components/generator/ToolSelectionStep";
 import { ProjectConfigStep } from "@/components/generator/ProjectConfigStep";
 import { AIModelSelector } from "@/components/generator/AIModelSelector";
 import { AILimitAlert } from "@/components/generator/AILimitAlert";
+import { FreeAIIntegration } from "@/components/generator/FreeAIIntegration";
 import { useAIUsage } from "@/hooks/useAIUsage";
 
 type Step = "project" | "context" | "stage" | "framework" | "tool" | "result";
@@ -519,6 +520,9 @@ Asegúrate de que todas las recomendaciones estén alineadas con las mejores pr�
                   </div>
                 </div>
               )}
+
+              {/* Free AI Integration */}
+              <FreeAIIntegration prompt={generatedPrompt} />
 
               <div className="pt-4">
                 <div className="flex flex-wrap gap-2">
