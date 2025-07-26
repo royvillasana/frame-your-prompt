@@ -197,7 +197,7 @@ const Generator = () => {
     }
 
     // Create a meta-prompt to generate the actual UX prompt
-    const metaPrompt = `Act as an expert UX Designer and AI prompt specialist. Your task is to generate a detailed and specific prompt to help a UX Designer who is working in the "${stageText}" stage of the ${frameworkText} framework, specifically with ${tool}.
+    const metaPrompt = `Act as an expert UX Designer and AI prompt specialist. Your task is to generate a detailed and specific prompt IN ENGLISH to help a UX Designer who is working in the "${stageText}" stage of the ${frameworkText} framework, specifically with ${tool}.
 
 Project context:
 - Industry: ${projectContext.industry}
@@ -207,12 +207,13 @@ Project context:
 - Target audience: ${projectContext.userProfile}
 
 CRITICAL INSTRUCTIONS:
-1. Generate a COMPLETE and SPECIFIC prompt that the UX Designer can use directly with an AI
+1. Generate a COMPLETE and SPECIFIC prompt IN ENGLISH that the UX Designer can use directly with an AI
 2. The prompt must be specifically adapted to the ${projectContext.industry} industry and ${projectContext.productType} product type
 3. Must include specific questions, applicable methodologies and concrete deliverables for the ${stageText} stage
 4. The prompt must be practical and oriented to tangible results
 5. Include specific aspects of ${tool} relevant to ${frameworkText}
 6. Adapt the language and approach according to company size: ${projectContext.companySize}
+7. IMPORTANT: Generate the entire prompt in English language only
 
 Generate ONLY the final prompt that the UX Designer will use, without additional explanations or introductions. The prompt should begin directly with clear instructions for the AI that will receive it.`;
 
