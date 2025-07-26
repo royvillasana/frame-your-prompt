@@ -349,18 +349,28 @@ async function callClaude(prompt: string, apiKey: string, modelId: string) {
 }
 
 serve(async (req) => {
+  console.log('=== EDGE FUNCTION STARTED ===');
+  
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
+    console.log('Handling CORS preflight request');
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
+    console.log('Processing request...');
+    
     // Get the authorization header
     const authHeader = req.headers.get('Authorization');
+    console.log('Auth header present:', !!authHeader);
+    
     if (!authHeader) {
+      console.error('No authorization header provided');
       throw new Error('No authorization header');
     }
 
+    console.log('Initializing Supabase client...');
+    
     // Initialize Supabase client
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
@@ -372,18 +382,32 @@ serve(async (req) => {
       }
     );
 
+    console.log('Getting user...');
+    
     // Get current user
     const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
     if (userError || !user) {
+      console.error('User authentication failed:', userError);
       throw new Error('Usuario no autenticado');
     }
+    
+    console.log('User authenticated:', user.id);
 
+    console.log('Parsing request body...');
+    
     // Get request body
     const { prompt, projectContext, selectedFramework, frameworkStage, selectedTool, aiModel = 'gpt-4o-mini' } = await req.json();
 
-    console.log('Request received:', { aiModel, hasPrompt: !!prompt });
+    console.log('Request received:', { 
+      aiModel, 
+      hasPrompt: !!prompt,
+      selectedFramework,
+      frameworkStage,
+      selectedTool 
+    });
 
     if (!prompt) {
+      console.error('No prompt provided');
       throw new Error('Prompt requerido');
     }
 
@@ -391,6 +415,8 @@ serve(async (req) => {
       console.error('AI model not supported:', aiModel, 'Available models:', Object.keys(AI_CONFIGS));
       throw new Error(`Modelo de IA no soportado: ${aiModel}`);
     }
+    
+    console.log('Model configuration found for:', aiModel);
 
     // Check usage limits using the database function
     const { data: usageCheck, error: usageError } = await supabaseClient.rpc(
@@ -462,7 +488,11 @@ serve(async (req) => {
         throw new Error('Proveedor de IA no soportado');
     }
 
+    console.log('=== AI RESPONSE SUCCESSFUL ===');
+    console.log('Response length:', aiResponse.length);
+
     // Save the generated prompt and response to database
+    console.log('Saving to database...');
     const { error: saveError } = await supabaseClient
       .from('generated_prompts')
       .insert({
@@ -478,8 +508,11 @@ serve(async (req) => {
     if (saveError) {
       console.error('Error saving to database:', saveError);
       // Don't throw error here, just log it
+    } else {
+      console.log('Successfully saved to database');
     }
 
+    console.log('=== RETURNING SUCCESS RESPONSE ===');
     return new Response(JSON.stringify({ 
       aiResponse,
       usage: usageCheck
@@ -488,9 +521,19 @@ serve(async (req) => {
     });
 
   } catch (error: any) {
-    console.error('Error in generate-ai-response function:', error);
+    console.error('=== ERROR IN EDGE FUNCTION ===');
+    console.error('Error type:', typeof error);
+    console.error('Error message:', error.message);
+    console.error('Error stack:', error.stack);
+    console.error('Full error object:', error);
+    
+    const errorMessage = error.message || 'Error interno del servidor';
+    console.log('Returning error response with message:', errorMessage);
+    
     return new Response(JSON.stringify({ 
-      error: error.message || 'Error interno del servidor' 
+      error: errorMessage,
+      timestamp: new Date().toISOString(),
+      details: error.stack ? error.stack.substring(0, 500) : 'No stack trace available'
     }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
