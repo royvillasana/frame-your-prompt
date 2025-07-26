@@ -335,10 +335,37 @@ Make sure all recommendations are aligned with ${frameworkText} best practices a
     }
   };
 
-  const handleExistingProject = (project: any) => {
+  const handleExistingProject = async (project: any) => {
     setCurrentProject(project);
-    // If project has context from previous prompts, we can pre-fill some data
     setSelectedFramework(project.selected_framework);
+    
+    // Fetch the latest prompt from this project to pre-fill context
+    try {
+      const { data: latestPrompt, error } = await supabase
+        .from('generated_prompts')
+        .select('project_context')
+        .eq('project_id', project.id)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      if (!error && latestPrompt?.project_context) {
+        // Pre-fill project context from the latest prompt
+        const contextData = latestPrompt.project_context as any;
+        if (contextData && typeof contextData === 'object') {
+          setProjectContext({
+            industry: contextData.industry || "",
+            productType: contextData.productType || "",
+            companySize: contextData.companySize || "",
+            productScope: contextData.productScope || "national",
+            userProfile: contextData.userProfile || "b2c"
+          });
+        }
+      }
+    } catch (error) {
+      console.log('No previous prompts found for this project, starting fresh');
+    }
+    
     setCurrentStep("context");
   };
 
@@ -398,7 +425,7 @@ Make sure all recommendations are aligned with ${frameworkText} best practices a
           />
         );
       case "context":
-        return <ProjectContextStep onNext={handleContextComplete} />;
+        return <ProjectContextStep onNext={handleContextComplete} initialContext={projectContext} />;
       case "stage":
         return (
           <ProjectStageStep 

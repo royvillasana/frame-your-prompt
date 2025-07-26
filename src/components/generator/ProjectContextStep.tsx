@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { StepCard } from "./StepCard";
 import { OptionCard } from "./OptionCard";
 import { Button } from "@/components/ui/button";
@@ -6,6 +6,7 @@ import { ArrowRight } from "lucide-react";
 
 interface ProjectContextStepProps {
   onNext: (context: ProjectContext) => void;
+  initialContext?: ProjectContext | null;
 }
 
 export interface ProjectContext {
@@ -39,10 +40,19 @@ const companySizes = [
   { id: "large", name: "Large", description: "Consolidated company with multiple products", tooltip: "201+ employees, multiple product lines" }
 ];
 
-export const ProjectContextStep = ({ onNext }: ProjectContextStepProps) => {
+export const ProjectContextStep = ({ onNext, initialContext }: ProjectContextStepProps) => {
   const [selectedIndustry, setSelectedIndustry] = useState("");
   const [selectedProductType, setSelectedProductType] = useState("");
   const [selectedCompanySize, setSelectedCompanySize] = useState("");
+
+  // Pre-fill form with initial context if provided
+  useEffect(() => {
+    if (initialContext) {
+      setSelectedIndustry(initialContext.industry || "");
+      setSelectedProductType(initialContext.productType || "");
+      setSelectedCompanySize(initialContext.companySize || "");
+    }
+  }, [initialContext]);
 
   const canProceed = selectedIndustry && selectedProductType && selectedCompanySize;
 
