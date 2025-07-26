@@ -138,6 +138,57 @@ const Generator = () => {
     }
   };
 
+  const handleProjectConfigComplete = async (projectName: string, description: string, framework: string) => {
+    try {
+      // Create the project
+      const { data: project, error } = await supabase
+        .from('projects')
+        .insert([
+          {
+            user_id: user!.id,
+            name: projectName,
+            description,
+            selected_framework: framework,
+          }
+        ])
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error creating project:', error);
+        toast({
+          title: "Error",
+          description: "No se pudo crear el proyecto",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Set current project and framework
+      setCurrentProject({
+        id: project.id,
+        name: project.name,
+        framework: project.selected_framework
+      });
+      setSelectedFramework(framework);
+      
+      toast({
+        title: "¡Proyecto creado!",
+        description: `Proyecto "${projectName}" creado exitosamente`,
+      });
+
+      // Continue to context step
+      setCurrentStep("context");
+    } catch (error) {
+      console.error('Error creating project:', error);
+      toast({
+        title: "Error",
+        description: "No se pudo crear el proyecto",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleContextComplete = (context: ProjectContext) => {
     setProjectContext(context);
     setCurrentStep("stage");
@@ -271,6 +322,8 @@ Asegúrate de que todas las recomendaciones estén alineadas con las mejores pr�
 
   const renderCurrentStep = () => {
     switch (currentStep) {
+      case "project":
+        return <ProjectConfigStep onNext={handleProjectConfigComplete} />;
       case "context":
         return <ProjectContextStep onNext={handleContextComplete} />;
       case "stage":
