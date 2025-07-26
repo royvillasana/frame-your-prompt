@@ -85,18 +85,18 @@ export const UsageLimitCard = () => {
       case 'registered_premium':
         return {
           icon: <Crown className="h-4 w-4" />,
-          label: "Premium",
+          label: "Premium Plan",
           color: "text-yellow-600",
           bgColor: "bg-yellow-50 border-yellow-200",
-          description: "Acceso ilimitado con tu API key"
+          description: "Unlimited access with your API key"
         };
       case 'registered_free':
         return {
           icon: <User className="h-4 w-4" />,
-          label: "Gratuito",
+          label: "Free",
           color: "text-blue-600",
           bgColor: "bg-blue-50 border-blue-200",
-          description: "6 prompts mensuales gratuitos"
+          description: "6 free monthly prompts"
         };
       case 'guest':
         return {
@@ -155,16 +155,16 @@ export const UsageLimitCard = () => {
             
             {!usageData.can_use && (
               <div className="text-xs text-muted-foreground">
-                <p>Has alcanzado tu límite mensual. {usageData.user_type === 'registered_free' 
-                  ? 'Configura una API key para acceso ilimitado.' 
-                  : 'Regístrate para obtener más prompts.'}</p>
+                <p>You have reached your monthly limit. {usageData.user_type === 'registered_free' 
+                  ? 'Configure an API key for unlimited access.' 
+                  : 'Register to get more prompts.'}</p>
               </div>
             )}
           </div>
         ) : (
           <div className="flex items-center gap-2 text-sm text-green-700">
             <Zap className="h-4 w-4" />
-            <span>Acceso ilimitado activado</span>
+            <span>Unlimited access activated</span>
           </div>
         )}
       </CardContent>
