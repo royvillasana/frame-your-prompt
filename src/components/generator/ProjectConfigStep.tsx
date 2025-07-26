@@ -41,9 +41,23 @@ export const ProjectConfigStep = ({
           <Label htmlFor="description">Descripción (Opcional)</Label>
           <Textarea id="description" value={description} onChange={e => setDescription(e.target.value)} placeholder="Breve descripción de tu proyecto..." rows={3} />
         </div>
+        <div className="space-y-2">
+          <Label htmlFor="framework">Framework de UX*</Label>
+          <Select value={selectedFramework} onValueChange={setSelectedFramework}>
+            <SelectTrigger>
+              <SelectValue placeholder="Selecciona un framework..." />
+            </SelectTrigger>
+            <SelectContent>
+              {UX_FRAMEWORKS.map((framework) => (
+                <SelectItem key={framework.id} value={framework.id}>
+                  {framework.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
 
         
-
         <div className="flex justify-end pt-4">
           <Button onClick={handleNext} disabled={!projectName.trim() || !selectedFramework} className="gap-2">
             Continuar con Contexto
