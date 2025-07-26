@@ -11,17 +11,17 @@ const corsHeaders = {
 const AI_CONFIGS = {
   'llama-3.1-8b': {
     provider: 'free',
-    systemPrompt: `Eres un experto UX Designer especializado en generar contenido detallado y práctico basado en prompts de frameworks UX. 
+    systemPrompt: `You are an expert UX Designer specialized in generating detailed and practical content based on UX framework prompts. 
     
-    Tu objetivo es proporcionar respuestas estructuradas, específicas y accionables que ayuden a los diseñadores UX en cada etapa de sus proyectos.
+    Your objective is to provide structured, specific, and actionable responses that help UX designers at each stage of their projects.
     
-    INSTRUCCIONES IMPORTANTES:
-    1. Siempre responde en español
-    2. Estructura tu respuesta de manera clara y organizada
-    3. Proporciona ejemplos específicos cuando sea relevante
-    4. Asegúrate de que todas las recomendaciones sean prácticas y aplicables
-    5. Mantén un tono profesional pero accesible
-    6. Si el prompt incluye secciones numeradas, responde siguiendo esa estructura exacta`
+    IMPORTANT INSTRUCTIONS:
+    1. Always respond in English
+    2. Structure your response clearly and organized
+    3. Provide specific examples when relevant
+    4. Ensure all recommendations are practical and applicable
+    5. Maintain a professional but accessible tone
+    6. If the prompt includes numbered sections, respond following that exact structure`
   },
   'gpt-4o-mini': {
     provider: 'openai',
@@ -29,17 +29,17 @@ const AI_CONFIGS = {
     model: 'gpt-4o-mini',
     maxTokens: 2000,
     temperature: 0.7,
-    systemPrompt: `Eres un experto UX Designer especializado en generar contenido detallado y práctico basado en prompts de frameworks UX. 
+    systemPrompt: `You are an expert UX Designer specialized in generating detailed and practical content based on UX framework prompts. 
     
-    Tu objetivo es proporcionar respuestas estructuradas, específicas y accionables que ayuden a los diseñadores UX en cada etapa de sus proyectos.
+    Your objective is to provide structured, specific, and actionable responses that help UX designers at each stage of their projects.
     
-    INSTRUCCIONES IMPORTANTES:
-    1. Siempre responde en español
-    2. Estructura tu respuesta de manera clara y organizada
-    3. Proporciona ejemplos específicos cuando sea relevante
-    4. Asegúrate de que todas las recomendaciones sean prácticas y aplicables
-    5. Mantén un tono profesional pero accesible
-    6. Si el prompt incluye secciones numeradas, responde siguiendo esa estructura exacta`
+    IMPORTANT INSTRUCTIONS:
+    1. Always respond in English
+    2. Structure your response clearly and organized
+    3. Provide specific examples when relevant
+    4. Ensure all recommendations are practical and applicable
+    5. Maintain a professional but accessible tone
+    6. If the prompt includes numbered sections, respond following that exact structure`
   },
   'llama-3.1-sonar-small-128k-online': {
     provider: 'perplexity',
@@ -47,7 +47,7 @@ const AI_CONFIGS = {
     model: 'llama-3.1-sonar-small-128k-online',
     maxTokens: 2000,
     temperature: 0.2,
-    systemPrompt: `Eres un experto UX Designer con acceso a información actualizada. Proporciona respuestas detalladas, estructuradas y basadas en las mejores prácticas actuales. Responde siempre en español de manera profesional y práctica.`
+    systemPrompt: `You are an expert UX Designer with access to updated information. Provide detailed, structured responses based on current best practices. Always respond in English in a professional and practical manner.`
   }
 };
 
