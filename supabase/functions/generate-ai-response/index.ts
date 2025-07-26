@@ -569,8 +569,7 @@ serve(async (req) => {
     }
 
     // Check if model is free (doesn't require API key)
-    const isFreeModel = aiModel.includes('-free') || 
-                       ['llama-3.1-8b', 'llama-3.1-70b', 'qwen-2.5-72b'].includes(aiModel);
+    const isFreeModel = aiModel === 'llama-3.1-8b';
 
     let apiKey = null;
     
@@ -613,20 +612,7 @@ serve(async (req) => {
           if (!apiKey) throw new Error('API key requerida para este modelo');
           aiResponse = await callOpenAI(prompt, apiKey);
           break;
-        case 'gemini-1.5-flash':
-          if (!apiKey) throw new Error('API key requerida para este modelo');
-          // For demo purposes, we'll use OpenAI for all models
-          // In production, you'd need separate API keys for each service
-          aiResponse = await callOpenAI(prompt, apiKey);
-          break;
-        case 'claude-3-haiku':
-          if (!apiKey) throw new Error('API key requerida para este modelo');
-          // For demo purposes, we'll use OpenAI for all models
-          // In production, you'd need separate API keys for each service
-          aiResponse = await callOpenAI(prompt, apiKey);
-          break;
         case 'llama-3.1-sonar-small-128k-online':
-        case 'llama-3.1-sonar-large-128k-online':
           if (!apiKey) throw new Error('API key de Perplexity requerida para este modelo');
           aiResponse = await callPerplexity(prompt, apiKey, aiModel);
           break;
