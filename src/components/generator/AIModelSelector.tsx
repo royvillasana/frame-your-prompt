@@ -22,8 +22,8 @@ export const AI_MODELS: AIModel[] = [
     name: "GPT-4o Mini",
     provider: "OpenAI",
     description: "Rápido y eficiente para tareas generales de UX",
-    freeLimit: 5,
-    registeredLimit: 50,
+    freeLimit: 50,
+    registeredLimit: 999999,
     icon: <Sparkles className="h-4 w-4" />,
     color: "bg-green-500"
   },
@@ -32,8 +32,8 @@ export const AI_MODELS: AIModel[] = [
     name: "Gemini 1.5 Flash",
     provider: "Google",
     description: "Excelente para análisis detallados y creatividad",
-    freeLimit: 5,
-    registeredLimit: 100,
+    freeLimit: 50,
+    registeredLimit: 999999,
     icon: <Star className="h-4 w-4" />,
     color: "bg-blue-500"
   },
@@ -42,8 +42,8 @@ export const AI_MODELS: AIModel[] = [
     name: "Claude 3 Haiku",
     provider: "Anthropic",
     description: "Perfecto para tareas de UX complejas y análisis profundo",
-    freeLimit: 5,
-    registeredLimit: 30,
+    freeLimit: 50,
+    registeredLimit: 999999,
     icon: <Brain className="h-4 w-4" />,
     color: "bg-purple-500"
   }
@@ -134,7 +134,7 @@ export const AIModelSelector = ({ selectedModel, onModelSelect, disabled }: AIMo
               
               {!isRegistered && (
                 <div className="text-xs text-muted-foreground bg-muted/50 p-2 rounded">
-                  💡 Regístrate para obtener límites mayores: hasta {selectedModelData.registeredLimit} prompts diarios
+                  💡 Regístrate para obtener uso ilimitado y configurar tus propias API keys
                 </div>
               )}
             </div>

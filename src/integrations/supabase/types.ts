@@ -85,24 +85,30 @@ export type Database = {
       }
       profiles: {
         Row: {
+          claude_api_key: string | null
           created_at: string
           display_name: string | null
+          gemini_api_key: string | null
           id: string
           openai_api_key: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
+          claude_api_key?: string | null
           created_at?: string
           display_name?: string | null
+          gemini_api_key?: string | null
           id?: string
           openai_api_key?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
+          claude_api_key?: string | null
           created_at?: string
           display_name?: string | null
+          gemini_api_key?: string | null
           id?: string
           openai_api_key?: string | null
           updated_at?: string

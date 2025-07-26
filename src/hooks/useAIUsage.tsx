@@ -38,7 +38,7 @@ export const useAIUsage = () => {
       
       AI_MODELS.forEach(model => {
         const modelUsage = data?.find(u => u.ai_model === model.id);
-        const limit = isRegistered ? model.registeredLimit : model.freeLimit;
+        const limit = isRegistered ? 999999 : 50; // Usuarios registrados tienen uso ilimitado, no registrados 50 prompts al mes
         const used = modelUsage?.prompts_used || 0;
         
         usage[model.id] = {
@@ -64,10 +64,8 @@ export const useAIUsage = () => {
   const getModelUsage = (modelId: string) => {
     return usageData[modelId] || {
       current_usage: 0,
-      remaining: isRegistered ? 
-        AI_MODELS.find(m => m.id === modelId)?.registeredLimit || 5 : 5,
-      daily_limit: isRegistered ? 
-        AI_MODELS.find(m => m.id === modelId)?.registeredLimit || 5 : 5,
+      remaining: isRegistered ? 999999 : 50,
+      daily_limit: isRegistered ? 999999 : 50,
       can_use: true
     };
   };
