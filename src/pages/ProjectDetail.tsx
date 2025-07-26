@@ -27,21 +27,29 @@ export const ProjectDetail = () => {
 
   useEffect(() => {
     const loadProject = async () => {
-      if (!projectId) return;
+      if (!projectId) {
+        console.log('No projectId provided');
+        return;
+      }
 
+      console.log('Loading project with ID:', projectId);
+      
       try {
         // Load project details
+        console.log('Making Supabase query for project...');
         const { data: projectData, error: projectError } = await supabase
           .from('projects')
           .select('*')
           .eq('id', projectId)
           .single();
 
+        console.log('Supabase response:', { projectData, projectError });
+
         if (projectError) {
           console.error('Error loading project:', projectError);
           toast({
             title: "Error",
-            description: "Project not found",
+            description: `Project not found: ${projectError.message}`,
             variant: "destructive",
           });
           navigate('/profile');
