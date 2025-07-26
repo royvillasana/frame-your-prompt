@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Copy, RefreshCw, Save, Download, Sparkles, RotateCcw } from "lucide-react";
+import { Copy, RefreshCw, Save, Download, Sparkles, RotateCcw, Library } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { toast as sonnerToast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
@@ -47,6 +47,10 @@ const Generator = () => {
       generatedPrompt?: string;
       aiResponse?: string;
       projectContext?: ProjectContext;
+      iterateFrom?: any;
+      selectedFramework?: string;
+      frameworkStage?: string;
+      selectedTool?: string;
     };
 
     if (state?.showResult && state?.generatedPrompt && state?.projectContext) {
@@ -56,6 +60,17 @@ const Generator = () => {
       if (state.aiResponse) {
         setAiResponse(state.aiResponse);
       }
+    } else if (state?.iterateFrom) {
+      // Handle iteration from existing prompt
+      setProjectContext(state.projectContext);
+      setSelectedFramework(state.selectedFramework || "");
+      setFrameworkStage(state.frameworkStage || "");
+      setSelectedTool(state.selectedTool || "");
+      setGeneratedPrompt(state.iterateFrom.original_prompt || "");
+      if (state.iterateFrom.ai_response) {
+        setAiResponse(state.iterateFrom.ai_response);
+      }
+      setCurrentStep("result");
     }
   }, [user, navigate, location.state]);
 
@@ -275,6 +290,15 @@ Asegúrate de que todas las recomendaciones estén alineadas con las mejores pr�
                 <Button onClick={resetGenerator} variant="outline" size="sm">
                   <RotateCcw className="mr-2 h-4 w-4" />
                   Nuevo Prompt
+                </Button>
+                <Button 
+                  onClick={() => navigate('/prompt-library')} 
+                  variant="outline" 
+                  size="sm"
+                  className="gap-2"
+                >
+                  <Library className="h-4 w-4" />
+                  Ver Biblioteca
                 </Button>
               </div>
 

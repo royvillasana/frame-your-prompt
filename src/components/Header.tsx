@@ -20,6 +20,7 @@ const Header = () => {
 
   const navItems = [
     { name: "Generator", path: "/generator" },
+    { name: "Prompts", path: "/prompt-library" },
     { name: "Library", path: "/library" },
     { name: "Pricing", path: "/pricing" },
     { name: "Learn", path: "/learn" },
