@@ -15,6 +15,7 @@ import { FrameworkStep } from "@/components/generator/FrameworkStep";
 import { ToolSelectionStep } from "@/components/generator/ToolSelectionStep";
 import { ProjectSelectionStep } from "@/components/generator/ProjectSelectionStep";
 import { UsageLimitCard } from "@/components/generator/UsageLimitCard";
+import { LoadingPromptGeneration } from "@/components/generator/LoadingPromptGeneration";
 
 import { useAIUsage } from "@/hooks/useAIUsage";
 
@@ -37,6 +38,7 @@ const Generator = () => {
   const [generatedPrompt, setGeneratedPrompt] = useState("");
   const [aiResponse, setAiResponse] = useState("");
   const [isGeneratingAI, setIsGeneratingAI] = useState(false);
+  const [isGeneratingPrompt, setIsGeneratingPrompt] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -163,8 +165,9 @@ const Generator = () => {
   const generatePrompt = async (tool: string) => {
     if (!projectContext) return;
 
-    // Show loading state
-    setGeneratedPrompt("Generando prompt personalizado...");
+    // Start loading state
+    setIsGeneratingPrompt(true);
+    setGeneratedPrompt("");
 
     // Determine framework and stage text
     let frameworkText = "";
@@ -255,6 +258,8 @@ Asegúrate de que todas las recomendaciones estén alineadas con las mejores pr�
         description: "Se generó un prompt básico. La IA no está disponible temporalmente.",
         variant: "destructive"
       });
+    } finally {
+      setIsGeneratingPrompt(false);
     }
   };
 
@@ -491,6 +496,14 @@ Asegúrate de que todas las recomendaciones estén alineadas con las mejores pr�
 
   return (
     <div className="min-h-screen bg-gradient-subtle py-12">
+      {/* Loading Overlay */}
+      <LoadingPromptGeneration 
+        isLoading={isGeneratingPrompt}
+        framework={selectedFramework}
+        tool={selectedTool}
+        industry={projectContext?.industry || ""}
+      />
+      
       <div className="container px-4 max-w-4xl">
         <div className="text-center mb-12">
           <div className="flex items-center justify-center gap-2 mb-4">
