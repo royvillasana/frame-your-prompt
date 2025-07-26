@@ -135,7 +135,14 @@ Continúa la conversación de manera natural y útil, manteniendo el contexto de
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate('/generator')}
+              onClick={() => navigate('/generator', { 
+                state: { 
+                  showResult: true,
+                  generatedPrompt: location.state?.initialPrompt,
+                  aiResponse: location.state?.initialResponse,
+                  projectContext: location.state?.projectContext
+                } 
+              })}
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               Volver al Generador

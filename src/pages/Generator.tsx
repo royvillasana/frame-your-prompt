@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
@@ -20,6 +20,7 @@ const Generator = () => {
   const { toast } = useToast();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [currentStep, setCurrentStep] = useState<Step>("context");
   const [projectContext, setProjectContext] = useState<ProjectContext | null>(null);
   const [projectStage, setProjectStage] = useState("");
@@ -33,8 +34,26 @@ const Generator = () => {
   useEffect(() => {
     if (!user) {
       navigate("/auth");
+      return;
     }
-  }, [user, navigate]);
+
+    // Check if coming from chat with result data
+    const state = location.state as {
+      showResult?: boolean;
+      generatedPrompt?: string;
+      aiResponse?: string;
+      projectContext?: ProjectContext;
+    };
+
+    if (state?.showResult && state?.generatedPrompt && state?.projectContext) {
+      setCurrentStep("result");
+      setGeneratedPrompt(state.generatedPrompt);
+      setProjectContext(state.projectContext);
+      if (state.aiResponse) {
+        setAiResponse(state.aiResponse);
+      }
+    }
+  }, [user, navigate, location.state]);
 
   const handleContextComplete = (context: ProjectContext) => {
     setProjectContext(context);
