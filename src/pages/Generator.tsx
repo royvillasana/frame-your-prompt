@@ -13,10 +13,11 @@ import { ProjectContextStep, ProjectContext } from "@/components/generator/Proje
 import { ProjectStageStep } from "@/components/generator/ProjectStageStep";
 import { FrameworkStep } from "@/components/generator/FrameworkStep";
 import { ToolSelectionStep } from "@/components/generator/ToolSelectionStep";
+import { ProjectSelectionStep } from "@/components/generator/ProjectSelectionStep";
 
 import { useAIUsage } from "@/hooks/useAIUsage";
 
-type Step = "context" | "stage" | "framework" | "tool" | "result";
+type Step = "project" | "context" | "stage" | "framework" | "tool" | "result";
 
 const Generator = () => {
   const { toast } = useToast();
@@ -24,7 +25,8 @@ const Generator = () => {
   const { refreshUsage } = useAIUsage();
   const navigate = useNavigate();
   const location = useLocation();
-  const [currentStep, setCurrentStep] = useState<Step>("context");
+  const [currentStep, setCurrentStep] = useState<Step>("project");
+  const [currentProject, setCurrentProject] = useState<any>(null);
   const [projectContext, setProjectContext] = useState<ProjectContext | null>(null);
   const [projectStage, setProjectStage] = useState("");
   const [selectedFramework, setSelectedFramework] = useState("");
@@ -263,18 +265,92 @@ Asegúrate de que todas las recomendaciones estén alineadas con las mejores pr�
     });
   };
 
-  const resetGenerator = () => {
+  const handleNewProject = async (name: string, description: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('projects')
+        .insert({
+          user_id: user?.id,
+          name,
+          description,
+          selected_framework: "Por definir"
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+      
+      setCurrentProject(data);
+      setCurrentStep("context");
+      sonnerToast.success("Proyecto creado exitosamente");
+    } catch (error: any) {
+      sonnerToast.error("Error al crear el proyecto");
+      console.error(error);
+    }
+  };
+
+  const handleExistingProject = (project: any) => {
+    setCurrentProject(project);
+    // If project has context from previous prompts, we can pre-fill some data
+    setSelectedFramework(project.selected_framework);
     setCurrentStep("context");
+  };
+
+  const savePromptToProject = async () => {
+    if (!currentProject || !generatedPrompt) return;
+
+    try {
+      const { error } = await supabase
+        .from('generated_prompts')
+        .insert({
+          user_id: user?.id,
+          project_id: currentProject.id,
+          project_context: projectContext as any,
+          selected_framework: selectedFramework,
+          framework_stage: frameworkStage,
+          selected_tool: selectedTool,
+          original_prompt: generatedPrompt,
+          ai_response: aiResponse
+        });
+
+      if (error) throw error;
+
+      // Update project framework if it changed
+      if (selectedFramework !== currentProject.selected_framework) {
+        await supabase
+          .from('projects')
+          .update({ selected_framework: selectedFramework })
+          .eq('id', currentProject.id);
+      }
+
+      sonnerToast.success("Prompt guardado en el proyecto");
+    } catch (error: any) {
+      sonnerToast.error("Error al guardar el prompt");
+      console.error(error);
+    }
+  };
+
+  const resetGenerator = () => {
+    setCurrentStep("project");
+    setCurrentProject(null);
     setProjectContext(null);
     setProjectStage("");
     setSelectedFramework("");
     setFrameworkStage("");
     setSelectedTool("");
     setGeneratedPrompt("");
+    setAiResponse("");
   };
 
   const renderCurrentStep = () => {
     switch (currentStep) {
+      case "project":
+        return (
+          <ProjectSelectionStep 
+            onNewProject={handleNewProject}
+            onExistingProject={handleExistingProject}
+          />
+        );
       case "context":
         return <ProjectContextStep onNext={handleContextComplete} />;
       case "stage":
@@ -342,7 +418,7 @@ Asegúrate de que todas las recomendaciones estén alineadas con las mejores pr�
                   <RefreshCw className="mr-2 h-4 w-4" />
                   Regenerar
                 </Button>
-                <Button variant="outline" size="sm">
+                <Button onClick={savePromptToProject} variant="outline" size="sm">
                   <Save className="mr-2 h-4 w-4" />
                   Guardar
                 </Button>

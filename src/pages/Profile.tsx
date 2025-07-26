@@ -6,19 +6,24 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Plus, FolderOpen, Calendar, MessageSquare } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [displayName, setDisplayName] = useState("");
   const [openaiApiKey, setOpenaiApiKey] = useState("");
   const [showApiKey, setShowApiKey] = useState(false);
   const [loading, setLoading] = useState(false);
   const [profileLoading, setProfileLoading] = useState(true);
+  const [projects, setProjects] = useState<any[]>([]);
+  const [projectsLoading, setProjectsLoading] = useState(true);
 
   useEffect(() => {
     if (user) {
       loadProfile();
+      loadProjects();
     }
   }, [user]);
 
@@ -68,6 +73,27 @@ const Profile = () => {
       console.error(error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadProjects = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('projects')
+        .select(`
+          *,
+          generated_prompts(count)
+        `)
+        .eq('user_id', user?.id)
+        .order('updated_at', { ascending: false });
+
+      if (error) throw error;
+      setProjects(data || []);
+    } catch (error: any) {
+      toast.error("Error al cargar los proyectos");
+      console.error(error);
+    } finally {
+      setProjectsLoading(false);
     }
   };
 
@@ -165,6 +191,82 @@ const Profile = () => {
                 {loading ? "Guardando..." : "Guardar Cambios"}
               </Button>
             </form>
+          </CardContent>
+        </Card>
+
+        {/* Sección de Proyectos */}
+        <Card className="mt-8">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle>Mis Proyectos</CardTitle>
+                <CardDescription>
+                  Gestiona todos tus proyectos de UX y sus prompts generados
+                </CardDescription>
+              </div>
+              <Button 
+                onClick={() => navigate('/generator')}
+                className="gap-2"
+              >
+                <Plus className="h-4 w-4" />
+                Nuevo Proyecto
+              </Button>
+            </div>
+          </CardHeader>
+          
+          <CardContent>
+            {projectsLoading ? (
+              <div className="text-center py-8">
+                <p className="text-muted-foreground">Cargando proyectos...</p>
+              </div>
+            ) : projects.length === 0 ? (
+              <div className="text-center py-8">
+                <FolderOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <p className="text-muted-foreground mb-4">No tienes proyectos creados aún</p>
+                <Button 
+                  onClick={() => navigate('/generator')}
+                  variant="outline"
+                  className="gap-2"
+                >
+                  <Plus className="h-4 w-4" />
+                  Crear mi primer proyecto
+                </Button>
+              </div>
+            ) : (
+              <div className="grid gap-4">
+                {projects.map((project) => (
+                  <Card 
+                    key={project.id} 
+                    className="cursor-pointer hover:shadow-md transition-shadow"
+                    onClick={() => navigate(`/project/${project.id}`)}
+                  >
+                    <CardContent className="p-4">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-lg mb-2">{project.name}</h3>
+                          {project.description && (
+                            <p className="text-muted-foreground text-sm mb-3">{project.description}</p>
+                          )}
+                          <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                            <div className="flex items-center gap-1">
+                              <Calendar className="h-3 w-3" />
+                              {new Date(project.updated_at).toLocaleDateString()}
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <MessageSquare className="h-3 w-3" />
+                              {project.generated_prompts?.[0]?.count || 0} prompts
+                            </div>
+                            <div className="px-2 py-1 bg-primary/10 text-primary rounded-full text-xs">
+                              {project.selected_framework}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
