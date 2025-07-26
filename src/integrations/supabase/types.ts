@@ -166,11 +166,14 @@ export type Database = {
     }
     Functions: {
       check_and_update_ai_usage: {
-        Args: {
-          p_user_id: string
-          p_ai_model: string
-          p_is_registered?: boolean
-        }
+        Args:
+          | { p_user_id: string; p_ai_model: string; p_is_registered?: boolean }
+          | {
+              p_user_id: string
+              p_ai_model: string
+              p_is_registered?: boolean
+              p_has_api_key?: boolean
+            }
         Returns: Json
       }
       reset_daily_ai_limits: {

@@ -14,6 +14,7 @@ import { ProjectStageStep } from "@/components/generator/ProjectStageStep";
 import { FrameworkStep } from "@/components/generator/FrameworkStep";
 import { ToolSelectionStep } from "@/components/generator/ToolSelectionStep";
 import { ProjectSelectionStep } from "@/components/generator/ProjectSelectionStep";
+import { UsageLimitCard } from "@/components/generator/UsageLimitCard";
 
 import { useAIUsage } from "@/hooks/useAIUsage";
 
@@ -499,6 +500,10 @@ Asegúrate de que todas las recomendaciones estén alineadas con las mejores pr�
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Genera prompts de IA personalizados para UX siguiendo un proceso paso a paso
           </p>
+        </div>
+
+        <div className="mb-8">
+          <UsageLimitCard />
         </div>
 
         {renderCurrentStep()}

@@ -51,7 +51,7 @@ const AI_CONFIGS = {
   }
 };
 
-async function callOpenAI(prompt: string, apiKey: string): Promise<string> {
+async function callOpenAI(prompt: string, apiKey: string, maxTokens: number = 2000): Promise<string> {
   const config = AI_CONFIGS['gpt-4o-mini'];
   
   const response = await fetch(config.apiUrl, {
@@ -67,7 +67,7 @@ async function callOpenAI(prompt: string, apiKey: string): Promise<string> {
         { role: 'user', content: prompt }
       ],
       temperature: config.temperature,
-      max_tokens: config.maxTokens,
+      max_tokens: Math.min(maxTokens, config.maxTokens), // Use the smaller value
     }),
   });
 
@@ -164,13 +164,29 @@ serve(async (req) => {
       throw new Error('Modelo de IA no soportado');
     }
 
-    // Check usage limits using the database function
+    // Get API keys for checking user type
+    const { data: profile, error: profileError } = await supabaseClient
+      .from('profiles')
+      .select('openai_api_key, perplexity_api_key')
+      .eq('user_id', user.id)
+      .maybeSingle();
+
+    if (profileError) {
+      console.error('Error getting profile:', profileError);
+    }
+
+    // Determine user type and limits
+    const hasApiKey = !!(profile?.openai_api_key || profile?.perplexity_api_key);
+    const isRegistered = true; // User is authenticated, so registered
+
+    // Check usage limits using the updated database function
     const { data: usageCheck, error: usageError } = await supabaseClient.rpc(
       'check_and_update_ai_usage',
       {
         p_user_id: user.id,
         p_ai_model: aiModel,
-        p_is_registered: true
+        p_is_registered: isRegistered,
+        p_has_api_key: hasApiKey
       }
     );
 
@@ -179,7 +195,24 @@ serve(async (req) => {
     }
 
     if (!usageCheck?.can_use) {
-      throw new Error(`Has alcanzado el límite diario para ${aiModel}. Prueba con otro modelo.`);
+      const userType = usageCheck?.user_type || 'registered_free';
+      let limitMessage = '';
+      
+      if (userType === 'registered_free') {
+        limitMessage = `Has alcanzado tu límite diario de ${usageCheck?.daily_limit || 6} prompts. Configura una API key en tu perfil para obtener acceso ilimitado.`;
+      } else if (userType === 'guest') {
+        limitMessage = `Has alcanzado tu límite diario de ${usageCheck?.daily_limit || 2} prompts. Regístrate para obtener más prompts gratuitos.`;
+      } else {
+        limitMessage = `Has alcanzado el límite diario para ${aiModel}.`;
+      }
+      
+      throw new Error(limitMessage);
+    }
+
+    // Determine token limits based on user type
+    let maxTokens = 2000; // Default for users with API keys
+    if (!hasApiKey) {
+      maxTokens = isRegistered ? 800 : 400; // Registered without API: 800, Guest: 400
     }
 
     // Check if model is free (doesn't require API key)
@@ -190,14 +223,8 @@ serve(async (req) => {
       // Call free model (will throw error to show alert)
       aiResponse = await callFreeModel(prompt, aiModel);
     } else {
-      // Get API keys for premium models
-      const { data: profile, error: profileError } = await supabaseClient
-        .from('profiles')
-        .select('openai_api_key, perplexity_api_key')
-        .eq('user_id', user.id)
-        .single();
-
-      if (profileError) {
+      // For premium models, use the profile we already loaded
+      if (!profile) {
         throw new Error('Error al obtener el perfil del usuario.');
       }
 
@@ -215,7 +242,7 @@ serve(async (req) => {
           throw new Error('API key de OpenAI no configurada. Ve a tu perfil para configurarla.');
         }
         apiKey = profile.openai_api_key;
-        aiResponse = await callOpenAI(prompt, apiKey);
+        aiResponse = await callOpenAI(prompt, apiKey, maxTokens);
       } else {
         throw new Error('Proveedor de IA no soportado');
       }
