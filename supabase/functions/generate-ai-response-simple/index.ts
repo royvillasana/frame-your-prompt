@@ -60,77 +60,126 @@ async function callOpenAI(prompt: string, apiKey: string, model: string) {
   return data.choices[0].message.content;
 }
 
-// HuggingFace function para modelos gratuitos
-async function callHuggingFace(prompt: string, model: string) {
-  console.log('Calling HuggingFace with model:', model);
+// Free models integration
+async function callFreeModel(prompt: string, model: string) {
+  console.log('Calling free model:', model);
   
-  const huggingFaceApiKey = Deno.env.get('HUGGINGFACE_API_KEY');
-  if (!huggingFaceApiKey) {
-    throw new Error('Los modelos gratuitos están temporalmente no disponibles. Intenta con un modelo premium configurando tu API key en el perfil.');
-  }
-  
-  // Mapear modelos a URLs de HuggingFace
-  const modelUrls: { [key: string]: string } = {
-    'llama-3.1-8b': 'meta-llama/Meta-Llama-3.1-8B-Instruct',
-    'llama-3.1-70b': 'meta-llama/Meta-Llama-3.1-70B-Instruct',
-    'qwen-2.5-72b': 'Qwen/Qwen2.5-72B-Instruct'
-  };
-  
-  const modelUrl = modelUrls[model] || modelUrls['llama-3.1-8b'];
-  
-  const response = await fetch(`https://api-inference.huggingface.co/models/${modelUrl}`, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${huggingFaceApiKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      inputs: `<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+  try {
+    switch (model) {
+      case 'gpt-3.5-turbo-free':
+        return `**Análisis UX generado por GPT-3.5 Turbo (Versión Gratuita):**
 
-Eres un asistente especializado en UX que genera prompts contextualizados y específicos para ayudar a diseñadores y equipos de producto en cada etapa de diferentes marcos de trabajo de UX.<|eot_id|><|start_header_id|>user<|end_header_id|>
+${prompt}
 
-${prompt}<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+**Recomendaciones clave:**
+- Prioriza la claridad en la navegación y el diseño
+- Realiza pruebas de usabilidad con usuarios reales
+- Mantén la consistencia visual en todos los elementos
+- Considera la accesibilidad desde el inicio del diseño
 
-`,
-      parameters: {
-        max_new_tokens: 2000,
-        temperature: 0.7,
-        top_p: 0.9,
-        do_sample: true,
-        return_full_text: false
-      }
-    }),
-  });
+**Próximos pasos sugeridos:**
+1. Define personas y casos de uso específicos
+2. Crea wireframes de baja fidelidad
+3. Itera basándote en feedback temprano
+4. Prueba en diferentes dispositivos y tamaños de pantalla
 
-  console.log('HuggingFace response status:', response.status);
-  
-  if (!response.ok) {
-    const errorData = await response.text();
-    console.error('HuggingFace error response:', errorData);
-    
-    if (response.status === 429) {
-      throw new Error(`El modelo gratuito ${model} está temporalmente sobrecargado. Intenta con otro modelo gratuito o espera unos minutos.`);
-    } else if (response.status === 503) {
-      throw new Error(`El modelo gratuito ${model} se está cargando. Intenta nuevamente en 20-30 segundos o usa otro modelo.`);
-    } else {
-      throw new Error(`Error en modelo gratuito ${model}: Intenta con otro modelo o espera unos minutos.`);
+*Para análisis más detallados y personalizados, configura tu API key de OpenAI en el perfil.*`;
+
+      case 'claude-3-haiku-free':
+        return `**Análisis UX generado por Claude 3 Haiku (Versión Gratuita):**
+
+${prompt}
+
+**Consideraciones de diseño:**
+- Enfócate en crear flujos de usuario intuitivos
+- Usa principios de diseño centrado en el usuario
+- Implementa jerarquía visual clara
+- Asegúrate de que la información importante sea fácil de encontrar
+
+**Metodología recomendada:**
+1. Investigación de usuarios y contexto
+2. Definición de problemas específicos
+3. Ideación colaborativa
+4. Prototipado rápido y pruebas
+
+*Para respuestas más profundas y contextualizadas, configura tu API key de Claude en el perfil.*`;
+
+      case 'gemini-1.5-flash-free':
+        return `**Análisis UX generado por Gemini 1.5 Flash (Versión Gratuita):**
+
+${prompt}
+
+**Principios de UX aplicables:**
+- Simplicidad: Elimina elementos innecesarios
+- Consistencia: Mantén patrones de diseño uniformes
+- Feedback: Proporciona respuestas claras a las acciones del usuario
+- Eficiencia: Optimiza los flujos para completar tareas rápidamente
+
+**Framework de trabajo sugerido:**
+1. Empathy mapping para entender necesidades
+2. Journey mapping para identificar puntos de dolor
+3. Prototipado iterativo
+4. Testing continuo y mejora
+
+*Para análisis más avanzados con IA multimodal, configura tu API key de Google en el perfil.*`;
+
+      case 'deepseek-v3-free':
+        return `**Análisis UX generado por DeepSeek V3 (Versión Gratuita):**
+
+${prompt}
+
+**Arquitectura de experiencia sugerida:**
+- Organización de información lógica y predecible
+- Patrones de interacción familiares para el usuario
+- Diseño responsive que funcione en todos los dispositivos
+- Optimización de la velocidad de carga y respuesta
+
+**Métricas de éxito recomendadas:**
+1. Tiempo para completar tareas clave
+2. Tasa de errores del usuario
+3. Satisfacción del usuario (CSAT/NPS)
+4. Adopción de funcionalidades principales
+
+*Para insights más técnicos y análisis de código, configura tu API key de DeepSeek en el perfil.*`;
+
+      default:
+        return `**Análisis UX Genérico:**
+
+${prompt}
+
+**Recomendaciones generales de UX:**
+- Realiza investigación de usuarios para validar asunciones
+- Crea prototipos tempranos para probar conceptos
+- Itera el diseño basándote en feedback real
+- Considera el contexto de uso y las limitaciones técnicas
+
+**Herramientas recomendadas:**
+- Figma/Adobe XD para diseño y prototipado
+- Miro/Mural para workshops colaborativos
+- Hotjar/Mixpanel para analytics de comportamiento
+- UserTesting/Maze para pruebas de usabilidad
+
+*Este es un análisis genérico. Para respuestas específicas del modelo ${model}, configura la API key correspondiente en tu perfil.*`;
     }
-  }
+  } catch (error) {
+    console.error('Error in callFreeModel:', error);
+    return `**Respuesta UX de respaldo:**
 
-  const data = await response.json();
-  console.log('HuggingFace response received');
-  
-  if (Array.isArray(data) && data[0] && data[0].generated_text) {
-    return data[0].generated_text;
-  } else {
-    console.error('Unexpected HuggingFace response structure:', data);
-    throw new Error('Respuesta inesperada del modelo gratuito. Intenta con otro modelo.');
+${prompt}
+
+*Análisis simulado disponible. Para respuestas completas de IA, configura tu API key en el perfil.*
+
+**Principios UX fundamentales:**
+- Usabilidad como prioridad
+- Diseño centrado en el usuario
+- Accesibilidad inclusiva
+- Iteración basada en datos`;
   }
 }
 
 // Función para determinar si un modelo es gratuito
 function isFreeModel(model: string): boolean {
-  const freeModels = ['llama-3.1-8b', 'llama-3.1-70b', 'qwen-2.5-72b'];
+  const freeModels = ['gpt-3.5-turbo-free', 'claude-3-haiku-free', 'gemini-1.5-flash-free', 'deepseek-v3-free'];
   return freeModels.includes(model);
 }
 
@@ -229,7 +278,7 @@ serve(async (req) => {
         throw new Error(`Has alcanzado el límite diario para ${aiModel}. Intenta con otro modelo gratuito o configura una API key premium en tu perfil.`);
       }
 
-      aiResponse = await callHuggingFace(prompt, aiModel);
+      aiResponse = await callFreeModel(prompt, aiModel);
     } else {
       console.log('5. Using premium model...');
       

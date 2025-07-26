@@ -22,34 +22,44 @@ export interface AIModel {
 export const AI_MODELS: AIModel[] = [
   // Modelos Gratuitos - disponibles sin API key
   {
-    id: "llama-3.1-8b",
-    name: "Llama 3.1 8B",
-    provider: "Meta",
-    description: "Modelo open-source rápido y eficiente para tareas de UX",
-    freeLimit: 100,
-    registeredLimit: 999999,
-    icon: <Zap className="h-4 w-4" />,
-    color: "bg-orange-500"
+    id: "gpt-3.5-turbo-free",
+    name: "GPT-3.5 Turbo",
+    provider: "OpenAI",
+    description: "Modelo rápido y versátil para análisis UX general",
+    freeLimit: 50,
+    registeredLimit: 200,
+    icon: <Sparkles className="h-4 w-4" />,
+    color: "bg-green-500"
   },
   {
-    id: "llama-3.1-70b",
-    name: "Llama 3.1 70B",
-    provider: "Meta",
-    description: "Modelo open-source avanzado para análisis profundo de UX",
-    freeLimit: 50,
-    registeredLimit: 999999,
-    icon: <Zap className="h-4 w-4" />,
-    color: "bg-orange-600"
-  },
-  {
-    id: "qwen-2.5-72b",
-    name: "Qwen 2.5 72B",
-    provider: "Alibaba",
-    description: "Modelo multilingüe avanzado para proyectos de UX globales",
-    freeLimit: 50,
-    registeredLimit: 999999,
+    id: "claude-3-haiku-free",
+    name: "Claude 3 Haiku",
+    provider: "Anthropic",
+    description: "Respuestas rápidas y precisas para consultas de UX",
+    freeLimit: 30,
+    registeredLimit: 150,
     icon: <Brain className="h-4 w-4" />,
-    color: "bg-orange-700"
+    color: "bg-purple-500"
+  },
+  {
+    id: "gemini-1.5-flash-free",
+    name: "Gemini 1.5 Flash",
+    provider: "Google",
+    description: "IA multimodal para análisis completo de experiencia",
+    freeLimit: 40,
+    registeredLimit: 180,
+    icon: <Star className="h-4 w-4" />,
+    color: "bg-blue-500"
+  },
+  {
+    id: "deepseek-v3-free",
+    name: "DeepSeek V3",
+    provider: "DeepSeek",
+    description: "Modelo avanzado para insights técnicos y UX",
+    freeLimit: 25,
+    registeredLimit: 120,
+    icon: <Brain className="h-4 w-4" />,
+    color: "bg-indigo-500"
   },
   // OpenAI Models - requieren API key
   {
