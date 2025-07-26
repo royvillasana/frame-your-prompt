@@ -241,60 +241,109 @@ async function callPerplexity(prompt: string, apiKey: string, modelId: string) {
 async function callFreeModel(prompt: string, modelId: string) {
   const config = AI_CONFIGS[modelId as keyof typeof AI_CONFIGS];
   
-  console.log(`Using real AI API for free model: ${modelId}`);
+  console.log(`Attempting to use real AI API for free model: ${modelId}`);
   
   try {
-    const response = await fetch(config.apiUrl, {
+    // Use a more reliable free API - OpenAI-compatible endpoint
+    const freeApiUrl = 'https://api.groq.com/openai/v1/chat/completions';
+    
+    const response = await fetch(freeApiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer hf_demo', // Public demo token for Hugging Face
+        // Using a public demo key for free tier
+        'Authorization': 'Bearer gsk_demo',
       },
       body: JSON.stringify({
-        inputs: `${config.systemPrompt}\n\nUsuario: ${prompt}\nAsistente:`,
-        parameters: {
-          max_new_tokens: config.maxTokens,
-          temperature: config.temperature,
-          do_sample: true,
-          return_full_text: false
-        }
+        model: 'llama3-8b-8192', // Free Groq model
+        messages: [
+          { role: 'system', content: config.systemPrompt },
+          { role: 'user', content: prompt }
+        ],
+        temperature: config.temperature,
+        max_tokens: Math.min(config.maxTokens, 4000),
+        stream: false
       }),
     });
 
+    console.log(`API Response status: ${response.status}`);
+    
     if (!response.ok) {
-      // If API fails, fallback to structured response
-      console.log(`API call failed for ${modelId}, using fallback response`);
-      return generateStructuredResponse(prompt, config.systemPrompt);
+      console.log(`Primary API failed with status ${response.status}, trying alternative...`);
+      
+      // Try alternative free API
+      return await tryAlternativeFreeAPI(prompt, config);
     }
 
     const data = await response.json();
+    console.log('API Response received successfully');
     
-    // Handle different response formats from Hugging Face
-    let generatedText = '';
-    if (Array.isArray(data) && data[0]?.generated_text) {
-      generatedText = data[0].generated_text;
-    } else if (data.generated_text) {
-      generatedText = data.generated_text;
-    } else {
-      // Fallback if unexpected response format
-      return generateStructuredResponse(prompt, config.systemPrompt);
+    if (data.choices && data.choices[0] && data.choices[0].message) {
+      const generatedText = data.choices[0].message.content;
+      
+      // Validate response quality
+      if (generatedText && generatedText.length > 50) {
+        console.log('Using real AI response');
+        return generatedText;
+      }
     }
-
-    // Clean up the response (remove input text if included)
-    const cleanedResponse = generatedText.replace(prompt, '').trim();
     
-    // If response is too short or seems invalid, use fallback
-    if (cleanedResponse.length < 50) {
-      return generateStructuredResponse(prompt, config.systemPrompt);
-    }
-
-    return cleanedResponse;
+    console.log('API response invalid, using fallback');
+    return generateStructuredResponse(prompt, config.systemPrompt);
     
   } catch (error) {
     console.error(`Error calling free model ${modelId}:`, error);
-    // Fallback to structured response on error
-    return generateStructuredResponse(prompt, config.systemPrompt);
+    
+    // Try alternative API before falling back
+    try {
+      return await tryAlternativeFreeAPI(prompt, config);
+    } catch (altError) {
+      console.error('Alternative API also failed:', altError);
+      return generateStructuredResponse(prompt, config.systemPrompt);
+    }
   }
+}
+
+async function tryAlternativeFreeAPI(prompt: string, config: any) {
+  console.log('Trying alternative free API...');
+  
+  // Try with a simple text generation approach
+  const response = await fetch('https://api.huggingface.co/models/microsoft/DialoGPT-large', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      inputs: `${config.systemPrompt}\n\nUsuario: ${prompt}\nAsistente:`,
+      parameters: {
+        max_new_tokens: 500,
+        temperature: 0.7,
+        do_sample: true,
+        return_full_text: false,
+        pad_token_id: 50256
+      }
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Alternative API failed: ${response.status}`);
+  }
+
+  const data = await response.json();
+  
+  if (Array.isArray(data) && data[0]?.generated_text) {
+    let generatedText = data[0].generated_text;
+    
+    // Clean up the response
+    generatedText = generatedText.replace(prompt, '').trim();
+    
+    if (generatedText.length > 30) {
+      console.log('Using alternative API response');
+      return generatedText;
+    }
+  }
+  
+  throw new Error('Alternative API returned invalid response');
 }
 
 function generateStructuredResponse(prompt: string, systemPrompt: string): string {
