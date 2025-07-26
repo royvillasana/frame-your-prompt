@@ -129,8 +129,16 @@ const Generator = () => {
       console.error('Full error:', error);
       const errorMessage = error.message || "Error al generar respuesta con IA";
       
-      // Check for specific API errors and provide helpful messages
-      if (errorMessage.includes("exceeded your current quota")) {
+      // Check for specific AI service errors and provide helpful messages
+      if (errorMessage.includes("No se pudo generar respuesta con IA")) {
+        sonnerToast.error("⚠️ Servicios de IA temporalmente no disponibles", {
+          description: "Los servicios gratuitos de IA están ocupados. Intenta con un modelo premium (requiere API key) o prueba más tarde.",
+          action: {
+            label: "Configurar API Key",
+            onClick: () => navigate('/profile')
+          }
+        });
+      } else if (errorMessage.includes("exceeded your current quota")) {
         sonnerToast.error("Tu API key de OpenAI ha excedido la cuota. Revisa tu plan y facturación en OpenAI.");
       } else if (errorMessage.includes("API key no configurada")) {
         sonnerToast.error("Debes configurar una API key en tu perfil para usar esta función.", {
@@ -139,10 +147,10 @@ const Generator = () => {
             onClick: () => navigate('/profile')
           }
         });
-      } else if (errorMessage.includes("Incorrect API key")) {
-        sonnerToast.error("Tu API key es incorrecta. Verifica en tu perfil.");
+      } else if (errorMessage.includes("límite diario")) {
+        sonnerToast.error("Has alcanzado el límite diario para este modelo de IA. Prueba con otro modelo o vuelve mañana.");
       } else {
-        sonnerToast.error(errorMessage);
+        sonnerToast.error(`Error: ${errorMessage}`);
       }
     } finally {
       setIsGeneratingAI(false);

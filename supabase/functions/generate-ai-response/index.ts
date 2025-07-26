@@ -189,267 +189,81 @@ async function callFreeModel(prompt: string, modelId: string) {
   
   console.log(`Attempting to use real AI API for free model: ${modelId}`);
   
-  try {
-    // Use Groq API for free tier
-    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
+  // Try multiple free AI APIs
+  const apis = [
+    {
+      name: 'Groq',
+      url: 'https://api.groq.com/openai/v1/chat/completions',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer gsk_DEMO_KEY', // Demo key - will fail but won't throw error
+        'Authorization': 'Bearer gsk_DEMO_KEY'
       },
-      body: JSON.stringify({
+      body: {
         model: 'llama3-8b-8192',
         messages: [
           { role: 'system', content: config.systemPrompt },
           { role: 'user', content: prompt }
         ],
         temperature: config.temperature,
-        max_tokens: Math.min(config.maxTokens, 1000),
-        stream: false
-      }),
-    });
-
-    console.log(`API Response status: ${response.status}`);
-    
-    if (response.ok) {
-      const data = await response.json();
-      console.log('API Response received successfully');
-      
-      if (data.choices && data.choices[0] && data.choices[0].message) {
-        const generatedText = data.choices[0].message.content;
-        
-        // Validate response quality
-        if (generatedText && generatedText.length > 50) {
-          console.log('Using real AI response');
-          return generatedText;
+        max_tokens: Math.min(config.maxTokens, 1000)
+      }
+    },
+    {
+      name: 'Hugging Face',
+      url: 'https://api-inference.huggingface.co/models/microsoft/DialoGPT-large',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: {
+        inputs: `${config.systemPrompt}\n\nUsuario: ${prompt}\nAsistente:`,
+        parameters: {
+          max_new_tokens: 500,
+          temperature: 0.7,
+          do_sample: true,
+          return_full_text: false
         }
       }
     }
-    
-    console.log('API response invalid or failed, using fallback');
-    return generateStructuredResponse(prompt, config.systemPrompt);
-    
-  } catch (error) {
-    console.error(`Error calling free model ${modelId}:`, error);
-    return generateStructuredResponse(prompt, config.systemPrompt);
-  }
-}
+  ];
 
-function generateStructuredResponse(prompt: string, systemPrompt: string): string {
-  // Extract key information from the prompt to create a dynamic response
-  const lowerPrompt = prompt.toLowerCase();
-  
-  // Check if this is a chat conversation (contains conversation history)
-  const isConversational = lowerPrompt.includes('conversación anterior') || 
-                           lowerPrompt.includes('usuario:') || 
-                           lowerPrompt.includes('asistente:');
-  
-  if (isConversational) {
-    // Extract the last user message for contextual response
-    const userMessages = prompt.split('Usuario:').slice(-1)[0];
-    const lastUserMessage = userMessages ? userMessages.split('Asistente:')[0].trim() : '';
-    
-    return generateConversationalResponse(lastUserMessage);
-  }
-  
-  // For structured UX prompts, provide comprehensive response
-  return generateUXStructuredResponse(prompt);
-}
+  for (const api of apis) {
+    try {
+      console.log(`Trying ${api.name} API...`);
+      
+      const response = await fetch(api.url, {
+        method: 'POST',
+        headers: api.headers,
+        body: JSON.stringify(api.body),
+      });
 
-function generateConversationalResponse(userMessage: string): string {
-  const lowerMessage = userMessage.toLowerCase();
-  
-  // Analyze the user's message and provide contextual responses
-  if (lowerMessage.includes('research') || lowerMessage.includes('investigación')) {
-    return `
-## 🔍 Investigación UX
-
-Excelente pregunta sobre investigación UX. Aquí te ayudo:
-
-**Métodos de investigación recomendados:**
-- **Entrevistas cualitativas**: Para entender motivaciones profundas
-- **Encuestas cuantitativas**: Para validar hipótesis con datos
-- **Testing de usabilidad**: Para identificar fricciones en la experiencia
-- **Análisis competitivo**: Para entender el mercado y oportunidades
-
-**Pasos siguientes:**
-1. Define tus objetivos de investigación específicos
-2. Selecciona el método más apropiado
-3. Recluta usuarios representativos
-4. Documenta y analiza los insights
-
-¿Hay algún aspecto específico de la investigación que te gustaría profundizar?
-
-*Respuesta generada con modelo gratuito - Para análisis más detallados, configura una API key.*`;
+      console.log(`${api.name} API Response status: ${response.status}`);
+      
+      if (response.ok) {
+        const data = await response.json();
+        
+        let generatedText = '';
+        
+        // Handle different response formats
+        if (api.name === 'Groq' && data.choices && data.choices[0]?.message?.content) {
+          generatedText = data.choices[0].message.content;
+        } else if (api.name === 'Hugging Face' && Array.isArray(data) && data[0]?.generated_text) {
+          generatedText = data[0].generated_text.replace(prompt, '').trim();
+        }
+        
+        // Validate response quality
+        if (generatedText && generatedText.length > 50) {
+          console.log(`Using real AI response from ${api.name}`);
+          return generatedText;
+        }
+      }
+    } catch (error) {
+      console.error(`Error with ${api.name} API:`, error);
+      continue;
+    }
   }
   
-  if (lowerMessage.includes('prototype') || lowerMessage.includes('prototipo')) {
-    return `
-## 🛠️ Prototipado UX
-
-Te ayudo con el prototipado:
-
-**Tipos de prototipado:**
-- **Sketches/Wireframes**: Rápidos para explorar ideas
-- **Prototipos de baja fidelidad**: Para testear flujos
-- **Prototipos de alta fidelidad**: Para validar detalles visuales
-- **Prototipos funcionales**: Para testear interacciones complejas
-
-**Herramientas recomendadas:**
-- Figma (colaborativo y versátil)
-- Adobe XD (robusto para diseño)
-- Sketch (Mac, amplio ecosistema)
-- InVision (para prototipos clickeables)
-
-**Mejores prácticas:**
-1. Comienza siempre con baja fidelidad
-2. Testea temprano y frecuentemente
-3. Itera basándote en feedback
-4. Documenta decisiones de diseño
-
-¿En qué etapa del prototipado te encuentras?
-
-*Respuesta generada con modelo gratuito - Para guías más específicas, configura una API key.*`;
-  }
-  
-  if (lowerMessage.includes('testing') || lowerMessage.includes('prueba')) {
-    return `
-## 🧪 Testing de Usabilidad
-
-Perfecto tema sobre testing:
-
-**Tipos de testing:**
-- **Testing moderado**: Con facilitador presente
-- **Testing no moderado**: Usuarios solos con tareas
-- **A/B Testing**: Para comparar variantes
-- **Testing de guerrilla**: Rápido y informal
-
-**Pasos para un buen test:**
-1. **Objetivos claros**: ¿Qué quieres aprender?
-2. **Tareas realistas**: Basadas en casos de uso reales
-3. **Usuarios representativos**: De tu audiencia objetivo
-4. **Ambiente controlado**: Sin distracciones
-5. **Análisis sistemático**: Patrones en el comportamiento
-
-**Métricas importantes:**
-- Tasa de completación de tareas
-- Tiempo en completar tareas
-- Número de errores
-- Satisfacción del usuario (SUS)
-
-¿Qué aspecto del testing te interesa más?
-
-*Respuesta generada con modelo gratuito - Para metodologías avanzadas, configura una API key.*`;
-  }
-  
-  if (lowerMessage.includes('design system') || lowerMessage.includes('sistema de diseño')) {
-    return `
-## 🎨 Design Systems
-
-Excelente pregunta sobre sistemas de diseño:
-
-**Componentes esenciales:**
-- **Tokens de diseño**: Colores, tipografías, espaciado
-- **Componentes UI**: Botones, formularios, navegación
-- **Patrones**: Layouts comunes y comportamientos
-- **Guidelines**: Principios y mejores prácticas
-
-**Beneficios:**
-- Consistencia visual y funcional
-- Eficiencia en desarrollo
-- Escalabilidad del producto
-- Colaboración mejorada entre equipos
-
-**Herramientas recomendadas:**
-- Figma (para documentación visual)
-- Storybook (para componentes de desarrollo)
-- Zeroheight (para documentación completa)
-
-**Pasos para implementar:**
-1. Audita tu diseño actual
-2. Define tokens base
-3. Crea componentes atómicos
-4. Documenta patrones de uso
-5. Evangeliza con el equipo
-
-¿Tienes un design system existente o empezarías desde cero?
-
-*Respuesta generada con modelo gratuito - Para estrategias específicas, configura una API key.*`;
-  }
-  
-  // Generic helpful response for other questions
-  return `
-## 💡 Respuesta UX
-
-Gracias por tu pregunta. Basándome en lo que compartes:
-
-**Mi análisis:**
-Tu consulta toca temas importantes de UX. Te recomiendo considerar:
-
-1. **Contexto del usuario**: Siempre partir de las necesidades reales
-2. **Iteración continua**: El diseño es un proceso, no un destino
-3. **Validación temprana**: Testea ideas antes de invertir mucho tiempo
-4. **Colaboración**: Involucra a todo el equipo en el proceso
-
-**Recursos útiles:**
-- Nielsen Norman Group para principios fundamentales
-- UX Planet para casos de estudio
-- Interaction Design Foundation para metodologías
-- Dribbble/Behance para inspiración visual
-
-**Pregunta de seguimiento:**
-¿Podrías darme más contexto sobre tu proyecto específico? Así puedo ayudarte de manera más precisa.
-
-*Respuesta generada con modelo gratuito - Para análisis más detallados y personalizados, configura una API key en tu perfil.*`;
-}
-
-function generateUXStructuredResponse(prompt: string): string {
-  // This is the original structured response for UX framework prompts
-  const response = `
-**Respuesta generada con modelo gratuito**
-
-Basándome en tu prompt sobre UX Design, aquí tienes una respuesta estructurada:
-
-## 📋 Análisis del Contexto
-Tu prompt se enfoca en metodologías UX y requiere un enfoque práctico y estructurado.
-
-## 🎯 Recomendaciones Principales
-
-### 1. Preguntas Clave para tu Proceso:
-- ¿Cuál es el objetivo principal del usuario?
-- ¿Qué obstáculos pueden surgir?
-- ¿Cómo mediremos el éxito?
-- ¿Qué recursos tenemos disponibles?
-- ¿Cuál es el timeline del proyecto?
-
-### 2. Enfoques Innovadores:
-- Aplicar design thinking centrado en datos
-- Usar metodologías ágiles de UX
-- Implementar testing continuo
-
-### 3. Métricas Importantes:
-- Satisfacción del usuario (NPS, CSAT)
-- Eficiencia de tareas (tiempo, errores)
-- Adopción y retención
-- ROI del diseño
-
-### 4. Herramientas Complementarias:
-- Figma/Sketch para prototipado
-- Analytics para medición
-
-### 5. Checklist de Validación:
-✅ Objetivos claros definidos
-✅ Usuarios objetivo identificados
-✅ Métricas establecidas
-✅ Recursos asignados
-✅ Timeline definido
-✅ Criterios de éxito establecidos
-
----
-*Nota: Esta respuesta fue generada con un modelo gratuito. Para respuestas más personalizadas y detalladas, configura una API key en tu perfil.*
-  `;
-  
-  return response.trim();
+  // If all APIs failed, throw error instead of using fallback
+  throw new Error('No se pudo generar respuesta con IA. Todos los servicios gratuitos están temporalmente no disponibles. Intenta usar un modelo premium con API key.');
 }
 
 serve(async (req) => {
