@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { StepCard } from "./StepCard";
 import { OptionCard } from "./OptionCard";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,11 @@ interface FrameworkStepProps {
   projectStage: string;
   onNext: (framework: string, stage: string) => void;
   onBack: () => void;
+  aiRecommendations?: {
+    recommendedFramework?: string;
+    recommendedTool?: string;
+    reasoning?: string;
+  };
 }
 
 const frameworks = [
@@ -240,8 +245,8 @@ const getFrameworkStageMapping = (projectStage: string, frameworkId: string): st
   return mappings[frameworkId]?.[projectStage] || "";
 };
 
-export const FrameworkStep = ({ context, projectStage, onNext, onBack }: FrameworkStepProps) => {
-  const [selectedFramework, setSelectedFramework] = useState("");
+export const FrameworkStep = ({ context, projectStage, onNext, onBack, aiRecommendations }: FrameworkStepProps) => {
+  const [selectedFramework, setSelectedFramework] = useState(aiRecommendations?.recommendedFramework || "");
   const [selectedStage, setSelectedStage] = useState("");
   
   const recommendedFramework = getRecommendedFramework(projectStage);
@@ -258,6 +263,14 @@ export const FrameworkStep = ({ context, projectStage, onNext, onBack }: Framewo
       setSelectedStage(""); // Reset stage when framework changes to "none"
     }
   };
+
+  // Auto-select stage when framework is preselected by AI
+  useEffect(() => {
+    if (aiRecommendations?.recommendedFramework && aiRecommendations.recommendedFramework !== "none") {
+      const mappedStage = getFrameworkStageMapping(projectStage, aiRecommendations.recommendedFramework);
+      setSelectedStage(mappedStage);
+    }
+  }, [aiRecommendations, projectStage]);
 
   const handleNext = () => {
     if (selectedFramework && (selectedFramework === "none" || selectedStage)) {
@@ -297,7 +310,8 @@ export const FrameworkStep = ({ context, projectStage, onNext, onBack }: Framewo
                 title={framework.name}
                 description={framework.description}
                 tooltip={framework.tooltip}
-                badge={framework.id === recommendedFramework ? "Recommended" : undefined}
+                badge={framework.id === aiRecommendations?.recommendedFramework ? "AI Recommended" : 
+                       framework.id === recommendedFramework ? "Recommended" : undefined}
                 isSelected={selectedFramework === framework.id}
                 onClick={() => handleFrameworkSelect(framework.id)}
               />

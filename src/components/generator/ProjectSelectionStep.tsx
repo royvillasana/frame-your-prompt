@@ -127,12 +127,12 @@ export const ProjectSelectionStep = ({ onNewProject, onExistingProject }: Projec
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="projectDescription">Description (Optional)</Label>
+            <Label htmlFor="projectDescription">Tell us about your project</Label>
             <Textarea
               id="projectDescription"
               value={projectDescription}
               onChange={(e) => setProjectDescription(e.target.value)}
-              placeholder="Briefly describe the objective and scope of your project..."
+              placeholder="Describe your project objective and scope to recommend you the best framework"
               rows={3}
             />
           </div>

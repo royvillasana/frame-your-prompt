@@ -34,6 +34,11 @@ const Generator = () => {
   const [selectedFramework, setSelectedFramework] = useState("");
   const [frameworkStage, setFrameworkStage] = useState("");
   const [selectedTool, setSelectedTool] = useState("");
+  const [aiRecommendations, setAiRecommendations] = useState<{
+    recommendedFramework?: string;
+    recommendedTool?: string;
+    reasoning?: string;
+  }>({});
   const [selectedAIModel] = useState("gpt-4o-mini");
   const [generatedPrompt, setGeneratedPrompt] = useState("");
   const [aiResponse, setAiResponse] = useState("");
@@ -84,8 +89,18 @@ const Generator = () => {
     setCurrentStep("stage");
   };
 
-  const handleStageComplete = (stage: string) => {
+  const handleStageComplete = async (stage: string) => {
     setProjectStage(stage);
+    
+    // Get AI recommendations when we have the project stage
+    if (currentProject && projectContext) {
+      await getAIRecommendations(
+        currentProject.name, 
+        currentProject.description || "", 
+        stage
+      );
+    }
+    
     setCurrentStep("framework");
   };
 
@@ -271,6 +286,30 @@ Make sure all recommendations are aligned with ${frameworkText} best practices a
     });
   };
 
+  const getAIRecommendations = async (name: string, description: string, stage: string) => {
+    try {
+      const { data, error } = await supabase.functions.invoke('get-ai-recommendations', {
+        body: {
+          projectName: name,
+          projectDescription: description,
+          projectStage: stage
+        }
+      });
+
+      if (error) throw error;
+      
+      setAiRecommendations(data);
+    } catch (error: any) {
+      console.error('Error getting AI recommendations:', error);
+      // Set fallback recommendations
+      setAiRecommendations({
+        recommendedFramework: "design-thinking",
+        recommendedTool: "User Interviews",
+        reasoning: "Fallback recommendation"
+      });
+    }
+  };
+
   const handleNewProject = async (name: string, description: string) => {
     try {
       const { data, error } = await supabase
@@ -374,6 +413,7 @@ Make sure all recommendations are aligned with ${frameworkText} best practices a
             projectStage={projectStage}
             onNext={handleFrameworkComplete}
             onBack={() => setCurrentStep("stage")}
+            aiRecommendations={aiRecommendations}
           />
         );
       case "tool":
@@ -385,6 +425,7 @@ Make sure all recommendations are aligned with ${frameworkText} best practices a
             frameworkStage={frameworkStage}
             onGenerate={handleToolComplete}
             onBack={() => setCurrentStep("framework")}
+            aiRecommendations={aiRecommendations}
           />
         );
       case "result":

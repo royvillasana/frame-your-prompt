@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { StepCard } from "./StepCard";
 import { OptionCard } from "./OptionCard";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,11 @@ interface ToolSelectionStepProps {
   frameworkStage: string;
   onGenerate: (tool: string) => void;
   onBack: () => void;
+  aiRecommendations?: {
+    recommendedFramework?: string;
+    recommendedTool?: string;
+    reasoning?: string;
+  };
 }
 
 const getToolsByFrameworkAndStage = (framework: string, stage: string) => {
@@ -108,8 +113,22 @@ const getSuggestedTools = (projectStage: string) => {
   return suggestions[projectStage] || [];
 };
 
-export const ToolSelectionStep = ({ context, projectStage, framework, frameworkStage, onGenerate, onBack }: ToolSelectionStepProps) => {
+export const ToolSelectionStep = ({ context, projectStage, framework, frameworkStage, onGenerate, onBack, aiRecommendations }: ToolSelectionStepProps) => {
   const [selectedTool, setSelectedTool] = useState("");
+
+  // Auto-select AI recommended tool
+  useEffect(() => {
+    if (aiRecommendations?.recommendedTool && selectedTool === "") {
+      const tools = framework !== "none" 
+        ? getToolsByFrameworkAndStage(framework, frameworkStage)
+        : getSuggestedTools(projectStage);
+      
+      const recommendedTool = tools.find(tool => tool.name === aiRecommendations.recommendedTool);
+      if (recommendedTool) {
+        setSelectedTool(recommendedTool.id);
+      }
+    }
+  }, [aiRecommendations, framework, frameworkStage, projectStage, selectedTool]);
 
   const tools = framework !== "none" 
     ? getToolsByFrameworkAndStage(framework, frameworkStage)
@@ -150,7 +169,8 @@ export const ToolSelectionStep = ({ context, projectStage, framework, frameworkS
                 title={tool.name}
                 description={tool.description}
                 tooltip={tool.tooltip}
-                isSelected={selectedTool === tool.id}
+                badge={tool.name === aiRecommendations?.recommendedTool ? "AI Recommended" : undefined}
+                isSelected={selectedTool === tool.id || (tool.name === aiRecommendations?.recommendedTool && selectedTool === "")}
                 onClick={() => setSelectedTool(tool.id)}
               />
             ))}
