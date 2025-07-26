@@ -17,92 +17,92 @@ const frameworks = [
   {
     id: "design-thinking",
     name: "Design Thinking",
-    description: "Proceso centrado en el usuario con 5 etapas iterativas",
-    tooltip: "Metodología que prioriza la empatía con el usuario para crear soluciones innovadoras",
-    stages: ["Empatizar", "Definir", "Idear", "Prototipar", "Testear", "Implementar"]
+    description: "User-centered process with 5 iterative stages",
+    tooltip: "Methodology that prioritizes user empathy to create innovative solutions",
+    stages: ["Empathize", "Define", "Ideate", "Prototype", "Test", "Implement"]
   },
   {
     id: "double-diamond",
     name: "Double Diamond",
-    description: "Proceso de divergencia y convergencia en dos fases",
-    tooltip: "Metodología del Design Council que alterna entre explorar y enfocar",
-    stages: ["Descubrir", "Definir", "Desarrollar", "Entregar"]
+    description: "Divergence and convergence process in two phases",
+    tooltip: "Design Council methodology that alternates between exploring and focusing",
+    stages: ["Discover", "Define", "Develop", "Deliver"]
   },
   {
     id: "lean-ux",
     name: "Lean UX",
-    description: "Enfoque ágil con ciclos rápidos de experimentación",
-    tooltip: "Metodología que combina design thinking con desarrollo ágil para iteraciones rápidas",
-    stages: ["Pensar", "Hacer", "Verificar"]
+    description: "Agile approach with rapid experimentation cycles",
+    tooltip: "Methodology that combines design thinking with agile development for rapid iterations",
+    stages: ["Think", "Make", "Check"]
   },
   {
     id: "google-design-sprint",
     name: "Google Design Sprint",
-    description: "Sprint de innovación estructurado de 5 días",
-    tooltip: "Metodología de Google para resolver problemas y validar ideas en una semana",
-    stages: ["Entender (Lunes)", "Idear (Martes)", "Decidir (Miércoles)", "Prototipar (Jueves)", "Testear (Viernes)"]
+    description: "5-day structured innovation sprint",
+    tooltip: "Google methodology to solve problems and validate ideas in one week",
+    stages: ["Understand (Mon)", "Ideate (Tue)", "Decide (Wed)", "Prototype (Thu)", "Test (Fri)"]
   },
   {
     id: "human-centered-design",
     name: "Human-Centered Design",
-    description: "Proceso de diseño impulsado por la empatía y la ética",
-    tooltip: "Enfoque que pone las necesidades humanas en el centro del proceso de diseño",
-    stages: ["Investigación", "Ideación", "Prototipado", "Implementación"]
+    description: "Design process driven by empathy and ethics",
+    tooltip: "Approach that puts human needs at the center of the design process",
+    stages: ["Research", "Ideation", "Prototyping", "Implementation"]
   },
   {
     id: "jobs-to-be-done",
     name: "Jobs To Be Done (JTBD)",
-    description: "Se enfoca en el 'trabajo' que el usuario quiere realizar",
-    tooltip: "Framework que entiende las motivaciones y necesidades subyacentes de los usuarios",
-    stages: ["Definir el trabajo", "Mapear el proceso", "Identificar oportunidades", "Diseñar soluciones"]
+    description: "Focuses on the 'job' the user wants to accomplish",
+    tooltip: "Framework that understands the underlying motivations and needs of users",
+    stages: ["Define the job", "Map the process", "Identify opportunities", "Design solutions"]
   },
   {
     id: "agile-ux",
     name: "Agile UX",
-    description: "UX integrado dentro del desarrollo Ágil",
-    tooltip: "Metodología que integra principios UX con sprints y desarrollo ágil",
-    stages: ["Sprint Planning UX", "Design Sprint", "Validación", "Iteración"]
+    description: "UX integrated within Agile development",
+    tooltip: "Methodology that integrates UX principles with sprints and agile development",
+    stages: ["UX Sprint Planning", "Design Sprint", "Validation", "Iteration"]
   },
   {
     id: "ux-lifecycle",
     name: "UX Lifecycle",
-    description: "Enfoque académico y estructurado",
-    tooltip: "Metodología completa y sistemática para proyectos de UX complejos",
-    stages: ["Análisis", "Diseño", "Desarrollo", "Evaluación", "Implementación"]
+    description: "Academic and structured approach",
+    tooltip: "Complete and systematic methodology for complex UX projects",
+    stages: ["Analysis", "Design", "Development", "Evaluation", "Implementation"]
   },
   {
     id: "ux-honeycomb",
     name: "UX Honeycomb",
-    description: "Modelo heurístico para la calidad UX",
-    tooltip: "Framework de Peter Morville para evaluar la experiencia de usuario",
-    stages: ["Útil", "Usable", "Deseable", "Accesible", "Creíble", "Encontrable", "Valioso"]
+    description: "Heuristic model for UX quality",
+    tooltip: "Peter Morville's framework for evaluating user experience",
+    stages: ["Useful", "Usable", "Desirable", "Accessible", "Credible", "Findable", "Valuable"]
   },
   {
     id: "user-centered-design",
     name: "User-Centered Design",
-    description: "Diseño centrado en usuarios basado en ISO 9241-210",
-    tooltip: "Estándar internacional para el diseño centrado en el usuario",
-    stages: ["Contexto de uso", "Requisitos", "Diseño", "Evaluación"]
+    description: "User-centered design based on ISO 9241-210",
+    tooltip: "International standard for user-centered design",
+    stages: ["Context of use", "Requirements", "Design", "Evaluation"]
   },
   {
     id: "heart-framework",
     name: "HEART Framework",
-    description: "Modelo de métricas UX de Google",
-    tooltip: "Framework para medir la experiencia de usuario a través de métricas específicas",
+    description: "Google's UX metrics model",
+    tooltip: "Framework for measuring user experience through specific metrics",
     stages: ["Happiness", "Engagement", "Adoption", "Retention", "Task Success"]
   },
   {
     id: "hooked-model",
     name: "Hooked Model",
-    description: "Diseño conductual para productos que crean hábitos",
-    tooltip: "Framework de Nir Eyal para crear productos que generen engagement",
+    description: "Behavioral design for habit-forming products",
+    tooltip: "Nir Eyal's framework for creating engaging products",
     stages: ["Trigger", "Action", "Variable Reward", "Investment"]
   },
   {
     id: "none",
-    name: "No uso framework",
-    description: "Trabajamos de forma libre sin metodología específica",
-    tooltip: "Te ayudaremos a sugerir el framework más adecuado para tu situación",
+    name: "No framework",
+    description: "We work freely without specific methodology",
+    tooltip: "We'll help suggest the most suitable framework for your situation",
     stages: []
   }
 ];
@@ -131,95 +131,95 @@ const getRecommendedFramework = (projectStage: string) => {
 const getRecommendationText = (projectStage: string) => {
   switch (projectStage) {
     case "research":
-      return "Para la etapa de investigación, recomendamos Design Thinking por su enfoque en empatía y comprensión del usuario.";
+      return "For the research stage, we recommend Design Thinking for its focus on empathy and user understanding.";
     case "ideation":
-      return "Para la generación de ideas, Design Thinking ofrece herramientas específicas para la ideación creativa.";
+      return "For idea generation, Design Thinking offers specific tools for creative ideation.";
     case "design":
-      return "Para el diseño, Lean UX permite iteraciones rápidas y validación continua de conceptos.";
+      return "For design, Lean UX allows rapid iterations and continuous concept validation.";
     case "testing":
-      return "Para testing, Google Design Sprint facilita ciclos rápidos de validación de prototipos.";
+      return "For testing, Google Design Sprint facilitates rapid prototype validation cycles.";
     case "implementation":
-      return "Para implementación, Agile UX integra perfectamente UX con el desarrollo ágil.";
+      return "For implementation, Agile UX perfectly integrates UX with agile development.";
     case "strategy":
-      return "Para estrategia, Jobs To Be Done ayuda a entender las motivaciones reales de los usuarios.";
+      return "For strategy, Jobs To Be Done helps understand users' real motivations.";
     case "metrics":
-      return "Para métricas, HEART Framework proporciona un modelo estructurado para medir la experiencia de usuario.";
+      return "For metrics, HEART Framework provides a structured model for measuring user experience.";
     default:
-      return "Design Thinking es ideal para comenzar con un enfoque centrado en el usuario.";
+      return "Design Thinking is ideal for starting with a user-centered approach.";
   }
 };
 
 const getFrameworkStageMapping = (projectStage: string, frameworkId: string): string => {
   const mappings: { [key: string]: { [key: string]: string } } = {
     "design-thinking": {
-      "research": "Empatizar",
-      "ideation": "Idear", 
-      "design": "Prototipar",
-      "testing": "Testear",
-      "implementation": "Implementar"
+      "research": "Empathize",
+      "ideation": "Ideate", 
+      "design": "Prototype",
+      "testing": "Test",
+      "implementation": "Implement"
     },
     "double-diamond": {
-      "research": "Descubrir",
-      "ideation": "Definir",
-      "design": "Desarrollar",
-      "testing": "Desarrollar", 
-      "implementation": "Entregar"
+      "research": "Discover",
+      "ideation": "Define",
+      "design": "Develop",
+      "testing": "Develop", 
+      "implementation": "Deliver"
     },
     "lean-ux": {
-      "research": "Pensar",
-      "ideation": "Pensar",
-      "design": "Hacer",
-      "testing": "Verificar",
-      "implementation": "Verificar"
+      "research": "Think",
+      "ideation": "Think",
+      "design": "Make",
+      "testing": "Check",
+      "implementation": "Check"
     },
     "google-design-sprint": {
-      "research": "Entender (Lunes)",
-      "ideation": "Idear (Martes)",
-      "design": "Prototipar (Jueves)",
-      "testing": "Testear (Viernes)",
-      "implementation": "Decidir (Miércoles)"
+      "research": "Understand (Mon)",
+      "ideation": "Ideate (Tue)",
+      "design": "Prototype (Thu)",
+      "testing": "Test (Fri)",
+      "implementation": "Decide (Wed)"
     },
     "human-centered-design": {
-      "research": "Investigación",
-      "ideation": "Ideación",
-      "design": "Prototipado",
-      "testing": "Investigación",
-      "implementation": "Implementación"
+      "research": "Research",
+      "ideation": "Ideation",
+      "design": "Prototyping",
+      "testing": "Research",
+      "implementation": "Implementation"
     },
     "jobs-to-be-done": {
-      "research": "Definir el trabajo",
-      "ideation": "Identificar oportunidades",
-      "design": "Diseñar soluciones",
-      "testing": "Mapear el proceso",
-      "implementation": "Diseñar soluciones"
+      "research": "Define the job",
+      "ideation": "Identify opportunities",
+      "design": "Design solutions",
+      "testing": "Map the process",
+      "implementation": "Design solutions"
     },
     "agile-ux": {
-      "research": "Sprint Planning UX",
+      "research": "UX Sprint Planning",
       "ideation": "Design Sprint",
       "design": "Design Sprint",
-      "testing": "Validación",
-      "implementation": "Iteración"
+      "testing": "Validation",
+      "implementation": "Iteration"
     },
     "ux-lifecycle": {
-      "research": "Análisis",
-      "ideation": "Análisis",
-      "design": "Diseño",
-      "testing": "Evaluación",
-      "implementation": "Implementación"
+      "research": "Analysis",
+      "ideation": "Analysis",
+      "design": "Design",
+      "testing": "Evaluation",
+      "implementation": "Implementation"
     },
     "ux-honeycomb": {
-      "research": "Útil",
-      "ideation": "Deseable",
+      "research": "Useful",
+      "ideation": "Desirable",
       "design": "Usable",
-      "testing": "Accesible",
-      "implementation": "Valioso"
+      "testing": "Accessible",
+      "implementation": "Valuable"
     },
     "user-centered-design": {
-      "research": "Contexto de uso",
-      "ideation": "Requisitos",
-      "design": "Diseño",
-      "testing": "Evaluación",
-      "implementation": "Diseño"
+      "research": "Context of use",
+      "ideation": "Requirements",
+      "design": "Design",
+      "testing": "Evaluation",
+      "implementation": "Design"
     },
     "heart-framework": {
       "research": "Happiness",
@@ -271,25 +271,25 @@ export const FrameworkStep = ({ context, projectStage, onNext, onBack }: Framewo
     <StepCard
       step={3}
       totalSteps={4}
-      title="Framework UX"
-      description="¿Utilizas alguna metodología UX específica en tu proyecto?"
+      title="UX Framework"
+      description="Do you use any specific UX methodology in your project?"
     >
       <div className="space-y-6">
         <div className="bg-muted/30 p-4 rounded-lg">
           <p className="text-sm text-muted-foreground">
-            <strong>Proyecto:</strong> {context.industry} • {context.productType} • Etapa: {projectStage}
+            <strong>Project:</strong> {context.industry} • {context.productType} • Stage: {projectStage}
           </p>
         </div>
 
         <Alert>
           <Lightbulb className="h-4 w-4" />
           <AlertDescription>
-            <strong>Recomendación:</strong> {getRecommendationText(projectStage)}
+            <strong>Recommendation:</strong> {getRecommendationText(projectStage)}
           </AlertDescription>
         </Alert>
 
         <div>
-          <h3 className="font-semibold mb-3">¿Qué framework UX utilizas?</h3>
+          <h3 className="font-semibold mb-3">What UX framework do you use?</h3>
           <div className="grid gap-3">
             {frameworks.map((framework) => (
               <OptionCard
@@ -297,7 +297,7 @@ export const FrameworkStep = ({ context, projectStage, onNext, onBack }: Framewo
                 title={framework.name}
                 description={framework.description}
                 tooltip={framework.tooltip}
-                badge={framework.id === recommendedFramework ? "Recomendado" : undefined}
+                badge={framework.id === recommendedFramework ? "Recommended" : undefined}
                 isSelected={selectedFramework === framework.id}
                 onClick={() => handleFrameworkSelect(framework.id)}
               />
@@ -307,16 +307,16 @@ export const FrameworkStep = ({ context, projectStage, onNext, onBack }: Framewo
 
         {currentFramework && currentFramework.stages.length > 0 && (
           <div>
-            <h3 className="font-semibold mb-3">¿En qué etapa del {currentFramework.name} estás?</h3>
+            <h3 className="font-semibold mb-3">What stage of {currentFramework.name} are you in?</h3>
             <p className="text-sm text-muted-foreground mb-3">
-              Basado en tu etapa de proyecto ({projectStage}), hemos preseleccionado la etapa más apropiada.
+              Based on your project stage ({projectStage}), we have preselected the most appropriate stage.
             </p>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
               {currentFramework.stages.map((stage, index) => (
                 <OptionCard
                   key={stage}
                   title={stage}
-                  description={`Etapa ${index + 1} del framework ${currentFramework.name}`}
+                  description={`Stage ${index + 1} of ${currentFramework.name} framework`}
                   isSelected={selectedStage === stage}
                   onClick={() => setSelectedStage(stage)}
                 />
@@ -328,10 +328,10 @@ export const FrameworkStep = ({ context, projectStage, onNext, onBack }: Framewo
         <div className="flex justify-between pt-4">
           <Button onClick={onBack} variant="outline" size="lg">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Anterior
+            Previous
           </Button>
           <Button onClick={handleNext} disabled={!canProceed} size="lg">
-            Continuar
+            Continue
             <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         </div>

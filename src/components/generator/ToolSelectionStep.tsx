@@ -17,11 +17,11 @@ interface ToolSelectionStepProps {
 const getToolsByFrameworkAndStage = (framework: string, stage: string) => {
   const toolMap: { [key: string]: { [key: string]: any[] } } = {
     "design-thinking": {
-      "Empatizar": [
-        { id: "interviews", name: "Entrevistas de Usuario", description: "Conversaciones profundas con usuarios para entender necesidades", tooltip: "Técnica cualitativa para obtener insights directos de usuarios" },
-        { id: "empathy-map", name: "Mapa de Empatía", description: "Visualización de lo que el usuario piensa, siente, ve y hace", tooltip: "Herramienta visual para sintetizar observaciones sobre usuarios" },
-        { id: "personas", name: "Personas", description: "Arquetipos de usuarios basados en investigación", tooltip: "Representaciones ficticias de usuarios reales basadas en datos" },
-        { id: "journey-map", name: "Mapa de Viaje del Usuario", description: "Visualización de la experiencia completa del usuario", tooltip: "Mapeo de todos los puntos de contacto en la experiencia del usuario" }
+      "Empathize": [
+        { id: "interviews", name: "User Interviews", description: "Deep conversations with users to understand needs", tooltip: "Qualitative technique to get direct insights from users" },
+        { id: "empathy-map", name: "Empathy Map", description: "Visualization of what the user thinks, feels, sees and does", tooltip: "Visual tool to synthesize observations about users" },
+        { id: "personas", name: "Personas", description: "User archetypes based on research", tooltip: "Fictional representations of real users based on data" },
+        { id: "journey-map", name: "User Journey Map", description: "Visualization of the complete user experience", tooltip: "Mapping of all touchpoints in the user experience" }
       ],
       "Definir": [
         { id: "problem-statement", name: "Declaración del Problema", description: "Definición clara y concisa del problema a resolver", tooltip: "Formulación específica del desafío centrado en el usuario" },
@@ -125,8 +125,8 @@ export const ToolSelectionStep = ({ context, projectStage, framework, frameworkS
     <StepCard
       step={4}
       totalSteps={4}
-      title="Herramienta UX"
-      description="Selecciona la herramienta para la cual quieres generar prompts de IA"
+      title="UX Tool"
+      description="Select the tool for which you want to generate AI prompts"
     >
       <div className="space-y-6">
         <div className="bg-muted/30 p-4 rounded-lg">

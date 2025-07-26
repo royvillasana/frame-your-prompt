@@ -44,7 +44,7 @@ export const OptionCard = ({ title, description, tooltip, badge, isSelected = fa
       </CardHeader>
       {isSelected && (
         <CardContent className="pt-0">
-          <Button size="sm" className="w-full">Seleccionado</Button>
+          <Button size="sm" className="w-full">Selected</Button>
         </CardContent>
       )}
     </Card>

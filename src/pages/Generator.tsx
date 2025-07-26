@@ -119,7 +119,7 @@ const Generator = () => {
 
       if (error) {
         console.error('Supabase function error:', error);
-        throw new Error(error.message || 'Error en la función de Supabase');
+        throw new Error(error.message || 'Supabase function error');
       }
 
       if (data?.error) {
@@ -129,31 +129,31 @@ const Generator = () => {
       
       setAiResponse(data.aiResponse);
       refreshUsage(); // Refresh usage data after successful AI response
-      sonnerToast.success("¡Respuesta generada con IA!");
+      sonnerToast.success("AI response generated!");
     } catch (error: any) {
       console.error('Full error:', error);
-      const errorMessage = error.message || "Error al generar respuesta con IA";
+      const errorMessage = error.message || "Error generating AI response";
       
       // Check for specific AI service errors and provide helpful messages
-      if (errorMessage.includes("No se pudo generar respuesta con IA")) {
-        sonnerToast.error("⚠️ Servicios de IA temporalmente no disponibles", {
-          description: "Los servicios gratuitos de IA están ocupados. Intenta con un modelo premium (requiere API key) o prueba más tarde.",
+      if (errorMessage.includes("Could not generate AI response")) {
+        sonnerToast.error("⚠️ AI services temporarily unavailable", {
+          description: "Free AI services are busy. Try with a premium model (requires API key) or try again later.",
           action: {
-            label: "Configurar API Key",
+            label: "Configure API Key",
             onClick: () => navigate('/profile')
           }
         });
       } else if (errorMessage.includes("exceeded your current quota")) {
-        sonnerToast.error("Tu API key de OpenAI ha excedido la cuota. Revisa tu plan y facturación en OpenAI.");
-      } else if (errorMessage.includes("API key no configurada")) {
-        sonnerToast.error("Debes configurar una API key en tu perfil para usar esta función.", {
+        sonnerToast.error("Your OpenAI API key has exceeded the quota. Check your plan and billing in OpenAI.");
+      } else if (errorMessage.includes("API key not configured")) {
+        sonnerToast.error("You must configure an API key in your profile to use this function.", {
           action: {
-            label: "Ir a Perfil",
+            label: "Go to Profile",
             onClick: () => navigate('/profile')
           }
         });
-      } else if (errorMessage.includes("límite diario")) {
-        sonnerToast.error("Has alcanzado el límite diario para este modelo de IA. Prueba con otro modelo o vuelve mañana.");
+      } else if (errorMessage.includes("daily limit")) {
+        sonnerToast.error("You have reached the daily limit for this AI model. Try another model or come back tomorrow.");
       } else {
         sonnerToast.error(`Error: ${errorMessage}`);
       }
@@ -177,29 +177,29 @@ const Generator = () => {
       frameworkText = selectedFramework;
       stageText = frameworkStage;
     } else {
-      frameworkText = "metodología libre";
+      frameworkText = "free methodology";
       stageText = projectStage;
     }
 
     // Create a meta-prompt to generate the actual UX prompt
-    const metaPrompt = `Actúa como un experto UX Designer y especialista en prompts de IA. Tu tarea es generar un prompt detallado y específico para ayudar a un UX Designer que está trabajando en la etapa de "${stageText}" del framework ${frameworkText}, específicamente con ${tool}.
+    const metaPrompt = `Act as an expert UX Designer and AI prompt specialist. Your task is to generate a detailed and specific prompt to help a UX Designer who is working in the "${stageText}" stage of the ${frameworkText} framework, specifically with ${tool}.
 
-Contexto del proyecto:
-- Industria: ${projectContext.industry}
-- Tipo de empresa: ${projectContext.companySize}
-- Producto: ${projectContext.productType}
-- Alcance: ${projectContext.productScope}
-- Audiencia objetivo: ${projectContext.userProfile}
+Project context:
+- Industry: ${projectContext.industry}
+- Company type: ${projectContext.companySize}
+- Product: ${projectContext.productType}
+- Scope: ${projectContext.productScope}
+- Target audience: ${projectContext.userProfile}
 
-INSTRUCCIONES CRÍTICAS:
-1. Genera un prompt COMPLETO y ESPECÍFICO que el UX Designer pueda usar directamente con una IA
-2. El prompt debe estar adaptado específicamente a la industria ${projectContext.industry} y al tipo de producto ${projectContext.productType}
-3. Debe incluir preguntas específicas, metodologías aplicables y entregables concretos para la etapa ${stageText}
-4. El prompt debe ser práctico y orientado a resultados tangibles
-5. Incluye aspectos específicos de ${tool} relevantes para ${frameworkText}
-6. Adapta el lenguaje y enfoque según el tamaño de empresa: ${projectContext.companySize}
+CRITICAL INSTRUCTIONS:
+1. Generate a COMPLETE and SPECIFIC prompt that the UX Designer can use directly with an AI
+2. The prompt must be specifically adapted to the ${projectContext.industry} industry and ${projectContext.productType} product type
+3. Must include specific questions, applicable methodologies and concrete deliverables for the ${stageText} stage
+4. The prompt must be practical and oriented to tangible results
+5. Include specific aspects of ${tool} relevant to ${frameworkText}
+6. Adapt the language and approach according to company size: ${projectContext.companySize}
 
-Genera SOLO el prompt final que el UX Designer usará, sin explicaciones adicionales ni introducciones. El prompt debe comenzar directamente con instrucciones claras para la IA que lo recibirá.`;
+Generate ONLY the final prompt that the UX Designer will use, without additional explanations or introductions. The prompt should begin directly with clear instructions for the AI that will receive it.`;
 
     try {
       const { data, error } = await supabase.functions.invoke('generate-ai-response', {
@@ -215,7 +215,7 @@ Genera SOLO el prompt final que el UX Designer usará, sin explicaciones adicion
 
       if (error) {
         console.error('Error generating prompt:', error);
-        throw new Error(error.message || 'Error al generar el prompt');
+        throw new Error(error.message || 'Error generating prompt');
       }
 
       if (data?.error) {
@@ -225,37 +225,37 @@ Genera SOLO el prompt final que el UX Designer usará, sin explicaciones adicion
       setGeneratedPrompt(data.aiResponse);
       
       toast({
-        title: "¡Prompt Generado con IA!",
-        description: "Tu prompt personalizado ha sido creado específicamente para tu proyecto.",
+        title: "AI Prompt Generated!",
+        description: "Your personalized prompt has been created specifically for your project.",
       });
     } catch (error: any) {
       console.error('Error generating prompt:', error);
       
       // Fallback to basic prompt structure if AI generation fails
-      const fallbackPrompt = `Como UX Designer trabajando en la etapa de "${stageText}" del framework ${frameworkText}, necesito ayuda con ${tool}.
+      const fallbackPrompt = `As a UX Designer working in the "${stageText}" stage of the ${frameworkText} framework, I need help with ${tool}.
 
-Contexto del proyecto:
-- Industria: ${projectContext.industry}
-- Tipo de empresa: ${projectContext.companySize}
-- Producto: ${projectContext.productType}
-- Alcance: ${projectContext.productScope}
-- Audiencia objetivo: ${projectContext.userProfile}
+Project context:
+- Industry: ${projectContext.industry}
+- Company type: ${projectContext.companySize}
+- Product: ${projectContext.productType}
+- Scope: ${projectContext.productScope}
+- Target audience: ${projectContext.userProfile}
 
-Utilizando capacidades de IA, ayúdame a:
+Using AI capabilities, help me to:
 
-1. Generar 5 preguntas específicas para guiar mi proceso de ${tool} en este contexto
-2. Sugerir 3 enfoques innovadores que aprovechen las características únicas de mi industria
-3. Identificar 4 métricas clave que debería considerar para evaluar el éxito
-4. Recomendar 2 herramientas complementarias que potencien este proceso
-5. Proporcionar un checklist de 6 puntos críticos a validar antes de avanzar a la siguiente etapa
+1. Generate 5 specific questions to guide my ${tool} process in this context
+2. Suggest 3 innovative approaches that leverage the unique characteristics of my industry
+3. Identify 4 key metrics I should consider to evaluate success
+4. Recommend 2 complementary tools that enhance this process
+5. Provide a checklist of 6 critical points to validate before moving to the next stage
 
-Asegúrate de que todas las recomendaciones estén alineadas con las mejores prácticas de ${frameworkText} y sean aplicables a ${projectContext.companySize} en ${projectContext.industry} que desarrolla ${projectContext.productType} con alcance ${projectContext.productScope}.`;
+Make sure all recommendations are aligned with ${frameworkText} best practices and are applicable to ${projectContext.companySize} in ${projectContext.industry} developing ${projectContext.productType} with ${projectContext.productScope} scope.`;
 
       setGeneratedPrompt(fallbackPrompt);
       
       toast({
-        title: "Prompt Generado (Modo Básico)",
-        description: "Se generó un prompt básico. La IA no está disponible temporalmente.",
+        title: "Prompt Generated (Basic Mode)",
+        description: "A basic prompt was generated. AI is temporarily unavailable.",
         variant: "destructive"
       });
     } finally {
@@ -266,8 +266,8 @@ Asegúrate de que todas las recomendaciones estén alineadas con las mejores pr�
   const copyToClipboard = () => {
     navigator.clipboard.writeText(generatedPrompt);
     toast({
-      title: "¡Copiado!",
-      description: "Prompt copiado al portapapeles.",
+      title: "Copied!",
+      description: "Prompt copied to clipboard.",
     });
   };
 
@@ -279,7 +279,7 @@ Asegúrate de que todas las recomendaciones estén alineadas con las mejores pr�
           user_id: user?.id,
           name,
           description,
-          selected_framework: "Por definir"
+          selected_framework: "To be defined"
         })
         .select()
         .single();
@@ -288,9 +288,9 @@ Asegúrate de que todas las recomendaciones estén alineadas con las mejores pr�
       
       setCurrentProject(data);
       setCurrentStep("context");
-      sonnerToast.success("Proyecto creado exitosamente");
+      sonnerToast.success("Project created successfully");
     } catch (error: any) {
-      sonnerToast.error("Error al crear el proyecto");
+      sonnerToast.error("Error creating project");
       console.error(error);
     }
   };
@@ -329,9 +329,9 @@ Asegúrate de que todas las recomendaciones estén alineadas con las mejores pr�
           .eq('id', currentProject.id);
       }
 
-      sonnerToast.success("Prompt guardado en el proyecto");
+      sonnerToast.success("Prompt saved to project");
     } catch (error: any) {
-      sonnerToast.error("Error al guardar el prompt");
+      sonnerToast.error("Error saving prompt");
       console.error(error);
     }
   };
@@ -391,9 +391,9 @@ Asegúrate de que todas las recomendaciones estén alineadas con las mejores pr�
         return (
           <Card className="bg-gradient-card shadow-medium">
             <CardHeader>
-              <CardTitle>¡Prompt Generado!</CardTitle>
+              <CardTitle>Prompt Generated!</CardTitle>
               <CardDescription>
-                Tu prompt personalizado está listo para usar con ChatGPT, Claude u otras herramientas de IA
+                Your personalized prompt is ready to use with ChatGPT, Claude or other AI tools
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -402,7 +402,7 @@ Asegúrate de que todas las recomendaciones estén alineadas con las mejores pr�
                   value={generatedPrompt}
                   onChange={(e) => setGeneratedPrompt(e.target.value)}
                   className="min-h-[200px] bg-transparent border-0 p-0 resize-none"
-                  placeholder="Tu prompt generado aparecerá aquí..."
+                  placeholder="Your generated prompt will appear here..."
                 />
               </div>
               
@@ -410,7 +410,7 @@ Asegúrate de que todas las recomendaciones estén alineadas con las mejores pr�
               <div className="flex flex-wrap gap-2">
                 <Button onClick={copyToClipboard} variant="outline" size="sm">
                   <Copy className="mr-2 h-4 w-4" />
-                  Copiar
+                  Copy
                 </Button>
                 <Button 
                   onClick={generateAIResponse} 
@@ -418,23 +418,23 @@ Asegúrate de que todas las recomendaciones estén alineadas con las mejores pr�
                   className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
                 >
                   <Sparkles className="mr-2 h-4 w-4" />
-                  {isGeneratingAI ? "Generando..." : "Usar Prompt"}
+                  {isGeneratingAI ? "Generating..." : "Use Prompt"}
                 </Button>
                 <Button onClick={() => generatePrompt(selectedTool)} variant="outline" size="sm">
                   <RefreshCw className="mr-2 h-4 w-4" />
-                  Regenerar
+                  Regenerate
                 </Button>
                 <Button onClick={savePromptToProject} variant="outline" size="sm">
                   <Save className="mr-2 h-4 w-4" />
-                  Guardar
+                  Save
                 </Button>
                 <Button variant="outline" size="sm">
                   <Download className="mr-2 h-4 w-4" />
-                  Exportar
+                  Export
                 </Button>
                 <Button onClick={resetGenerator} variant="outline" size="sm">
                   <RotateCcw className="mr-2 h-4 w-4" />
-                  Nuevo Prompt
+                  New Prompt
                 </Button>
                 <Button 
                   onClick={() => navigate('/prompt-library')} 
@@ -443,7 +443,7 @@ Asegúrate de que todas las recomendaciones estén alineadas con las mejores pr�
                   className="gap-2"
                 >
                   <Library className="h-4 w-4" />
-                  Ver Biblioteca
+                  View Library
                 </Button>
               </div>
 
@@ -451,7 +451,7 @@ Asegúrate de que todas las recomendaciones estén alineadas con las mejores pr�
                 <div className="mt-6 p-4 bg-gradient-to-br from-primary/5 to-accent/5 rounded-lg border">
                   <div className="flex items-center gap-2 mb-3">
                     <Sparkles className="h-5 w-5 text-primary" />
-                    <h3 className="font-semibold text-lg">Respuesta de IA</h3>
+                    <h3 className="font-semibold text-lg">AI Response</h3>
                     <Button 
                       onClick={() => navigate('/chat', { 
                         state: { 

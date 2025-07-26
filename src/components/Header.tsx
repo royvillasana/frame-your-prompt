@@ -76,24 +76,24 @@ const Header = () => {
                 <DropdownMenuItem asChild>
                   <Link to="/profile">
                     <User className="mr-2 h-4 w-4" />
-                    <span>Perfil</span>
+                    <span>Profile</span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={signOut}>
                   <LogOut className="mr-2 h-4 w-4" />
-                  <span>Cerrar Sesión</span>
+                  <span>Sign Out</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
             <>
               <Link to="/auth">
-                <Button variant="ghost">Iniciar Sesión</Button>
+                <Button variant="ghost">Sign In</Button>
               </Link>
               <Link to="/auth">
                 <Button variant="hero" size="default">
-                  Comenzar Gratis
+                  Start Free
                 </Button>
               </Link>
             </>
@@ -133,24 +133,24 @@ const Header = () => {
                   <Link to="/profile" className="block" onClick={() => setIsMenuOpen(false)}>
                     <Button variant="ghost" className="w-full justify-start">
                       <User className="mr-2 h-4 w-4" />
-                      Perfil
+                      Profile
                     </Button>
                   </Link>
                   <Button variant="ghost" className="w-full justify-start" onClick={signOut}>
                     <LogOut className="mr-2 h-4 w-4" />
-                    Cerrar Sesión
+                    Sign Out
                   </Button>
                 </>
               ) : (
                 <>
                   <Link to="/auth" className="block" onClick={() => setIsMenuOpen(false)}>
                     <Button variant="ghost" className="w-full">
-                      Iniciar Sesión
+                      Sign In
                     </Button>
                   </Link>
                   <Link to="/auth" className="block" onClick={() => setIsMenuOpen(false)}>
                     <Button variant="hero" className="w-full">
-                      Comenzar Gratis
+                      Start Free
                     </Button>
                   </Link>
                 </>

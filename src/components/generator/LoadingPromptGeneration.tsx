@@ -31,29 +31,29 @@ export const LoadingPromptGeneration = ({
   const loadingSteps: LoadingStep[] = [
     {
       id: "analyzing",
-      title: "Analizando contexto",
-      description: `Procesando las características específicas de ${industry} y ${tool}`,
+      title: "Analyzing context",
+      description: `Processing specific characteristics of ${industry} and ${tool}`,
       icon: <Brain className="h-4 w-4" />,
       duration: 2000
     },
     {
       id: "framework",
-      title: "Adaptando al framework",
-      description: `Aplicando mejores prácticas de ${framework}`,
+      title: "Adapting to framework",
+      description: `Applying ${framework} best practices`,
       icon: <Wand2 className="h-4 w-4" />,
       duration: 2500
     },
     {
       id: "generating",
-      title: "Generando prompt IA",
-      description: "Creando un prompt personalizado y específico para tu proyecto",
+      title: "Generating AI prompt",
+      description: "Creating a personalized and specific prompt for your project",
       icon: <Sparkles className="h-4 w-4" />,
       duration: 3000
     },
     {
       id: "complete",
-      title: "¡Listo!",
-      description: "Tu prompt personalizado está preparado",
+      title: "Ready!",
+      description: "Your personalized prompt is prepared",
       icon: <CheckCircle className="h-4 w-4" />,
       duration: 500
     }
@@ -116,9 +116,9 @@ export const LoadingPromptGeneration = ({
               <Sparkles className="h-8 w-8 text-primary" />
             </div>
           </div>
-          <CardTitle className="text-xl">Generando tu prompt personalizado</CardTitle>
+          <CardTitle className="text-xl">Generating your personalized prompt</CardTitle>
           <CardDescription>
-            Esto tomará solo unos segundos...
+            This will only take a few seconds...
           </CardDescription>
         </CardHeader>
         
@@ -126,7 +126,7 @@ export const LoadingPromptGeneration = ({
           {/* Progress Bar */}
           <div className="space-y-2">
             <div className="flex justify-between text-sm text-muted-foreground">
-              <span>Progreso</span>
+              <span>Progress</span>
               <span>{Math.round(progress)}%</span>
             </div>
             <Progress value={progress} className="h-2" />
@@ -186,7 +186,7 @@ export const LoadingPromptGeneration = ({
 
           {/* Tips */}
           <div className="text-xs text-muted-foreground text-center p-3 bg-muted/20 rounded-lg">
-            💡 <strong>Tip:</strong> Tu prompt será específico para {industry} y optimizado para {tool}
+            💡 <strong>Tip:</strong> Your prompt will be specific to {industry} and optimized for {tool}
           </div>
         </CardContent>
       </Card>

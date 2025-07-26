@@ -18,9 +18,9 @@ export const StepCard = ({ step, totalSteps, title, description, children, isAct
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Badge variant={isActive ? "default" : "secondary"} className="text-sm">
-              Paso {step} de {totalSteps}
+              Step {step} of {totalSteps}
             </Badge>
-            {!isActive && <Badge variant="outline">Completado</Badge>}
+            {!isActive && <Badge variant="outline">Completed</Badge>}
           </div>
         </div>
         <CardTitle className={`text-xl ${!isActive && 'text-muted-foreground'}`}>{title}</CardTitle>

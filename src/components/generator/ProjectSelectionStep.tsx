@@ -68,9 +68,9 @@ export const ProjectSelectionStep = ({ onNewProject, onExistingProject }: Projec
     return (
       <Card className="bg-gradient-card shadow-medium">
         <CardHeader>
-          <CardTitle>¿Para qué proyecto vas a generar prompts?</CardTitle>
+          <CardTitle>For which project will you generate prompts?</CardTitle>
           <CardDescription>
-            Elige si quieres crear un nuevo proyecto o continuar con uno existente
+            Choose whether you want to create a new project or continue with an existing one
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -81,9 +81,9 @@ export const ProjectSelectionStep = ({ onNewProject, onExistingProject }: Projec
             >
               <CardContent className="p-6 text-center">
                 <Plus className="h-12 w-12 text-primary mx-auto mb-4" />
-                <h3 className="font-semibold text-lg mb-2">Nuevo Proyecto</h3>
+                <h3 className="font-semibold text-lg mb-2">New Project</h3>
                 <p className="text-muted-foreground text-sm">
-                  Crea un proyecto desde cero y configura todos los detalles
+                  Create a project from scratch and configure all details
                 </p>
               </CardContent>
             </Card>
@@ -94,9 +94,9 @@ export const ProjectSelectionStep = ({ onNewProject, onExistingProject }: Projec
             >
               <CardContent className="p-6 text-center">
                 <FolderOpen className="h-12 w-12 text-primary mx-auto mb-4" />
-                <h3 className="font-semibold text-lg mb-2">Proyecto Existente</h3>
+                <h3 className="font-semibold text-lg mb-2">Existing Project</h3>
                 <p className="text-muted-foreground text-sm">
-                  Continúa trabajando en un proyecto que ya tienes creado
+                  Continue working on a project you already have created
                 </p>
               </CardContent>
             </Card>
@@ -110,19 +110,19 @@ export const ProjectSelectionStep = ({ onNewProject, onExistingProject }: Projec
     return (
       <Card className="bg-gradient-card shadow-medium">
         <CardHeader>
-          <CardTitle>Crear Nuevo Proyecto</CardTitle>
+          <CardTitle>Create New Project</CardTitle>
           <CardDescription>
-            Define el nombre y descripción de tu nuevo proyecto UX
+            Define the name and description of your new UX project
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="projectName">Nombre del Proyecto *</Label>
+            <Label htmlFor="projectName">Project Name *</Label>
             <Input
               id="projectName"
               value={projectName}
               onChange={(e) => setProjectName(e.target.value)}
-              placeholder="Ej: Rediseño de App Móvil, Portal de Cliente, etc."
+              placeholder="Ex: Mobile App Redesign, Customer Portal, etc."
             />
           </div>
 
