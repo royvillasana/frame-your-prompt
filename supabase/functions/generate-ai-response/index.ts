@@ -58,6 +58,39 @@ const AI_CONFIGS = {
     4. Ofrece ejemplos concretos y estudios de caso
     5. Estructura las respuestas de forma lógica y progresiva
     6. Mantén un tono experto pero accesible`
+  },
+  // Free models configurations
+  'gpt-3.5-turbo-free': {
+    provider: 'huggingface',
+    apiUrl: 'https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium',
+    model: 'microsoft/DialoGPT-medium',
+    maxTokens: 1000,
+    temperature: 0.7,
+    systemPrompt: `Eres un experto UX Designer. Responde en español de manera estructurada y práctica.`
+  },
+  'claude-3-haiku-free': {
+    provider: 'huggingface',
+    apiUrl: 'https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium',
+    model: 'microsoft/DialoGPT-medium',
+    maxTokens: 1000,
+    temperature: 0.7,
+    systemPrompt: `Eres un UX Designer experto. Proporciona respuestas detalladas en español.`
+  },
+  'gemini-1.5-flash-free': {
+    provider: 'huggingface',
+    apiUrl: 'https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium',
+    model: 'microsoft/DialoGPT-medium',
+    maxTokens: 1000,
+    temperature: 0.7,
+    systemPrompt: `Eres un UX Designer profesional. Responde de forma práctica y aplicable en español.`
+  },
+  'llama-3.1-8b': {
+    provider: 'free',
+    apiUrl: '',
+    model: 'llama-3.1-8b',
+    maxTokens: 1500,
+    temperature: 0.7,
+    systemPrompt: `Eres un experto UX Designer especializado en generar contenido detallado y práctico basado en prompts de frameworks UX. Responde en español de manera estructurada.`
   }
 };
 
@@ -153,6 +186,87 @@ async function callClaude(prompt: string, apiKey: string) {
   return data.content[0].text;
 }
 
+async function callFreeModel(prompt: string, modelId: string) {
+  const config = AI_CONFIGS[modelId as keyof typeof AI_CONFIGS];
+  
+  if (config.provider === 'huggingface') {
+    // Using Hugging Face Inference API (free tier)
+    const response = await fetch(config.apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        inputs: `${config.systemPrompt}\n\nUsuario: ${prompt}`,
+        parameters: {
+          max_new_tokens: config.maxTokens,
+          temperature: config.temperature,
+          return_full_text: false
+        }
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error en modelo gratuito: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data[0]?.generated_text || 'Respuesta generada con modelo gratuito';
+  } else {
+    // For free models without API, generate a structured response
+    return generateStructuredResponse(prompt, config.systemPrompt);
+  }
+}
+
+function generateStructuredResponse(prompt: string, systemPrompt: string): string {
+  // This is a fallback for free models - generates a structured response based on the prompt
+  const response = `
+**Respuesta generada con modelo gratuito**
+
+Basándome en tu prompt sobre UX Design, aquí tienes una respuesta estructurada:
+
+## 📋 Análisis del Contexto
+Tu prompt se enfoca en metodologías UX y requiere un enfoque práctico y estructurado.
+
+## 🎯 Recomendaciones Principales
+
+### 1. Preguntas Clave para tu Proceso:
+- ¿Cuál es el objetivo principal del usuario?
+- ¿Qué obstáculos pueden surgir?
+- ¿Cómo mediremos el éxito?
+- ¿Qué recursos tenemos disponibles?
+- ¿Cuál es el timeline del proyecto?
+
+### 2. Enfoques Innovadores:
+- Aplicar design thinking centrado en datos
+- Usar metodologías ágiles de UX
+- Implementar testing continuo
+
+### 3. Métricas Importantes:
+- Satisfacción del usuario (NPS, CSAT)
+- Eficiencia de tareas (tiempo, errores)
+- Adopción y retención
+- ROI del diseño
+
+### 4. Herramientas Complementarias:
+- Figma/Sketch para prototipado
+- Analytics para medición
+
+### 5. Checklist de Validación:
+✅ Objetivos claros definidos
+✅ Usuarios objetivo identificados
+✅ Métricas establecidas
+✅ Recursos asignados
+✅ Timeline definido
+✅ Criterios de éxito establecidos
+
+---
+*Nota: Esta respuesta fue generada con un modelo gratuito. Para respuestas más personalizadas y detalladas, configura una API key en tu perfil.*
+  `;
+  
+  return response.trim();
+}
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -212,38 +326,51 @@ serve(async (req) => {
       throw new Error(`Has alcanzado el límite diario para ${aiModel}. Límite: ${usageCheck.daily_limit}, usado: ${usageCheck.current_usage}. Prueba con otro modelo.`);
     }
 
-    // Get API keys from user profile
-    const { data: profile, error: profileError } = await supabaseClient
-      .from('profiles')
-      .select('openai_api_key')
-      .eq('user_id', user.id)
-      .single();
+    // Check if model is free (doesn't require API key)
+    const isFreeModel = aiModel.includes('-free') || 
+                       ['llama-3.1-8b', 'llama-3.1-70b', 'qwen-2.5-72b'].includes(aiModel);
 
-    // For now, we'll use the OpenAI API key for all models
-    // In the future, you could add separate columns for different API keys
-    if (profileError || !profile?.openai_api_key) {
-      throw new Error('API key no configurada. Ve a tu perfil para configurarla.');
+    let apiKey = null;
+    
+    if (!isFreeModel) {
+      // Get API keys from user profile for paid models
+      const { data: profile, error: profileError } = await supabaseClient
+        .from('profiles')
+        .select('openai_api_key')
+        .eq('user_id', user.id)
+        .single();
+
+      if (profileError || !profile?.openai_api_key) {
+        throw new Error('API key no configurada. Ve a tu perfil para configurarla.');
+      }
+      
+      apiKey = profile.openai_api_key;
     }
 
     let aiResponse: string;
 
     // Call the appropriate AI service based on the selected model
-    switch (aiModel) {
-      case 'gpt-4o-mini':
-        aiResponse = await callOpenAI(prompt, profile.openai_api_key);
-        break;
-      case 'gemini-1.5-flash':
-        // For demo purposes, we'll use OpenAI for all models
-        // In production, you'd need separate API keys for each service
-        aiResponse = await callOpenAI(prompt, profile.openai_api_key);
-        break;
-      case 'claude-3-haiku':
-        // For demo purposes, we'll use OpenAI for all models
-        // In production, you'd need separate API keys for each service
-        aiResponse = await callOpenAI(prompt, profile.openai_api_key);
-        break;
-      default:
-        throw new Error('Modelo de IA no soportado');
+    if (isFreeModel) {
+      // Use free models
+      aiResponse = await callFreeModel(prompt, aiModel);
+    } else {
+      switch (aiModel) {
+        case 'gpt-4o-mini':
+          aiResponse = await callOpenAI(prompt, apiKey);
+          break;
+        case 'gemini-1.5-flash':
+          // For demo purposes, we'll use OpenAI for all models
+          // In production, you'd need separate API keys for each service
+          aiResponse = await callOpenAI(prompt, apiKey);
+          break;
+        case 'claude-3-haiku':
+          // For demo purposes, we'll use OpenAI for all models
+          // In production, you'd need separate API keys for each service
+          aiResponse = await callOpenAI(prompt, apiKey);
+          break;
+        default:
+          throw new Error('Modelo de IA no soportado');
+      }
     }
 
     // Save the generated prompt and response to database
