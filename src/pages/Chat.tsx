@@ -99,6 +99,7 @@ Continúa la conversación de manera natural y útil, manteniendo el contexto de
           selectedFramework: 'conversational',
           frameworkStage: 'iterative',
           selectedTool: 'chat',
+          aiModel: 'gpt-3.5-turbo-free', // Use free model by default for chat
         }
       });
 
