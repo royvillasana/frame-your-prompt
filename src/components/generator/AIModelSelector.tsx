@@ -48,6 +48,27 @@ export const AI_MODELS: AIModel[] = [
     icon: <Star className="h-4 w-4" />,
     color: "bg-blue-500"
   },
+  // Perplexity AI models (real API integration)
+  {
+    id: "llama-3.1-sonar-small-128k-online",
+    name: "Perplexity Sonar Small",
+    provider: "Perplexity AI",
+    description: "Modelo con acceso a internet para respuestas actualizadas",
+    freeLimit: 0,
+    registeredLimit: 50,
+    icon: <Zap className="h-4 w-4" />,
+    color: "bg-orange-500"
+  },
+  {
+    id: "llama-3.1-sonar-large-128k-online",
+    name: "Perplexity Sonar Large",
+    provider: "Perplexity AI", 
+    description: "Modelo avanzado con acceso a internet para análisis profundos",
+    freeLimit: 0,
+    registeredLimit: 25,
+    icon: <Zap className="h-4 w-4" />,
+    color: "bg-red-500"
+  },
   {
     id: "llama-3.1-8b",
     name: "Llama 3.1 8B (Gratuito)",

@@ -91,6 +91,23 @@ const AI_CONFIGS = {
     maxTokens: 1500,
     temperature: 0.7,
     systemPrompt: `Eres un experto UX Designer especializado en generar contenido detallado y práctico basado en prompts de frameworks UX. Responde en español de manera estructurada.`
+  },
+  // Perplexity AI models
+  'llama-3.1-sonar-small-128k-online': {
+    provider: 'perplexity',
+    apiUrl: 'https://api.perplexity.ai/chat/completions',
+    model: 'llama-3.1-sonar-small-128k-online',
+    maxTokens: 2000,
+    temperature: 0.2,
+    systemPrompt: `Eres un experto UX Designer con acceso a información actualizada. Proporciona respuestas detalladas, estructuradas y basadas en las mejores prácticas actuales. Responde siempre en español de manera profesional y práctica.`
+  },
+  'llama-3.1-sonar-large-128k-online': {
+    provider: 'perplexity',
+    apiUrl: 'https://api.perplexity.ai/chat/completions',
+    model: 'llama-3.1-sonar-large-128k-online',
+    maxTokens: 2000,
+    temperature: 0.2,
+    systemPrompt: `Eres un UX Designer senior con acceso a información actualizada y capacidades avanzadas de análisis. Proporciona respuestas exhaustivas, bien estructuradas y fundamentadas en investigación reciente. Responde en español con un enfoque profesional y detallado.`
   }
 };
 
@@ -184,6 +201,41 @@ async function callClaude(prompt: string, apiKey: string) {
 
   const data = await response.json();
   return data.content[0].text;
+}
+
+async function callPerplexity(prompt: string, apiKey: string, modelId: string) {
+  const config = AI_CONFIGS[modelId as keyof typeof AI_CONFIGS];
+  
+  const response = await fetch(config.apiUrl, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: config.model,
+      messages: [
+        { role: 'system', content: config.systemPrompt },
+        { role: 'user', content: prompt }
+      ],
+      temperature: config.temperature,
+      max_tokens: config.maxTokens,
+      top_p: 0.9,
+      return_images: false,
+      return_related_questions: false,
+      search_recency_filter: 'month',
+      frequency_penalty: 1,
+      presence_penalty: 0
+    }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(`Error de Perplexity AI: ${errorData.error?.message || 'Error desconocido'}`);
+  }
+
+  const data = await response.json();
+  return data.choices[0].message.content;
 }
 
 async function callFreeModel(prompt: string, modelId: string) {
@@ -478,18 +530,30 @@ serve(async (req) => {
     let apiKey = null;
     
     if (!isFreeModel) {
-      // Get API keys from user profile for paid models
+      const config = AI_CONFIGS[aiModel as keyof typeof AI_CONFIGS];
+      
+      // Get appropriate API key based on provider
       const { data: profile, error: profileError } = await supabaseClient
         .from('profiles')
-        .select('openai_api_key')
+        .select('openai_api_key, perplexity_api_key')
         .eq('user_id', user.id)
         .single();
 
-      if (profileError || !profile?.openai_api_key) {
-        throw new Error('API key no configurada. Ve a tu perfil para configurarla.');
+      if (profileError) {
+        throw new Error('Error al obtener el perfil del usuario.');
       }
-      
-      apiKey = profile.openai_api_key;
+
+      if (config.provider === 'perplexity') {
+        if (!profile?.perplexity_api_key) {
+          throw new Error('API key de Perplexity no configurada. Ve a tu perfil para configurarla.');
+        }
+        apiKey = profile.perplexity_api_key;
+      } else {
+        if (!profile?.openai_api_key) {
+          throw new Error('API key de OpenAI no configurada. Ve a tu perfil para configurarla.');
+        }
+        apiKey = profile.openai_api_key;
+      }
     }
 
     let aiResponse: string;
@@ -515,6 +579,11 @@ serve(async (req) => {
           // For demo purposes, we'll use OpenAI for all models
           // In production, you'd need separate API keys for each service
           aiResponse = await callOpenAI(prompt, apiKey);
+          break;
+        case 'llama-3.1-sonar-small-128k-online':
+        case 'llama-3.1-sonar-large-128k-online':
+          if (!apiKey) throw new Error('API key de Perplexity requerida para este modelo');
+          aiResponse = await callPerplexity(prompt, apiKey, aiModel);
           break;
         default:
           throw new Error('Modelo de IA no soportado');
