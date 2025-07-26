@@ -37,7 +37,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
-import { es } from "date-fns/locale";
+import { enUS } from "date-fns/locale";
 
 interface GeneratedPrompt {
   id: string;
@@ -215,7 +215,7 @@ const PromptLibrary = () => {
                   <div className="space-y-2 flex-1">
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <Calendar className="h-4 w-4" />
-                      {format(new Date(prompt.created_at), "d 'de' MMMM, yyyy 'a las' HH:mm", { locale: es })}
+                      {format(new Date(prompt.created_at), "MMMM d, yyyy 'at' HH:mm", { locale: enUS })}
                     </div>
                     
                     <div className="flex flex-wrap gap-2">

@@ -28,7 +28,7 @@ const PromptDetail = () => {
 
   const loadPromptDetails = async () => {
     try {
-      // Cargar prompt
+      // Load prompt
       const { data: promptData, error: promptError } = await supabase
         .from('generated_prompts')
         .select('*')
@@ -39,7 +39,7 @@ const PromptDetail = () => {
       if (promptError) throw promptError;
       setPrompt(promptData);
 
-      // Cargar proyecto asociado
+      // Load associated project
       if (promptData.project_id) {
         const { data: projectData, error: projectError } = await supabase
           .from('projects')
@@ -51,7 +51,7 @@ const PromptDetail = () => {
         setProject(projectData);
       }
     } catch (error: any) {
-      toast.error("Error al cargar los detalles del prompt");
+      toast.error("Error loading prompt details");
       console.error(error);
       navigate('/profile');
     } finally {
@@ -62,8 +62,8 @@ const PromptDetail = () => {
   const copyToClipboard = () => {
     navigator.clipboard.writeText(prompt.original_prompt);
     toastHook({
-      title: "¡Copiado!",
-      description: "Prompt copiado al portapapeles.",
+      title: "Copied!",
+      description: "Prompt copied to clipboard.",
     });
   };
 
@@ -85,7 +85,7 @@ const PromptDetail = () => {
 
       if (error) {
         console.error('Supabase function error:', error);
-        throw new Error(error.message || 'Error en la función de Supabase');
+        throw new Error(error.message || 'Supabase function error');
       }
 
       if (data?.error) {
@@ -93,7 +93,7 @@ const PromptDetail = () => {
         throw new Error(data.error);
       }
       
-      // Actualizar el prompt con la nueva respuesta
+      // Update prompt with new response
       const { error: updateError } = await supabase
         .from('generated_prompts')
         .update({ ai_response: data.aiResponse })
@@ -143,7 +143,7 @@ const PromptDetail = () => {
   };
 
   const deletePrompt = async () => {
-    if (!window.confirm('¿Estás seguro de que quieres eliminar este prompt? Esta acción no se puede deshacer.')) {
+    if (!window.confirm('Are you sure you want to delete this prompt? This action cannot be undone.')) {
       return;
     }
 
@@ -156,16 +156,16 @@ const PromptDetail = () => {
 
       if (error) throw error;
 
-      toast.success("Prompt eliminado exitosamente");
+      toast.success("Prompt deleted successfully");
       
-      // Regresar al proyecto o perfil
+      // Return to project or profile
       if (project) {
         navigate(`/project/${project.id}`);
       } else {
         navigate('/profile');
       }
     } catch (error: any) {
-      toast.error("Error al eliminar el prompt");
+      toast.error("Error deleting prompt");
       console.error(error);
     }
   };
@@ -176,7 +176,7 @@ const PromptDetail = () => {
         <div className="max-w-4xl mx-auto">
           <Card>
             <CardHeader>
-              <CardTitle>Cargando prompt...</CardTitle>
+              <CardTitle>Loading prompt...</CardTitle>
             </CardHeader>
           </Card>
         </div>
@@ -188,10 +188,10 @@ const PromptDetail = () => {
     return (
       <div className="container mx-auto py-8">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-2xl font-bold mb-4">Prompt no encontrado</h1>
+          <h1 className="text-2xl font-bold mb-4">Prompt not found</h1>
           <Button onClick={() => navigate('/profile')}>
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Volver al perfil
+            Back to profile
           </Button>
         </div>
       </div>
@@ -209,14 +209,14 @@ const PromptDetail = () => {
             className="mb-4"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
-            {project ? `Volver a ${project.name}` : 'Volver al perfil'}
+            {project ? `Back to ${project.name}` : 'Back to profile'}
           </Button>
           
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              <h1 className="text-3xl font-bold mb-2">Detalle del Prompt</h1>
+              <h1 className="text-3xl font-bold mb-2">Prompt Details</h1>
               {project && (
-                <p className="text-muted-foreground text-lg mb-4">Proyecto: {project.name}</p>
+                <p className="text-muted-foreground text-lg mb-4">Project: {project.name}</p>
               )}
               <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
                 <div className="flex items-center gap-1">
@@ -248,9 +248,9 @@ const PromptDetail = () => {
         {/* Prompt Content */}
         <Card className="mb-6">
           <CardHeader>
-            <CardTitle>Prompt Original</CardTitle>
+            <CardTitle>Original Prompt</CardTitle>
             <CardDescription>
-              El prompt generado específicamente para tu proyecto
+              The prompt generated specifically for your project
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -265,7 +265,7 @@ const PromptDetail = () => {
             <div className="flex flex-wrap gap-2">
               <Button onClick={copyToClipboard} variant="outline" size="sm">
                 <Copy className="mr-2 h-4 w-4" />
-                Copiar
+                Copy
               </Button>
               <Button 
                 onClick={generateAIResponse} 
@@ -273,11 +273,11 @@ const PromptDetail = () => {
                 className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
               >
                 <Sparkles className="mr-2 h-4 w-4" />
-                {isGeneratingAI ? "Generando..." : prompt.ai_response ? "Regenerar IA" : "Usar Prompt"}
+                {isGeneratingAI ? "Generating..." : prompt.ai_response ? "Regenerate AI" : "Use Prompt"}
               </Button>
               <Button onClick={iteratePrompt} variant="outline" size="sm">
                 <RefreshCw className="mr-2 h-4 w-4" />
-                Iterar
+                Iterate
               </Button>
             </div>
           </CardContent>
@@ -289,7 +289,7 @@ const PromptDetail = () => {
             <CardHeader>
               <div className="flex items-center gap-2">
                 <Sparkles className="h-5 w-5 text-primary" />
-                <CardTitle>Respuesta de IA</CardTitle>
+                <CardTitle>AI Response</CardTitle>
                 <Button 
                   onClick={() => navigate('/chat', { 
                     state: { 
@@ -301,7 +301,7 @@ const PromptDetail = () => {
                   size="sm"
                   className="ml-auto"
                 >
-                  Continuar en Chat
+                  Continue in Chat
                 </Button>
               </div>
             </CardHeader>
