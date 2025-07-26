@@ -232,6 +232,12 @@ export const AIModelSelector = ({ selectedModel, onModelSelect, disabled }: AIMo
   // Categorizar modelos
   const freeModels = AI_MODELS.filter(m => m.freeLimit > 0);
   const premiumModels = AI_MODELS.filter(m => m.freeLimit === 0);
+  
+  // Debug: log the models
+  console.log('Free models count:', freeModels.length);
+  console.log('Free models:', freeModels.map(m => ({ id: m.id, name: m.name, freeLimit: m.freeLimit })));
+  console.log('Loading state:', loading);
+  console.log('User registered:', isRegistered);
 
   // Auto-select first available model
   useEffect(() => {
@@ -309,7 +315,7 @@ export const AIModelSelector = ({ selectedModel, onModelSelect, disabled }: AIMo
           <p className="text-xs text-muted-foreground mb-3">{model.description}</p>
           
           {/* Progress bar y límites para modelos gratuitos */}
-          {isFreeModel && !userHasAPIKey && (
+          {isFreeModel && (
             <div className="space-y-2">
               <div className="flex justify-between text-xs">
                 <span className="text-muted-foreground">Uso diario</span>
