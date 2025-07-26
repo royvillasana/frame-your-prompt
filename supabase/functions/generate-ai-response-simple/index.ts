@@ -36,7 +36,19 @@ async function callOpenAI(prompt: string, apiKey: string, model: string) {
   if (!response.ok) {
     const errorData = await response.text();
     console.error('OpenAI error response:', errorData);
-    throw new Error(`Error de OpenAI (${response.status}): ${errorData}`);
+    
+    // Handle specific OpenAI errors
+    if (response.status === 429) {
+      const errorJson = JSON.parse(errorData);
+      if (errorJson.error?.code === 'insufficient_quota') {
+        throw new Error('Tu API key de OpenAI ha excedido la cuota disponible. Por favor revisa tu plan y facturación en OpenAI.');
+      }
+      throw new Error('API de OpenAI temporalmente no disponible. Intenta nuevamente en unos minutos.');
+    } else if (response.status === 401) {
+      throw new Error('API key de OpenAI inválida. Por favor verifica tu clave en el perfil.');
+    } else {
+      throw new Error(`Error de OpenAI (${response.status}): ${errorData}`);
+    }
   }
 
   const data = await response.json();
