@@ -64,13 +64,22 @@ export const ProjectDetail = () => {
 
         setPromptsByStage(organized);
 
-        // Set default selected stage to first stage with prompts, or first stage of framework
+        // Set default selected stage to the stage of the most recent prompt, or first stage of framework
         const framework = getFrameworkById(projectData.selected_framework);
         if (framework?.stages.length) {
-          const firstStageWithPrompts = framework.stages.find(stage => 
-            organized[stage.id] && organized[stage.id].length > 0
-          );
-          setSelectedStage(firstStageWithPrompts?.id || framework.stages[0].id);
+          // Find the most recent prompt to determine default stage
+          const allPrompts = prompts.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+          const mostRecentPrompt = allPrompts[0];
+          
+          if (mostRecentPrompt) {
+            // Get the stage ID from the most recent prompt
+            const recentStageId = mostRecentPrompt.framework_stage?.toLowerCase().replace(/\s+/g, '-') || '';
+            const stageExists = framework.stages.find(stage => stage.id === recentStageId);
+            setSelectedStage(stageExists ? recentStageId : framework.stages[0].id);
+          } else {
+            // No prompts exist, use first stage
+            setSelectedStage(framework.stages[0].id);
+          }
         }
 
       } catch (error) {
