@@ -91,10 +91,17 @@ serve(async (req) => {
     console.log('User ID:', user.id);
 
     console.log('4. Parsing request body...');
-    const body = await req.json();
+    let body;
+    try {
+      body = await req.json();
+    } catch (parseError) {
+      console.error('Error parsing request body:', parseError);
+      throw new Error('Invalid JSON in request body');
+    }
+    
     const { prompt, aiModel = 'gpt-4o-mini' } = body;
     
-    console.log('Request data:', { aiModel, hasPrompt: !!prompt });
+    console.log('Request data:', { aiModel, hasPrompt: !!prompt, bodyKeys: Object.keys(body) });
 
     if (!prompt) {
       throw new Error('Prompt requerido');
@@ -109,7 +116,8 @@ serve(async (req) => {
 
     if (profileError) {
       console.error('Profile error:', profileError);
-      throw new Error('Error al obtener el perfil del usuario');
+      console.error('Profile error details:', JSON.stringify(profileError));
+      throw new Error(`Error al obtener el perfil del usuario: ${profileError.message}`);
     }
 
     console.log('6. Checking API key...');
@@ -133,12 +141,16 @@ serve(async (req) => {
 
   } catch (error: any) {
     console.error('=== ERROR ===');
+    console.error('Error type:', typeof error);
+    console.error('Error name:', error.name);
     console.error('Error message:', error.message);
     console.error('Error stack:', error.stack);
+    console.error('Full error object:', JSON.stringify(error, Object.getOwnPropertyNames(error)));
     
     return new Response(JSON.stringify({ 
       error: error.message || 'Error interno del servidor',
-      details: error.stack || 'No stack trace'
+      details: error.stack || 'No stack trace',
+      type: error.name || 'Unknown error type'
     }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
