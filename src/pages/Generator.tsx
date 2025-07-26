@@ -375,32 +375,38 @@ Asegúrate de que todas las recomendaciones estén alineadas con las mejores pr�
       case "context":
         return <ProjectContextStep onNext={handleContextComplete} />;
       case "stage":
-        return (
+        return projectContext ? (
           <ProjectStageStep 
-            context={projectContext!} 
+            context={projectContext} 
             onNext={handleStageComplete}
             onBack={() => setCurrentStep("context")}
           />
+        ) : (
+          <div>Loading...</div>
         );
       case "framework":
-        return (
+        return projectContext ? (
           <FrameworkStep 
-            context={projectContext!}
+            context={projectContext}
             projectStage={projectStage}
             onNext={handleFrameworkComplete}
             onBack={() => setCurrentStep("stage")}
           />
+        ) : (
+          <div>Loading...</div>
         );
       case "tool":
-        return (
+        return projectContext ? (
           <ToolSelectionStep 
-            context={projectContext!}
+            context={projectContext}
             projectStage={projectStage}
             framework={selectedFramework}
             frameworkStage={frameworkStage}
             onGenerate={handleToolComplete}
             onBack={() => setCurrentStep("framework")}
           />
+        ) : (
+          <div>Loading...</div>
         );
       case "result":
         return (
