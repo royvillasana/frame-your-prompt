@@ -13,10 +13,11 @@ import { ProjectContextStep, ProjectContext } from "@/components/generator/Proje
 import { ProjectStageStep } from "@/components/generator/ProjectStageStep";
 import { FrameworkStep } from "@/components/generator/FrameworkStep";
 import { ToolSelectionStep } from "@/components/generator/ToolSelectionStep";
+import { ProjectConfigStep } from "@/components/generator/ProjectConfigStep";
 import { AIModelSelector } from "@/components/generator/AIModelSelector";
 import { useAIUsage } from "@/hooks/useAIUsage";
 
-type Step = "context" | "stage" | "framework" | "tool" | "result";
+type Step = "project" | "context" | "stage" | "framework" | "tool" | "result";
 
 const Generator = () => {
   const { toast } = useToast();
@@ -24,7 +25,8 @@ const Generator = () => {
   const { refreshUsage } = useAIUsage();
   const navigate = useNavigate();
   const location = useLocation();
-  const [currentStep, setCurrentStep] = useState<Step>("context");
+  const [currentStep, setCurrentStep] = useState<Step>("project");
+  const [currentProject, setCurrentProject] = useState<{id: string, name: string, framework: string} | null>(null);
   const [projectContext, setProjectContext] = useState<ProjectContext | null>(null);
   const [projectStage, setProjectStage] = useState("");
   const [selectedFramework, setSelectedFramework] = useState("");
