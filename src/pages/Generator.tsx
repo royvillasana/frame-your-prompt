@@ -15,6 +15,7 @@ import { FrameworkStep } from "@/components/generator/FrameworkStep";
 import { ToolSelectionStep } from "@/components/generator/ToolSelectionStep";
 import { ProjectConfigStep } from "@/components/generator/ProjectConfigStep";
 import { AIModelSelector } from "@/components/generator/AIModelSelector";
+import { AILimitAlert } from "@/components/generator/AILimitAlert";
 import { useAIUsage } from "@/hooks/useAIUsage";
 
 type Step = "project" | "context" | "stage" | "framework" | "tool" | "result";
@@ -22,7 +23,7 @@ type Step = "project" | "context" | "stage" | "framework" | "tool" | "result";
 const Generator = () => {
   const { toast } = useToast();
   const { user } = useAuth();
-  const { refreshUsage } = useAIUsage();
+  const { refreshUsage, getModelUsage } = useAIUsage();
   const navigate = useNavigate();
   const location = useLocation();
   const [currentStep, setCurrentStep] = useState<Step>("project");
@@ -32,7 +33,7 @@ const Generator = () => {
   const [selectedFramework, setSelectedFramework] = useState("");
   const [frameworkStage, setFrameworkStage] = useState("");
   const [selectedTool, setSelectedTool] = useState("");
-  const [selectedAIModel, setSelectedAIModel] = useState("gpt-4o-mini");
+  const [selectedAIModel, setSelectedAIModel] = useState("llama-3.1-8b");
   const [generatedPrompt, setGeneratedPrompt] = useState("");
   const [aiResponse, setAiResponse] = useState("");
   const [isGeneratingAI, setIsGeneratingAI] = useState(false);
@@ -431,6 +432,12 @@ Asegúrate de que todas las recomendaciones estén alineadas con las mejores pr�
                 selectedModel={selectedAIModel}
                 onModelSelect={setSelectedAIModel}
                 disabled={isGeneratingAI}
+              />
+              
+              <AILimitAlert 
+                selectedModel={selectedAIModel}
+                usage={getModelUsage(selectedAIModel)}
+                onModelSelect={setSelectedAIModel}
               />
               
               <div className="flex flex-wrap gap-2">

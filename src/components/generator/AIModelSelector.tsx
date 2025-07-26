@@ -18,14 +18,45 @@ export interface AIModel {
 }
 
 export const AI_MODELS: AIModel[] = [
-  // OpenAI Models
+  // Modelos Gratuitos - disponibles sin API key
+  {
+    id: "llama-3.1-8b",
+    name: "Llama 3.1 8B (Gratis)",
+    provider: "HuggingFace",
+    description: "Modelo open-source rápido y eficiente para tareas de UX",
+    freeLimit: 100,
+    registeredLimit: 999999,
+    icon: <Zap className="h-4 w-4" />,
+    color: "bg-orange-500"
+  },
+  {
+    id: "llama-3.1-70b",
+    name: "Llama 3.1 70B (Gratis)",
+    provider: "HuggingFace",
+    description: "Modelo open-source avanzado para análisis profundo de UX",
+    freeLimit: 50,
+    registeredLimit: 999999,
+    icon: <Zap className="h-4 w-4" />,
+    color: "bg-orange-600"
+  },
+  {
+    id: "qwen-2.5-72b",
+    name: "Qwen 2.5 72B (Gratis)",
+    provider: "HuggingFace",
+    description: "Modelo multilingüe avanzado para proyectos de UX globales",
+    freeLimit: 50,
+    registeredLimit: 999999,
+    icon: <Zap className="h-4 w-4" />,
+    color: "bg-orange-700"
+  },
+  // OpenAI Models - requieren API key
   {
     id: "gpt-4o-mini",
     name: "GPT-4o Mini",
     provider: "OpenAI",
     description: "Rápido y eficiente para tareas generales de UX",
-    freeLimit: 50,
-    registeredLimit: 999999,
+    freeLimit: 0,
+    registeredLimit: 0,
     icon: <Sparkles className="h-4 w-4" />,
     color: "bg-green-500"
   },
@@ -59,14 +90,14 @@ export const AI_MODELS: AIModel[] = [
     icon: <Sparkles className="h-4 w-4" />,
     color: "bg-green-600"
   },
-  // Google Gemini Models
+  // Google Gemini Models - requieren API key
   {
     id: "gemini-1.5-flash",
     name: "Gemini 1.5 Flash",
     provider: "Google",
     description: "Excelente para análisis detallados y creatividad",
-    freeLimit: 50,
-    registeredLimit: 999999,
+    freeLimit: 0,
+    registeredLimit: 0,
     icon: <Star className="h-4 w-4" />,
     color: "bg-blue-500"
   },
@@ -110,14 +141,14 @@ export const AI_MODELS: AIModel[] = [
     icon: <Star className="h-4 w-4" />,
     color: "bg-blue-900"
   },
-  // Anthropic Claude Models
+  // Anthropic Claude Models - requieren API key
   {
     id: "claude-3-haiku",
     name: "Claude 3 Haiku",
     provider: "Anthropic",
     description: "Perfecto para tareas de UX complejas y análisis profundo",
-    freeLimit: 50,
-    registeredLimit: 999999,
+    freeLimit: 0,
+    registeredLimit: 0,
     icon: <Brain className="h-4 w-4" />,
     color: "bg-purple-500"
   },
@@ -185,15 +216,22 @@ export const AIModelSelector = ({ selectedModel, onModelSelect, disabled }: AIMo
 
   const selectedModelData = AI_MODELS.find(m => m.id === selectedModel);
 
-  // Auto-select first model with API key configured
+  // Auto-select first available model
   useEffect(() => {
-    if (isRegistered && !selectedModel) {
+    if (!selectedModel) {
+      // Priorizar modelos con API key configurada, luego modelos gratuitos
       const configuredKeys = getConfiguredAPIKeys();
       if (configuredKeys.length > 0) {
         onModelSelect(configuredKeys[0]);
+      } else {
+        // Seleccionar primer modelo gratuito disponible
+        const freeModels = AI_MODELS.filter(m => m.freeLimit > 0);
+        if (freeModels.length > 0) {
+          onModelSelect(freeModels[0].id);
+        }
       }
     }
-  }, [isRegistered, selectedModel, getConfiguredAPIKeys, onModelSelect]);
+  }, [selectedModel, getConfiguredAPIKeys, onModelSelect]);
 
   return (
     <div className="space-y-4">
@@ -209,15 +247,11 @@ export const AIModelSelector = ({ selectedModel, onModelSelect, disabled }: AIMo
             {AI_MODELS.map((model) => {
               const usage = getModelUsage(model.id);
               const userHasAPIKey = hasAPIKey(model.id);
-              const premiumModels = [
-                'gpt-4o', 'gpt-4.1', 'gpt-4.1-mini',
-                'gemini-1.5-pro', 'gemini-2.0-flash', 'gemini-2.5-flash', 'gemini-2.5-pro',
-                'claude-3.5-haiku', 'claude-3.5-sonnet', 'claude-3.7-sonnet', 'claude-sonnet-4', 'claude-opus-4'
-              ];
-              const isPremium = premiumModels.includes(model.id);
+              const isFreeModel = model.freeLimit > 0;
+              const isPremiumModel = model.freeLimit === 0;
               
-              // Solo mostrar modelos premium si el usuario tiene la API key correspondiente
-              const shouldShow = !isPremium || userHasAPIKey;
+              // Mostrar modelos gratuitos siempre, modelos premium solo si tienen API key
+              const shouldShow = isFreeModel || userHasAPIKey;
               
               if (!shouldShow) return null;
               
@@ -234,7 +268,10 @@ export const AIModelSelector = ({ selectedModel, onModelSelect, disabled }: AIMo
                       {userHasAPIKey && (
                         <Key className="h-3 w-3 text-green-600" />
                       )}
-                      {isPremium && (
+                      {isFreeModel && (
+                        <Badge variant="secondary" className="text-xs bg-orange-100 text-orange-800">Gratis</Badge>
+                      )}
+                      {isPremiumModel && (
                         <Badge variant="secondary" className="text-xs">Premium</Badge>
                       )}
                     </div>
@@ -244,14 +281,19 @@ export const AIModelSelector = ({ selectedModel, onModelSelect, disabled }: AIMo
                           Tu API
                         </Badge>
                       )}
-                      {!isPremium && (
+                      {isFreeModel && !userHasAPIKey && (
                         <Badge variant={usage.can_use ? "secondary" : "destructive"}>
                           {loading ? "..." : `${usage.remaining}/${usage.daily_limit}`}
                         </Badge>
                       )}
-                      {isPremium && (
+                      {isPremiumModel && userHasAPIKey && (
                         <Badge variant="secondary">
                           Ilimitado
+                        </Badge>
+                      )}
+                      {isPremiumModel && !userHasAPIKey && (
+                        <Badge variant="outline" className="text-muted-foreground">
+                          Requiere API Key
                         </Badge>
                       )}
                       {!usage.can_use && !loading && !userHasAPIKey && (

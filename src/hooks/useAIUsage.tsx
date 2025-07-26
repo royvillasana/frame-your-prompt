@@ -62,15 +62,18 @@ export const useAIUsage = () => {
   }, [user, isRegistered]);
 
   const getModelUsage = (modelId: string) => {
-    // Los modelos premium solo están disponibles con API key propia
-    const premiumModels = [
-      'gpt-4o', 'gpt-4.1', 'gpt-4.1-mini',
-      'gemini-1.5-pro', 'gemini-2.0-flash', 'gemini-2.5-flash', 'gemini-2.5-pro',
-      'claude-3.5-haiku', 'claude-3.5-sonnet', 'claude-3.7-sonnet', 'claude-sonnet-4', 'claude-opus-4'
-    ];
-    const isPremium = premiumModels.includes(modelId);
+    const model = AI_MODELS.find(m => m.id === modelId);
+    if (!model) {
+      return {
+        current_usage: 0,
+        remaining: 0,
+        daily_limit: 0,
+        can_use: false
+      };
+    }
     
-    if (isPremium) {
+    // Para modelos premium (requieren API key)
+    if (model.freeLimit === 0) {
       return {
         current_usage: 0,
         remaining: 999999,
@@ -79,10 +82,11 @@ export const useAIUsage = () => {
       };
     }
     
+    // Para modelos gratuitos, usar datos reales de uso
     return usageData[modelId] || {
       current_usage: 0,
-      remaining: isRegistered ? 999999 : 50,
-      daily_limit: isRegistered ? 999999 : 50,
+      remaining: isRegistered ? model.registeredLimit : model.freeLimit,
+      daily_limit: isRegistered ? model.registeredLimit : model.freeLimit,
       can_use: true
     };
   };
