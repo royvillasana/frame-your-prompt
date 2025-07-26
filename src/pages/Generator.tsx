@@ -90,9 +90,9 @@ const Generator = () => {
     setCurrentStep("tool");
   };
 
-  const handleToolComplete = (tool: string) => {
+  const handleToolComplete = async (tool: string) => {
     setSelectedTool(tool);
-    generatePrompt(tool);
+    await generatePrompt(tool);
     setCurrentStep("result");
   };
 
@@ -157,8 +157,11 @@ const Generator = () => {
     }
   };
 
-  const generatePrompt = (tool: string) => {
+  const generatePrompt = async (tool: string) => {
     if (!projectContext) return;
+
+    // Show loading state
+    setGeneratedPrompt("Generando prompt personalizado...");
 
     // Determine framework and stage text
     let frameworkText = "";
@@ -172,8 +175,8 @@ const Generator = () => {
       stageText = projectStage;
     }
 
-    // Build the structured prompt
-    const structuredPrompt = `Como UX Designer trabajando en la etapa de "${stageText}" del framework ${frameworkText}, necesito ayuda con ${tool}.
+    // Create a meta-prompt to generate the actual UX prompt
+    const metaPrompt = `Actúa como un experto UX Designer y especialista en prompts de IA. Tu tarea es generar un prompt detallado y específico para ayudar a un UX Designer que está trabajando en la etapa de "${stageText}" del framework ${frameworkText}, específicamente con ${tool}.
 
 Contexto del proyecto:
 - Industria: ${projectContext.industry}
@@ -182,7 +185,57 @@ Contexto del proyecto:
 - Alcance: ${projectContext.productScope}
 - Audiencia objetivo: ${projectContext.userProfile}
 
-Utilizando capacidades de IA (análisis de datos, síntesis de información, generación de contenido), ayúdame a:
+INSTRUCCIONES CRÍTICAS:
+1. Genera un prompt COMPLETO y ESPECÍFICO que el UX Designer pueda usar directamente con una IA
+2. El prompt debe estar adaptado específicamente a la industria ${projectContext.industry} y al tipo de producto ${projectContext.productType}
+3. Debe incluir preguntas específicas, metodologías aplicables y entregables concretos para la etapa ${stageText}
+4. El prompt debe ser práctico y orientado a resultados tangibles
+5. Incluye aspectos específicos de ${tool} relevantes para ${frameworkText}
+6. Adapta el lenguaje y enfoque según el tamaño de empresa: ${projectContext.companySize}
+
+Genera SOLO el prompt final que el UX Designer usará, sin explicaciones adicionales ni introducciones. El prompt debe comenzar directamente con instrucciones claras para la IA que lo recibirá.`;
+
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-ai-response', {
+        body: {
+          prompt: metaPrompt,
+          projectContext,
+          selectedFramework,
+          frameworkStage,
+          selectedTool: tool,
+          aiModel: "gpt-4o-mini", // Use OpenAI for prompt generation
+        }
+      });
+
+      if (error) {
+        console.error('Error generating prompt:', error);
+        throw new Error(error.message || 'Error al generar el prompt');
+      }
+
+      if (data?.error) {
+        throw new Error(data.error);
+      }
+      
+      setGeneratedPrompt(data.aiResponse);
+      
+      toast({
+        title: "¡Prompt Generado con IA!",
+        description: "Tu prompt personalizado ha sido creado específicamente para tu proyecto.",
+      });
+    } catch (error: any) {
+      console.error('Error generating prompt:', error);
+      
+      // Fallback to basic prompt structure if AI generation fails
+      const fallbackPrompt = `Como UX Designer trabajando en la etapa de "${stageText}" del framework ${frameworkText}, necesito ayuda con ${tool}.
+
+Contexto del proyecto:
+- Industria: ${projectContext.industry}
+- Tipo de empresa: ${projectContext.companySize}
+- Producto: ${projectContext.productType}
+- Alcance: ${projectContext.productScope}
+- Audiencia objetivo: ${projectContext.userProfile}
+
+Utilizando capacidades de IA, ayúdame a:
 
 1. Generar 5 preguntas específicas para guiar mi proceso de ${tool} en este contexto
 2. Sugerir 3 enfoques innovadores que aprovechen las características únicas de mi industria
@@ -192,12 +245,14 @@ Utilizando capacidades de IA (análisis de datos, síntesis de información, gen
 
 Asegúrate de que todas las recomendaciones estén alineadas con las mejores prácticas de ${frameworkText} y sean aplicables a ${projectContext.companySize} en ${projectContext.industry} que desarrolla ${projectContext.productType} con alcance ${projectContext.productScope}.`;
 
-    setGeneratedPrompt(structuredPrompt);
-    
-    toast({
-      title: "¡Prompt Generado!",
-      description: "Tu prompt personalizado está listo para usar.",
-    });
+      setGeneratedPrompt(fallbackPrompt);
+      
+      toast({
+        title: "Prompt Generado (Modo Básico)",
+        description: "Se generó un prompt básico. La IA no está disponible temporalmente.",
+        variant: "destructive"
+      });
+    }
   };
 
   const copyToClipboard = () => {
