@@ -48,9 +48,10 @@ export const useProfile = () => {
     if (!profile) return [];
     
     const keys = [];
-    if (profile.openai_api_key) keys.push('gpt-4o-mini');
-    if (profile.gemini_api_key) keys.push('gemini-1.5-flash');
-    if (profile.claude_api_key) keys.push('claude-3-haiku');
+    // Priorizar modelos premium cuando hay API key configurada
+    if (profile.openai_api_key) keys.push('gpt-4o');
+    if (profile.gemini_api_key) keys.push('gemini-1.5-pro');
+    if (profile.claude_api_key) keys.push('claude-3.5-sonnet');
     
     return keys;
   };
@@ -60,10 +61,13 @@ export const useProfile = () => {
     
     switch (modelId) {
       case 'gpt-4o-mini':
+      case 'gpt-4o':
         return !!profile.openai_api_key;
       case 'gemini-1.5-flash':
+      case 'gemini-1.5-pro':
         return !!profile.gemini_api_key;
       case 'claude-3-haiku':
+      case 'claude-3.5-sonnet':
         return !!profile.claude_api_key;
       default:
         return false;

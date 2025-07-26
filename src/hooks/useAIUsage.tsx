@@ -62,6 +62,19 @@ export const useAIUsage = () => {
   }, [user, isRegistered]);
 
   const getModelUsage = (modelId: string) => {
+    // Los modelos premium solo están disponibles con API key propia
+    const premiumModels = ['gpt-4o', 'gemini-1.5-pro', 'claude-3.5-sonnet'];
+    const isPremium = premiumModels.includes(modelId);
+    
+    if (isPremium) {
+      return {
+        current_usage: 0,
+        remaining: 999999,
+        daily_limit: 999999,
+        can_use: true // Se validará la API key en el backend
+      };
+    }
+    
     return usageData[modelId] || {
       current_usage: 0,
       remaining: isRegistered ? 999999 : 50,

@@ -29,6 +29,16 @@ export const AI_MODELS: AIModel[] = [
     color: "bg-green-500"
   },
   {
+    id: "gpt-4o",
+    name: "GPT-4o",
+    provider: "OpenAI",
+    description: "Modelo premium de OpenAI para análisis avanzados de UX",
+    freeLimit: 0,
+    registeredLimit: 0,
+    icon: <Sparkles className="h-4 w-4" />,
+    color: "bg-green-600"
+  },
+  {
     id: "gemini-1.5-flash",
     name: "Gemini 1.5 Flash",
     provider: "Google",
@@ -39,6 +49,16 @@ export const AI_MODELS: AIModel[] = [
     color: "bg-blue-500"
   },
   {
+    id: "gemini-1.5-pro",
+    name: "Gemini 1.5 Pro",
+    provider: "Google",
+    description: "Modelo premium de Google para tareas complejas de UX",
+    freeLimit: 0,
+    registeredLimit: 0,
+    icon: <Star className="h-4 w-4" />,
+    color: "bg-blue-600"
+  },
+  {
     id: "claude-3-haiku",
     name: "Claude 3 Haiku",
     provider: "Anthropic",
@@ -47,6 +67,16 @@ export const AI_MODELS: AIModel[] = [
     registeredLimit: 999999,
     icon: <Brain className="h-4 w-4" />,
     color: "bg-purple-500"
+  },
+  {
+    id: "claude-3.5-sonnet",
+    name: "Claude 3.5 Sonnet",
+    provider: "Anthropic",
+    description: "Modelo premium de Anthropic para análisis profundo de UX",
+    freeLimit: 0,
+    registeredLimit: 0,
+    icon: <Brain className="h-4 w-4" />,
+    color: "bg-purple-600"
   }
 ];
 
