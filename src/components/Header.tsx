@@ -3,6 +3,8 @@ import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Brain, Menu, X, Sparkles, User, LogOut } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { LanguageSelector } from "@/components/LanguageSelector";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,15 +17,16 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
   const { user, signOut } = useAuth();
+  const { t } = useLanguage();
 
   const isActive = (path: string) => location.pathname === path;
 
   const navItems = [
-    { name: "Generator", path: "/generator" },
+    { name: t("nav.generator"), path: "/generator" },
     { name: "Prompts", path: "/prompt-library" },
-    { name: "Library", path: "/library" },
-    { name: "Pricing", path: "/pricing" },
-    { name: "Learn", path: "/learn" },
+    { name: t("nav.library"), path: "/library" },
+    { name: t("nav.pricing"), path: "/pricing" },
+    { name: t("nav.learn"), path: "/learn" },
   ];
 
   return (
@@ -59,6 +62,7 @@ const Header = () => {
 
         {/* Desktop CTA */}
         <div className="hidden md:flex items-center space-x-3">
+          <LanguageSelector />
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -76,24 +80,24 @@ const Header = () => {
                 <DropdownMenuItem asChild>
                   <Link to="/profile">
                     <User className="mr-2 h-4 w-4" />
-                    <span>Perfil</span>
+                    <span>{t("nav.profile")}</span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={signOut}>
                   <LogOut className="mr-2 h-4 w-4" />
-                  <span>Cerrar Sesión</span>
+                  <span>{t("nav.logout")}</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
             <>
               <Link to="/auth">
-                <Button variant="ghost">Iniciar Sesión</Button>
+                <Button variant="ghost">{t("nav.login")}</Button>
               </Link>
               <Link to="/auth">
                 <Button variant="hero" size="default">
-                  Comenzar Gratis
+                  {t("auth.sign_up")}
                 </Button>
               </Link>
             </>
@@ -128,29 +132,32 @@ const Header = () => {
               </Link>
             ))}
             <div className="pt-4 space-y-2">
+              <div className="pb-3 border-b border-border/50">
+                <LanguageSelector />
+              </div>
               {user ? (
                 <>
                   <Link to="/profile" className="block" onClick={() => setIsMenuOpen(false)}>
                     <Button variant="ghost" className="w-full justify-start">
                       <User className="mr-2 h-4 w-4" />
-                      Perfil
+                      {t("nav.profile")}
                     </Button>
                   </Link>
                   <Button variant="ghost" className="w-full justify-start" onClick={signOut}>
                     <LogOut className="mr-2 h-4 w-4" />
-                    Cerrar Sesión
+                    {t("nav.logout")}
                   </Button>
                 </>
               ) : (
                 <>
                   <Link to="/auth" className="block" onClick={() => setIsMenuOpen(false)}>
                     <Button variant="ghost" className="w-full">
-                      Iniciar Sesión
+                      {t("nav.login")}
                     </Button>
                   </Link>
                   <Link to="/auth" className="block" onClick={() => setIsMenuOpen(false)}>
                     <Button variant="hero" className="w-full">
-                      Comenzar Gratis
+                      {t("auth.sign_up")}
                     </Button>
                   </Link>
                 </>

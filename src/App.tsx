@@ -17,36 +17,39 @@ import ProjectDetail from "./pages/ProjectDetail";
 import PromptDetail from "./pages/PromptDetail";
 import NotFound from "./pages/NotFound";
 import { AuthProvider } from "./hooks/useAuth";
+import { LanguageProvider } from "./contexts/LanguageContext";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Layout>
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/generator" element={<Generator />} />
-              <Route path="/library" element={<Library />} />
-              <Route path="/pricing" element={<Pricing />} />
-              <Route path="/learn" element={<Learn />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/chat" element={<Chat />} />
-              <Route path="/prompt-library" element={<PromptLibrary />} />
-              <Route path="/project/:projectId" element={<ProjectDetail />} />
-              <Route path="/prompt/:promptId" element={<PromptDetail />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Layout>
-        </BrowserRouter>
-      </TooltipProvider>
-    </AuthProvider>
+    <LanguageProvider>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Layout>
+              <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/generator" element={<Generator />} />
+                <Route path="/library" element={<Library />} />
+                <Route path="/pricing" element={<Pricing />} />
+                <Route path="/learn" element={<Learn />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/chat" element={<Chat />} />
+                <Route path="/prompt-library" element={<PromptLibrary />} />
+                <Route path="/project/:projectId" element={<ProjectDetail />} />
+                <Route path="/prompt/:promptId" element={<PromptDetail />} />
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Layout>
+          </BrowserRouter>
+        </TooltipProvider>
+      </AuthProvider>
+    </LanguageProvider>
   </QueryClientProvider>
 );
 

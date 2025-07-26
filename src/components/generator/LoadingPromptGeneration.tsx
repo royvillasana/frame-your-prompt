@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Sparkles, Brain, Wand2, CheckCircle } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface LoadingPromptGenerationProps {
   isLoading: boolean;
@@ -27,33 +28,34 @@ export const LoadingPromptGeneration = ({
 }: LoadingPromptGenerationProps) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [progress, setProgress] = useState(0);
+  const { t } = useLanguage();
 
   const loadingSteps: LoadingStep[] = [
     {
       id: "analyzing",
-      title: "Analizando contexto",
-      description: `Procesando las características específicas de ${industry} y ${tool}`,
+      title: t("generator.loading.analyzing"),
+      description: `${t("generator.loading.analyzing")} - ${industry} y ${tool}`,
       icon: <Brain className="h-4 w-4" />,
       duration: 2000
     },
     {
       id: "framework",
-      title: "Adaptando al framework",
-      description: `Aplicando mejores prácticas de ${framework}`,
+      title: t("generator.loading.framework"),
+      description: `${t("generator.loading.framework")} - ${framework}`,
       icon: <Wand2 className="h-4 w-4" />,
       duration: 2500
     },
     {
       id: "generating",
-      title: "Generando prompt IA",
-      description: "Creando un prompt personalizado y específico para tu proyecto",
+      title: t("generator.loading.generating"),
+      description: t("generator.loading.generating"),
       icon: <Sparkles className="h-4 w-4" />,
       duration: 3000
     },
     {
       id: "complete",
-      title: "¡Listo!",
-      description: "Tu prompt personalizado está preparado",
+      title: t("generator.loading.complete"),
+      description: t("generator.loading.complete"),
       icon: <CheckCircle className="h-4 w-4" />,
       duration: 500
     }
@@ -116,9 +118,9 @@ export const LoadingPromptGeneration = ({
               <Sparkles className="h-8 w-8 text-primary" />
             </div>
           </div>
-          <CardTitle className="text-xl">Generando tu prompt personalizado</CardTitle>
+          <CardTitle className="text-xl">{t("generator.loading.title")}</CardTitle>
           <CardDescription>
-            Esto tomará solo unos segundos...
+            {t("generator.loading.subtitle")}
           </CardDescription>
         </CardHeader>
         
@@ -126,7 +128,7 @@ export const LoadingPromptGeneration = ({
           {/* Progress Bar */}
           <div className="space-y-2">
             <div className="flex justify-between text-sm text-muted-foreground">
-              <span>Progreso</span>
+              <span>Progress</span>
               <span>{Math.round(progress)}%</span>
             </div>
             <Progress value={progress} className="h-2" />
