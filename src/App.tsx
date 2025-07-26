@@ -11,7 +11,6 @@ import Pricing from "./pages/Pricing";
 import Learn from "./pages/Learn";
 import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
-import { ProjectDetail } from "./pages/ProjectDetail";
 import Chat from "./pages/Chat";
 import PromptLibrary from "./pages/PromptLibrary";
 import NotFound from "./pages/NotFound";
@@ -35,7 +34,6 @@ const App = () => (
               <Route path="/learn" element={<Learn />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/profile" element={<Profile />} />
-              <Route path="/projects/:projectId" element={<ProjectDetail />} />
               <Route path="/chat" element={<Chat />} />
               <Route path="/prompt-library" element={<PromptLibrary />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

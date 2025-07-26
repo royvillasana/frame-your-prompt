@@ -9,7 +9,6 @@ const corsHeaders = {
 
 // API configurations for different AI models
 const AI_CONFIGS = {
-  // OpenAI Models
   'gpt-4o-mini': {
     provider: 'openai',
     apiUrl: 'https://api.openai.com/v1/chat/completions',
@@ -28,55 +27,6 @@ const AI_CONFIGS = {
     5. Mantén un tono profesional pero accesible
     6. Si el prompt incluye secciones numeradas, responde siguiendo esa estructura exacta`
   },
-  'gpt-4o': {
-    provider: 'openai',
-    apiUrl: 'https://api.openai.com/v1/chat/completions',
-    model: 'gpt-4o',
-    maxTokens: 4000,
-    temperature: 0.7,
-    systemPrompt: `Eres un experto UX Designer senior con amplia experiencia en investigación y metodologías de diseño. Tu expertise incluye análisis profundo y pensamiento estratégico.
-    
-    DIRECTRICES AVANZADAS:
-    1. Responde exclusivamente en español con alta calidad y detalle
-    2. Proporciona análisis profundos y consideraciones estratégicas
-    3. Incluye múltiples perspectivas y enfoques innovadores
-    4. Ofrece ejemplos específicos y casos de estudio detallados
-    5. Estructura las respuestas de forma lógica y comprehensiva
-    6. Mantén un nivel experto pero accesible`
-  },
-  'gpt-4.1': {
-    provider: 'openai',
-    apiUrl: 'https://api.openai.com/v1/chat/completions',
-    model: 'gpt-4.1',
-    maxTokens: 8000,
-    temperature: 0.7,
-    systemPrompt: `Eres un UX Director ejecutivo con experiencia visionaria en diseño centrado en el usuario y estrategia de producto. Tu expertise incluye liderazgo en UX y visión a largo plazo.
-    
-    DIRECTRICES EJECUTIVAS:
-    1. Responde en español con perspectiva ejecutiva y visionaria
-    2. Proporciona análisis estratégicos a nivel directivo
-    3. Incluye consideraciones de negocio, ROI y escalabilidad
-    4. Ofrece frameworks y metodologías de vanguardia
-    5. Estructura respuestas con enfoque sistémico y holístico
-    6. Mantén tono de líder visionario en UX`
-  },
-  'gpt-4.1-mini': {
-    provider: 'openai',
-    apiUrl: 'https://api.openai.com/v1/chat/completions',
-    model: 'gpt-4.1-mini',
-    maxTokens: 4000,
-    temperature: 0.7,
-    systemPrompt: `Eres un UX Designer senior con especialización en eficiencia y optimización de procesos de diseño. Tu expertise incluye metodologías ágiles y entrega rápida de valor.
-    
-    DIRECTRICES OPTIMIZADAS:
-    1. Responde en español con enfoque en eficiencia y practicidad
-    2. Proporciona soluciones rápidas y efectivas
-    3. Incluye procesos optimizados y metodologías ágiles
-    4. Ofrece recomendaciones accionables inmediatamente
-    5. Estructura respuestas para implementación rápida
-    6. Mantén equilibrio entre calidad y velocidad`
-  },
-  // Google Gemini Models
   'gemini-1.5-flash': {
     provider: 'google',
     apiUrl: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent',
@@ -93,71 +43,6 @@ const AI_CONFIGS = {
     5. Mantén un equilibrio entre teoría y práctica
     6. Usa un tono profesional pero comprensible`
   },
-  'gemini-1.5-pro': {
-    provider: 'google',
-    apiUrl: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent',
-    model: 'gemini-1.5-pro-latest',
-    maxTokens: 4096,
-    temperature: 0.7,
-    systemPrompt: `Eres un UX Director con experiencia ejecutiva en diseño centrado en el usuario y estrategia de producto. Tu expertise incluye visión estratégica y liderazgo en UX.
-    
-    PAUTAS EJECUTIVAS:
-    1. Responde en español con perspectiva estratégica
-    2. Proporciona análisis profundos a nivel directivo
-    3. Incluye consideraciones de negocio y ROI
-    4. Ofrece frameworks y metodologías avanzadas
-    5. Estructura respuestas con enfoque ejecutivo
-    6. Mantén tono experto y visionario`
-  },
-  'gemini-2.0-flash': {
-    provider: 'google',
-    apiUrl: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent',
-    model: 'gemini-2.0-flash',
-    maxTokens: 4096,
-    temperature: 0.7,
-    systemPrompt: `Eres un UX Innovation Lead con expertise en tecnologías emergentes y futuros digitales. Tu especialidad incluye diseño para próximas generaciones de interfaces.
-    
-    PAUTAS INNOVADORAS:
-    1. Responde en español con perspectiva futurista
-    2. Proporciona soluciones de vanguardia e innovadoras
-    3. Incluye consideraciones de tecnologías emergentes
-    4. Ofrece enfoques disruptivos y experimentales
-    5. Estructura respuestas para el futuro del UX
-    6. Mantén tono visionario e innovador`
-  },
-  'gemini-2.5-flash': {
-    provider: 'google',
-    apiUrl: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',
-    model: 'gemini-2.5-flash',
-    maxTokens: 6000,
-    temperature: 0.7,
-    systemPrompt: `Eres un UX Strategist con pensamiento adaptativo y expertise en optimización continua. Tu especialidad incluye metodologías adaptativas y optimización de rendimiento.
-    
-    PAUTAS ADAPTATIVAS:
-    1. Responde en español con enfoque adaptativo
-    2. Proporciona estrategias flexibles y escalables
-    3. Incluye metodologías de optimización continua
-    4. Ofrece soluciones que se adaptan al contexto
-    5. Estructura respuestas para máxima eficiencia
-    6. Mantén tono estratégico y adaptativo`
-  },
-  'gemini-2.5-pro': {
-    provider: 'google',
-    apiUrl: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent',
-    model: 'gemini-2.5-pro',
-    maxTokens: 8000,
-    temperature: 0.7,
-    systemPrompt: `Eres un Chief Design Officer con pensamiento avanzado y expertise en problemas complejos de UX a escala empresarial. Tu especialidad incluye transformación digital y liderazgo de diseño.
-    
-    PAUTAS EMPRESARIALES:
-    1. Responde en español con perspectiva de C-level
-    2. Proporciona estrategias de transformación digital
-    3. Incluye consideraciones de escala empresarial
-    4. Ofrece frameworks de liderazgo en diseño
-    5. Estructura respuestas para impacto organizacional
-    6. Mantén tono de Chief Design Officer`
-  },
-  // Anthropic Claude Models
   'claude-3-haiku': {
     provider: 'anthropic',
     apiUrl: 'https://api.anthropic.com/v1/messages',
@@ -173,91 +58,11 @@ const AI_CONFIGS = {
     4. Ofrece ejemplos concretos y estudios de caso
     5. Estructura las respuestas de forma lógica y progresiva
     6. Mantén un tono experto pero accesible`
-  },
-  'claude-3.5-haiku': {
-    provider: 'anthropic',
-    apiUrl: 'https://api.anthropic.com/v1/messages',
-    model: 'claude-3-5-haiku-20241022',
-    maxTokens: 3000,
-    temperature: 0.7,
-    systemPrompt: `Eres un UX Speed Specialist con expertise en velocidad ultrarrápida sin comprometer calidad. Tu especialidad incluye metodologías ágiles y entrega rápida de insights.
-    
-    DIRECTRICES VELOCES:
-    1. Responde en español con máxima eficiencia
-    2. Proporciona insights rápidos pero profundos
-    3. Incluye soluciones inmediatamente aplicables
-    4. Ofrece metodologías de implementación rápida
-    5. Estructura respuestas para acción inmediata
-    6. Mantén velocidad sin sacrificar calidad`
-  },
-  'claude-3.5-sonnet': {
-    provider: 'anthropic',
-    apiUrl: 'https://api.anthropic.com/v1/messages',
-    model: 'claude-3-5-sonnet-20241022',
-    maxTokens: 4000,
-    temperature: 0.7,
-    systemPrompt: `Eres un UX Research Director con experiencia avanzada en metodologías de investigación y análisis comportamental. Tu expertise incluye pensamiento sistémico y análisis crítico profundo.
-    
-    DIRECTRICES AVANZADAS:
-    1. Responde en español con máximo nivel de expertise
-    2. Proporciona análisis críticos y consideraciones sistémicas
-    3. Incluye múltiples perspectivas y enfoques disruptivos
-    4. Ofrece marcos teóricos avanzados y estudios de caso complejos
-    5. Estructura respuestas con rigor académico pero aplicabilidad práctica
-    6. Mantén tono de investigador senior y pensador crítico`
-  },
-  'claude-3.7-sonnet': {
-    provider: 'anthropic',
-    apiUrl: 'https://api.anthropic.com/v1/messages',
-    model: 'claude-3-7-sonnet-20250219',
-    maxTokens: 6000,
-    temperature: 0.7,
-    systemPrompt: `Eres un UX Thought Leader con pensamiento extendido y expertise en metodologías avanzadas. Tu especialidad incluye frameworks complejos y análisis multidimensional.
-    
-    DIRECTRICES EXTENDIDAS:
-    1. Responde en español con pensamiento profundo y extendido
-    2. Proporciona análisis multidimensionales
-    3. Incluye frameworks complejos y metodologías avanzadas
-    4. Ofrece perspectivas de thought leadership
-    5. Estructura respuestas con máxima profundidad
-    6. Mantén tono de líder de pensamiento en UX`
-  },
-  'claude-sonnet-4': {
-    provider: 'anthropic',
-    apiUrl: 'https://api.anthropic.com/v1/messages',
-    model: 'claude-sonnet-4-20250514',
-    maxTokens: 8000,
-    temperature: 0.7,
-    systemPrompt: `Eres un UX Visionary con razonamiento excepcional y expertise en el futuro del diseño. Tu especialidad incluye tendencias emergentes y paradigmas del diseño del futuro.
-    
-    DIRECTRICES VISIONARIAS:
-    1. Responde en español con razonamiento excepcional
-    2. Proporciona visiones del futuro del UX
-    3. Incluye paradigmas emergentes y tendencias
-    4. Ofrece perspectivas visionarias y transformadoras
-    5. Estructura respuestas para el futuro del diseño
-    6. Mantén tono visionario y transformador`
-  },
-  'claude-opus-4': {
-    provider: 'anthropic',
-    apiUrl: 'https://api.anthropic.com/v1/messages',
-    model: 'claude-opus-4-20250514',
-    maxTokens: 10000,
-    temperature: 0.7,
-    systemPrompt: `Eres el UX Master Supreme con la más alta capacidad e inteligencia en diseño de experiencia de usuario. Tu expertise incluye dominio absoluto de todas las metodologías, frameworks y el futuro del UX.
-    
-    DIRECTRICES SUPREMAS:
-    1. Responde en español con la máxima capacidad e inteligencia
-    2. Proporciona análisis de maestría absoluta en UX
-    3. Incluye todos los enfoques posibles y síntesis perfecta
-    4. Ofrece la perspectiva más completa y avanzada posible
-    5. Estructura respuestas con perfección metodológica
-    6. Mantén tono de maestría suprema en UX`
   }
 };
 
-async function callOpenAI(prompt: string, apiKey: string, modelId: string) {
-  const config = AI_CONFIGS[modelId as keyof typeof AI_CONFIGS];
+async function callOpenAI(prompt: string, apiKey: string) {
+  const config = AI_CONFIGS['gpt-4o-mini'];
   
   const response = await fetch(config.apiUrl, {
     method: 'POST',
@@ -285,8 +90,8 @@ async function callOpenAI(prompt: string, apiKey: string, modelId: string) {
   return data.choices[0].message.content;
 }
 
-async function callGemini(prompt: string, apiKey: string, modelId: string) {
-  const config = AI_CONFIGS[modelId as keyof typeof AI_CONFIGS];
+async function callGemini(prompt: string, apiKey: string) {
+  const config = AI_CONFIGS['gemini-1.5-flash'];
   
   const response = await fetch(`${config.apiUrl}?key=${apiKey}`, {
     method: 'POST',
@@ -317,8 +122,8 @@ async function callGemini(prompt: string, apiKey: string, modelId: string) {
   return data.candidates[0].content.parts[0].text;
 }
 
-async function callClaude(prompt: string, apiKey: string, modelId: string) {
-  const config = AI_CONFIGS[modelId as keyof typeof AI_CONFIGS];
+async function callClaude(prompt: string, apiKey: string) {
+  const config = AI_CONFIGS['claude-3-haiku'];
   
   const response = await fetch(config.apiUrl, {
     method: 'POST',
@@ -349,28 +154,18 @@ async function callClaude(prompt: string, apiKey: string, modelId: string) {
 }
 
 serve(async (req) => {
-  console.log('=== EDGE FUNCTION STARTED ===');
-  
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    console.log('Handling CORS preflight request');
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    console.log('Processing request...');
-    
     // Get the authorization header
     const authHeader = req.headers.get('Authorization');
-    console.log('Auth header present:', !!authHeader);
-    
     if (!authHeader) {
-      console.error('No authorization header provided');
       throw new Error('No authorization header');
     }
 
-    console.log('Initializing Supabase client...');
-    
     // Initialize Supabase client
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
@@ -382,41 +177,22 @@ serve(async (req) => {
       }
     );
 
-    console.log('Getting user...');
-    
     // Get current user
     const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
     if (userError || !user) {
-      console.error('User authentication failed:', userError);
       throw new Error('Usuario no autenticado');
     }
-    
-    console.log('User authenticated:', user.id);
 
-    console.log('Parsing request body...');
-    
     // Get request body
     const { prompt, projectContext, selectedFramework, frameworkStage, selectedTool, aiModel = 'gpt-4o-mini' } = await req.json();
 
-    console.log('Request received:', { 
-      aiModel, 
-      hasPrompt: !!prompt,
-      selectedFramework,
-      frameworkStage,
-      selectedTool 
-    });
-
     if (!prompt) {
-      console.error('No prompt provided');
       throw new Error('Prompt requerido');
     }
 
     if (!AI_CONFIGS[aiModel as keyof typeof AI_CONFIGS]) {
-      console.error('AI model not supported:', aiModel, 'Available models:', Object.keys(AI_CONFIGS));
-      throw new Error(`Modelo de IA no soportado: ${aiModel}`);
+      throw new Error('Modelo de IA no soportado');
     }
-    
-    console.log('Model configuration found for:', aiModel);
 
     // Check usage limits using the database function
     const { data: usageCheck, error: usageError } = await supabaseClient.rpc(
@@ -429,11 +205,8 @@ serve(async (req) => {
     );
 
     if (usageError) {
-      console.error('Usage check error:', usageError);
       throw new Error(`Error checking usage: ${usageError.message}`);
     }
-
-    console.log('Usage check result:', usageCheck);
 
     if (!usageCheck.can_use) {
       throw new Error(`Has alcanzado el límite diario para ${aiModel}. Límite: ${usageCheck.daily_limit}, usado: ${usageCheck.current_usage}. Prueba con otro modelo.`);
@@ -442,57 +215,38 @@ serve(async (req) => {
     // Get API keys from user profile
     const { data: profile, error: profileError } = await supabaseClient
       .from('profiles')
-      .select('openai_api_key, gemini_api_key, claude_api_key')
+      .select('openai_api_key')
       .eq('user_id', user.id)
       .single();
 
-    if (profileError) {
-      console.error('Profile error:', profileError);
-      throw new Error('Error al obtener el perfil del usuario');
+    // For now, we'll use the OpenAI API key for all models
+    // In the future, you could add separate columns for different API keys
+    if (profileError || !profile?.openai_api_key) {
+      throw new Error('API key no configurada. Ve a tu perfil para configurarla.');
     }
-
-    console.log('Profile loaded, checking API keys for model:', aiModel);
 
     let aiResponse: string;
-    const config = AI_CONFIGS[aiModel as keyof typeof AI_CONFIGS];
 
-    // Call the appropriate AI service based on the selected model and API keys
-    console.log('Calling AI service for provider:', config.provider);
-    switch (config.provider) {
-      case 'openai':
-        if (!profile?.openai_api_key) {
-          console.error('Missing OpenAI API key for model:', aiModel);
-          throw new Error('API key de OpenAI no configurada. Ve a tu perfil para configurarla.');
-        }
-        console.log('Calling OpenAI with model:', config.model);
-        aiResponse = await callOpenAI(prompt, profile.openai_api_key, aiModel);
+    // Call the appropriate AI service based on the selected model
+    switch (aiModel) {
+      case 'gpt-4o-mini':
+        aiResponse = await callOpenAI(prompt, profile.openai_api_key);
         break;
-      case 'google':
-        if (!profile?.gemini_api_key) {
-          console.error('Missing Gemini API key for model:', aiModel);
-          throw new Error('API key de Google Gemini no configurada. Ve a tu perfil para configurarla.');
-        }
-        console.log('Calling Gemini with model:', config.model);
-        aiResponse = await callGemini(prompt, profile.gemini_api_key, aiModel);
+      case 'gemini-1.5-flash':
+        // For demo purposes, we'll use OpenAI for all models
+        // In production, you'd need separate API keys for each service
+        aiResponse = await callOpenAI(prompt, profile.openai_api_key);
         break;
-      case 'anthropic':
-        if (!profile?.claude_api_key) {
-          console.error('Missing Claude API key for model:', aiModel);
-          throw new Error('API key de Claude no configurada. Ve a tu perfil para configurarla.');
-        }
-        console.log('Calling Claude with model:', config.model);
-        aiResponse = await callClaude(prompt, profile.claude_api_key, aiModel);
+      case 'claude-3-haiku':
+        // For demo purposes, we'll use OpenAI for all models
+        // In production, you'd need separate API keys for each service
+        aiResponse = await callOpenAI(prompt, profile.openai_api_key);
         break;
       default:
-        console.error('Unsupported provider:', config.provider);
-        throw new Error('Proveedor de IA no soportado');
+        throw new Error('Modelo de IA no soportado');
     }
 
-    console.log('=== AI RESPONSE SUCCESSFUL ===');
-    console.log('Response length:', aiResponse.length);
-
     // Save the generated prompt and response to database
-    console.log('Saving to database...');
     const { error: saveError } = await supabaseClient
       .from('generated_prompts')
       .insert({
@@ -508,11 +262,8 @@ serve(async (req) => {
     if (saveError) {
       console.error('Error saving to database:', saveError);
       // Don't throw error here, just log it
-    } else {
-      console.log('Successfully saved to database');
     }
 
-    console.log('=== RETURNING SUCCESS RESPONSE ===');
     return new Response(JSON.stringify({ 
       aiResponse,
       usage: usageCheck
@@ -521,19 +272,9 @@ serve(async (req) => {
     });
 
   } catch (error: any) {
-    console.error('=== ERROR IN EDGE FUNCTION ===');
-    console.error('Error type:', typeof error);
-    console.error('Error message:', error.message);
-    console.error('Error stack:', error.stack);
-    console.error('Full error object:', error);
-    
-    const errorMessage = error.message || 'Error interno del servidor';
-    console.log('Returning error response with message:', errorMessage);
-    
+    console.error('Error in generate-ai-response function:', error);
     return new Response(JSON.stringify({ 
-      error: errorMessage,
-      timestamp: new Date().toISOString(),
-      details: error.stack ? error.stack.substring(0, 500) : 'No stack trace available'
+      error: error.message || 'Error interno del servidor' 
     }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

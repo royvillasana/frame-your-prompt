@@ -20,31 +20,7 @@ export const useAIUsage = () => {
   const isRegistered = !!user;
 
   const fetchUsageData = async () => {
-    // Para usuarios no autenticados, usar límites por defecto
     if (!user) {
-      const usage: UsageData = {};
-      
-      AI_MODELS.forEach(model => {
-        // Solo modelos gratuitos están disponibles para usuarios no autenticados
-        if (model.freeLimit > 0) {
-          usage[model.id] = {
-            current_usage: 0,
-            remaining: model.freeLimit,
-            daily_limit: model.freeLimit,
-            can_use: true
-          };
-        } else {
-          // Modelos premium no disponibles sin autenticación
-          usage[model.id] = {
-            current_usage: 0,
-            remaining: 0,
-            daily_limit: 0,
-            can_use: false
-          };
-        }
-      });
-      
-      setUsageData(usage);
       setLoading(false);
       return;
     }
@@ -86,31 +62,12 @@ export const useAIUsage = () => {
   }, [user, isRegistered]);
 
   const getModelUsage = (modelId: string) => {
-    const model = AI_MODELS.find(m => m.id === modelId);
-    if (!model) {
-      return {
-        current_usage: 0,
-        remaining: 0,
-        daily_limit: 0,
-        can_use: false
-      };
-    }
-    
-    // Para modelos premium (requieren API key)
-    if (model.freeLimit === 0) {
-      return {
-        current_usage: 0,
-        remaining: 999999,
-        daily_limit: 999999,
-        can_use: true // Se validará la API key en el backend
-      };
-    }
-    
-    // Para modelos gratuitos, usar datos reales de uso
     return usageData[modelId] || {
       current_usage: 0,
-      remaining: isRegistered ? model.registeredLimit : model.freeLimit,
-      daily_limit: isRegistered ? model.registeredLimit : model.freeLimit,
+      remaining: isRegistered ? 
+        AI_MODELS.find(m => m.id === modelId)?.registeredLimit || 5 : 5,
+      daily_limit: isRegistered ? 
+        AI_MODELS.find(m => m.id === modelId)?.registeredLimit || 5 : 5,
       can_use: true
     };
   };

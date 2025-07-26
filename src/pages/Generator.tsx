@@ -13,28 +13,24 @@ import { ProjectContextStep, ProjectContext } from "@/components/generator/Proje
 import { ProjectStageStep } from "@/components/generator/ProjectStageStep";
 import { FrameworkStep } from "@/components/generator/FrameworkStep";
 import { ToolSelectionStep } from "@/components/generator/ToolSelectionStep";
-import { ProjectConfigStep } from "@/components/generator/ProjectConfigStep";
 import { AIModelSelector } from "@/components/generator/AIModelSelector";
-import { AILimitAlert } from "@/components/generator/AILimitAlert";
-import { FreeAIIntegration } from "@/components/generator/FreeAIIntegration";
 import { useAIUsage } from "@/hooks/useAIUsage";
 
-type Step = "project" | "context" | "stage" | "framework" | "tool" | "result";
+type Step = "context" | "stage" | "framework" | "tool" | "result";
 
 const Generator = () => {
   const { toast } = useToast();
   const { user } = useAuth();
-  const { refreshUsage, getModelUsage } = useAIUsage();
+  const { refreshUsage } = useAIUsage();
   const navigate = useNavigate();
   const location = useLocation();
-  const [currentStep, setCurrentStep] = useState<Step>("project");
-  const [currentProject, setCurrentProject] = useState<{id: string, name: string, framework: string} | null>(null);
+  const [currentStep, setCurrentStep] = useState<Step>("context");
   const [projectContext, setProjectContext] = useState<ProjectContext | null>(null);
   const [projectStage, setProjectStage] = useState("");
   const [selectedFramework, setSelectedFramework] = useState("");
   const [frameworkStage, setFrameworkStage] = useState("");
   const [selectedTool, setSelectedTool] = useState("");
-  const [selectedAIModel, setSelectedAIModel] = useState("llama-3.1-8b");
+  const [selectedAIModel, setSelectedAIModel] = useState("gpt-4o-mini");
   const [generatedPrompt, setGeneratedPrompt] = useState("");
   const [aiResponse, setAiResponse] = useState("");
   const [isGeneratingAI, setIsGeneratingAI] = useState(false);
@@ -43,52 +39,6 @@ const Generator = () => {
     if (!user) {
       navigate("/auth");
       return;
-    }
-
-    // Check URL parameters for project integration
-    const searchParams = new URLSearchParams(location.search);
-    const projectId = searchParams.get('project');
-    const framework = searchParams.get('framework'); 
-    const stage = searchParams.get('stage');
-    const editPromptId = searchParams.get('edit');
-    const quickStart = searchParams.get('quickStart') === 'true';
-
-    // Handle editing existing prompt
-    if (editPromptId) {
-      loadPromptForEditing(editPromptId);
-      return;
-    }
-
-    // Handle project integration from URL params
-    if (projectId && framework) {
-      // Set current project from URL params
-      setCurrentProject({
-        id: projectId,
-        name: 'Existing Project', // Will be loaded later if needed
-        framework: framework
-      });
-      setSelectedFramework(framework);
-      
-      if (stage) {
-        setFrameworkStage(stage);
-        
-        // If quickStart is true, skip context step and go directly to tool selection
-        if (quickStart) {
-          // Set default project context for quick start
-          setProjectContext({
-            industry: 'saas',
-            productType: 'web',
-            companySize: 'startup',
-            productScope: 'digital',
-            userProfile: 'general'
-          });
-          setCurrentStep("tool");
-        } else {
-          setCurrentStep("context");
-        }
-      } else {
-        setCurrentStep("context");
-      }
     }
 
     // Check if coming from chat with result data
@@ -122,94 +72,7 @@ const Generator = () => {
       }
       setCurrentStep("result");
     }
-  }, [user, navigate, location.state, location.search]);
-
-  const loadPromptForEditing = async (promptId: string) => {
-    try {
-      const { data: prompt, error } = await supabase
-        .from('generated_prompts')
-        .select('*')
-        .eq('id', promptId)
-        .single();
-
-      if (error || !prompt) {
-        toast({
-          title: "Error",
-          description: "Prompt not found",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      // Pre-fill the form with existing prompt data
-      setProjectContext((prompt.project_context as unknown as ProjectContext) || null);
-      setSelectedFramework(prompt.selected_framework);
-      setFrameworkStage(prompt.framework_stage);
-      setSelectedTool(prompt.selected_tool);
-      setGeneratedPrompt(prompt.original_prompt);
-      if (prompt.ai_response) {
-        setAiResponse(prompt.ai_response);
-      }
-      setCurrentStep("result");
-    } catch (error) {
-      console.error('Error loading prompt for editing:', error);
-      toast({
-        title: "Error",
-        description: "Failed to load prompt",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleProjectConfigComplete = async (projectName: string, description: string) => {
-    try {
-      // Create the project without framework (will be set when framework is selected)
-      const { data: project, error } = await supabase
-        .from('projects')
-        .insert([
-          {
-            user_id: user!.id,
-            name: projectName,
-            description,
-            selected_framework: '', // Will be updated when framework is selected
-          }
-        ])
-        .select()
-        .single();
-
-      if (error) {
-        console.error('Error creating project:', error);
-        toast({
-          title: "Error",
-          description: "No se pudo crear el proyecto",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      // Set current project
-      setCurrentProject({
-        id: project.id,
-        name: project.name,
-        framework: '' // Will be set later
-      });
-      
-      toast({
-        title: "¡Proyecto creado!",
-        description: `Proyecto "${projectName}" creado exitosamente`,
-      });
-
-      // Continue to context step
-      setCurrentStep("context");
-    } catch (error) {
-      console.error('Error creating project:', error);
-      toast({
-        title: "Error",
-        description: "Error inesperado al crear el proyecto",
-        variant: "destructive",
-      });
-    }
-  };
+  }, [user, navigate, location.state]);
 
   const handleContextComplete = (context: ProjectContext) => {
     setProjectContext(context);
@@ -221,25 +84,9 @@ const Generator = () => {
     setCurrentStep("framework");
   };
 
-  const handleFrameworkComplete = async (framework: string, stage: string) => {
+  const handleFrameworkComplete = (framework: string, stage: string) => {
     setSelectedFramework(framework);
     setFrameworkStage(stage);
-    
-    // Update project with selected framework if we have a current project
-    if (currentProject?.id) {
-      try {
-        await supabase
-          .from('projects')
-          .update({ selected_framework: framework })
-          .eq('id', currentProject.id);
-          
-        // Update current project state
-        setCurrentProject(prev => prev ? { ...prev, framework } : null);
-      } catch (error) {
-        console.error('Error updating project framework:', error);
-      }
-    }
-    
     setCurrentStep("tool");
   };
 
@@ -254,7 +101,7 @@ const Generator = () => {
     
     setIsGeneratingAI(true);
     try {
-      const { data, error } = await supabase.functions.invoke('generate-ai-response-simple', {
+      const { data, error } = await supabase.functions.invoke('generate-ai-response', {
         body: {
           prompt: generatedPrompt,
           projectContext,
@@ -276,33 +123,6 @@ const Generator = () => {
       }
       
       setAiResponse(data.aiResponse);
-      
-      // Save the prompt to database if we have a current project
-      if (currentProject?.id && user) {
-        try {
-          await supabase
-            .from('generated_prompts')
-            .insert([
-              {
-                user_id: user.id,
-                project_id: currentProject.id,
-                project_context: projectContext as any, // Convert to Json type
-                selected_framework: selectedFramework,
-                framework_stage: frameworkStage,
-                selected_tool: selectedTool,
-                original_prompt: generatedPrompt,
-                ai_response: data.aiResponse,
-              }
-            ]);
-          
-          console.log('Prompt saved to project successfully');
-          sonnerToast.success("¡Prompt guardado en el proyecto!");
-        } catch (saveError) {
-          console.error('Error saving prompt to project:', saveError);
-          // Don't show error to user as the main function worked
-        }
-      }
-      
       refreshUsage(); // Refresh usage data after successful AI response
       sonnerToast.success("¡Respuesta generada con IA!");
     } catch (error: any) {
@@ -387,43 +207,35 @@ Asegúrate de que todas las recomendaciones estén alineadas con las mejores pr�
 
   const renderCurrentStep = () => {
     switch (currentStep) {
-      case "project":
-        return <ProjectConfigStep onNext={handleProjectConfigComplete} />;
       case "context":
         return <ProjectContextStep onNext={handleContextComplete} />;
       case "stage":
-        return projectContext ? (
+        return (
           <ProjectStageStep 
-            context={projectContext} 
+            context={projectContext!} 
             onNext={handleStageComplete}
             onBack={() => setCurrentStep("context")}
           />
-        ) : (
-          <div>Loading...</div>
         );
       case "framework":
-        return projectContext ? (
+        return (
           <FrameworkStep 
-            context={projectContext}
+            context={projectContext!}
             projectStage={projectStage}
             onNext={handleFrameworkComplete}
             onBack={() => setCurrentStep("stage")}
           />
-        ) : (
-          <div>Loading...</div>
         );
       case "tool":
-        return projectContext ? (
+        return (
           <ToolSelectionStep 
-            context={projectContext}
+            context={projectContext!}
             projectStage={projectStage}
             framework={selectedFramework}
             frameworkStage={frameworkStage}
             onGenerate={handleToolComplete}
             onBack={() => setCurrentStep("framework")}
           />
-        ) : (
-          <div>Loading...</div>
         );
       case "result":
         return (
@@ -448,12 +260,6 @@ Asegúrate de que todas las recomendaciones estén alineadas con las mejores pr�
                 selectedModel={selectedAIModel}
                 onModelSelect={setSelectedAIModel}
                 disabled={isGeneratingAI}
-              />
-              
-              <AILimitAlert 
-                selectedModel={selectedAIModel}
-                usage={getModelUsage(selectedAIModel)}
-                onModelSelect={setSelectedAIModel}
               />
               
               <div className="flex flex-wrap gap-2">
@@ -520,9 +326,6 @@ Asegúrate de que todas las recomendaciones estén alineadas con las mejores pr�
                   </div>
                 </div>
               )}
-
-              {/* Free AI Integration */}
-              <FreeAIIntegration prompt={generatedPrompt} />
 
               <div className="pt-4">
                 <div className="flex flex-wrap gap-2">
