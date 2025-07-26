@@ -102,6 +102,7 @@ export type Database = {
           gemini_api_key: string | null
           id: string
           openai_api_key: string | null
+          perplexity_api_key: string | null
           updated_at: string
           user_id: string
         }
@@ -112,6 +113,7 @@ export type Database = {
           gemini_api_key?: string | null
           id?: string
           openai_api_key?: string | null
+          perplexity_api_key?: string | null
           updated_at?: string
           user_id: string
         }
@@ -122,6 +124,7 @@ export type Database = {
           gemini_api_key?: string | null
           id?: string
           openai_api_key?: string | null
+          perplexity_api_key?: string | null
           updated_at?: string
           user_id?: string
         }
