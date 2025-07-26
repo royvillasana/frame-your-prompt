@@ -232,27 +232,19 @@ export const AIModelSelector = ({ selectedModel, onModelSelect, disabled }: AIMo
   // Categorizar modelos
   const freeModels = AI_MODELS.filter(m => m.freeLimit > 0);
   const premiumModels = AI_MODELS.filter(m => m.freeLimit === 0);
-  
-  // Debug: log the models
-  console.log('Free models count:', freeModels.length);
-  console.log('Free models:', freeModels.map(m => ({ id: m.id, name: m.name, freeLimit: m.freeLimit })));
-  console.log('Loading state:', loading);
-  console.log('User registered:', isRegistered);
 
   // Auto-select first available model
   useEffect(() => {
     if (!selectedModel) {
-      // Priorizar modelos con API key configurada, luego modelos gratuitos
       const configuredKeys = getConfiguredAPIKeys();
-      if (configuredKeys.length > 0) {
+      
+      // Priorizar modelos gratuitos siempre, luego modelos con API key configurada
+      if (freeModels.length > 0) {
+        onModelSelect(freeModels[0].id);
+        setActiveTab("free");
+      } else if (configuredKeys.length > 0) {
         onModelSelect(configuredKeys[0]);
         setActiveTab("premium");
-      } else {
-        // Seleccionar primer modelo gratuito disponible
-        if (freeModels.length > 0) {
-          onModelSelect(freeModels[0].id);
-          setActiveTab("free");
-        }
       }
     } else {
       // Actualizar tab activo basado en el modelo seleccionado
