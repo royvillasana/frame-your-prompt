@@ -238,10 +238,19 @@ serve(async (req) => {
         apiKey = profile.perplexity_api_key;
         aiResponse = await callPerplexity(prompt, apiKey, aiModel);
       } else if (config.provider === 'openai') {
-        if (!profile?.openai_api_key) {
-          throw new Error('API key de OpenAI no configurada. Ve a tu perfil para configurarla.');
+        // Try user's API key first, then fall back to Supabase key for registered users
+        if (profile?.openai_api_key) {
+          apiKey = profile.openai_api_key;
+        } else if (isRegistered) {
+          // Use Supabase OpenAI API key for registered users without their own key
+          const supabaseOpenAIKey = Deno.env.get('OPENAI_API_KEY');
+          if (!supabaseOpenAIKey) {
+            throw new Error('Servicio de IA temporalmente no disponible. Intenta más tarde o configura tu propia API key.');
+          }
+          apiKey = supabaseOpenAIKey;
+        } else {
+          throw new Error('API key de OpenAI no configurada. Regístrate o configura tu propia API key en tu perfil.');
         }
-        apiKey = profile.openai_api_key;
         aiResponse = await callOpenAI(prompt, apiKey, maxTokens);
       } else {
         throw new Error('Proveedor de IA no soportado');
