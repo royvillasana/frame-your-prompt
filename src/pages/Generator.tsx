@@ -101,7 +101,7 @@ const Generator = () => {
     
     setIsGeneratingAI(true);
     try {
-      const { data, error } = await supabase.functions.invoke('generate-ai-response', {
+      const { data, error } = await supabase.functions.invoke('generate-ai-response-simple', {
         body: {
           prompt: generatedPrompt,
           projectContext,
