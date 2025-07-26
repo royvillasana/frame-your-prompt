@@ -51,14 +51,14 @@ export const ProjectSelectionStep = ({ onNewProject, onExistingProject }: Projec
       if (error) throw error;
       setProjects(data || []);
     } catch (error: any) {
-      toast.error("Error al cargar los proyectos");
+      toast.error("Error loading projects");
       console.error(error);
     }
   };
 
   const handleNewProject = () => {
     if (!projectName.trim()) {
-      toast.error("El nombre del proyecto es requerido");
+      toast.error("Project name is required");
       return;
     }
     onNewProject(projectName, projectDescription);
@@ -127,12 +127,12 @@ export const ProjectSelectionStep = ({ onNewProject, onExistingProject }: Projec
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="projectDescription">Descripción (Opcional)</Label>
+            <Label htmlFor="projectDescription">Description (Optional)</Label>
             <Textarea
               id="projectDescription"
               value={projectDescription}
               onChange={(e) => setProjectDescription(e.target.value)}
-              placeholder="Describe brevemente el objetivo y alcance de tu proyecto..."
+              placeholder="Briefly describe the objective and scope of your project..."
               rows={3}
             />
           </div>
@@ -143,14 +143,14 @@ export const ProjectSelectionStep = ({ onNewProject, onExistingProject }: Projec
               variant="outline"
               className="flex-1"
             >
-              Atrás
+              Back
             </Button>
             <Button 
               onClick={handleNewProject}
               disabled={!projectName.trim()}
               className="flex-1"
             >
-              Continuar
+              Continue
             </Button>
           </div>
         </CardContent>
@@ -161,23 +161,23 @@ export const ProjectSelectionStep = ({ onNewProject, onExistingProject }: Projec
   return (
     <Card className="bg-gradient-card shadow-medium">
       <CardHeader>
-        <CardTitle>Seleccionar Proyecto Existente</CardTitle>
+        <CardTitle>Select Existing Project</CardTitle>
         <CardDescription>
-          Elige un proyecto existente para continuar agregando prompts
+          Choose an existing project to continue adding prompts
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {projects.length === 0 ? (
           <div className="text-center py-8">
             <FolderOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <p className="text-muted-foreground mb-4">No tienes proyectos creados aún</p>
+            <p className="text-muted-foreground mb-4">You don't have any projects created yet</p>
             <Button 
               onClick={() => setIsNewProject(true)}
               variant="outline"
               className="gap-2"
             >
               <Plus className="h-4 w-4" />
-              Crear mi primer proyecto
+              Create my first project
             </Button>
           </div>
         ) : (
@@ -218,7 +218,7 @@ export const ProjectSelectionStep = ({ onNewProject, onExistingProject }: Projec
                 variant="outline"
                 className="flex-1"
               >
-                Atrás
+                Back
               </Button>
               <Button 
                 onClick={() => setIsNewProject(true)}
@@ -226,7 +226,7 @@ export const ProjectSelectionStep = ({ onNewProject, onExistingProject }: Projec
                 className="gap-2"
               >
                 <Plus className="h-4 w-4" />
-                Nuevo Proyecto
+                New Project
               </Button>
             </div>
           </>

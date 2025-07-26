@@ -23,56 +23,56 @@ const getToolsByFrameworkAndStage = (framework: string, stage: string) => {
         { id: "personas", name: "Personas", description: "User archetypes based on research", tooltip: "Fictional representations of real users based on data" },
         { id: "journey-map", name: "User Journey Map", description: "Visualization of the complete user experience", tooltip: "Mapping of all touchpoints in the user experience" }
       ],
-      "Definir": [
-        { id: "problem-statement", name: "Declaración del Problema", description: "Definición clara y concisa del problema a resolver", tooltip: "Formulación específica del desafío centrado en el usuario" },
-        { id: "hmw", name: "¿Cómo Podríamos...?", description: "Preguntas que reformulan problemas como oportunidades", tooltip: "Técnica para convertir problemas en oportunidades de diseño" },
-        { id: "pov", name: "Punto de Vista", description: "Perspectiva específica sobre el usuario y sus necesidades", tooltip: "Declaración que combina usuario, necesidad y insight" }
+      "Define": [
+        { id: "problem-statement", name: "Problem Statement", description: "Clear and concise definition of the problem to solve", tooltip: "Specific formulation of the user-centered challenge" },
+        { id: "hmw", name: "How Might We...?", description: "Questions that reframe problems as opportunities", tooltip: "Technique to convert problems into design opportunities" },
+        { id: "pov", name: "Point of View", description: "Specific perspective on the user and their needs", tooltip: "Statement combining user, need and insight" }
       ],
-      "Idear": [
-        { id: "brainstorming", name: "Lluvia de Ideas", description: "Generación libre de ideas sin restricciones", tooltip: "Técnica grupal para generar gran cantidad de ideas creativas" },
-        { id: "crazy-8s", name: "Crazy 8s", description: "8 ideas en 8 minutos para forzar la creatividad", tooltip: "Ejercicio de sketching rápido para generar ideas diversas" },
-        { id: "scamper", name: "SCAMPER", description: "Técnica sistemática para modificar ideas existentes", tooltip: "Sustituir, Combinar, Adaptar, Modificar, Poner otros usos, Eliminar, Reorganizar" }
+      "Ideate": [
+        { id: "brainstorming", name: "Brainstorming", description: "Free generation of ideas without restrictions", tooltip: "Group technique to generate many creative ideas" },
+        { id: "crazy-8s", name: "Crazy 8s", description: "8 ideas in 8 minutes to force creativity", tooltip: "Quick sketching exercise to generate diverse ideas" },
+        { id: "scamper", name: "SCAMPER", description: "Systematic technique to modify existing ideas", tooltip: "Substitute, Combine, Adapt, Modify, Put to other uses, Eliminate, Rearrange" }
       ],
-      "Prototipar": [
-        { id: "sketches", name: "Sketches", description: "Dibujos rápidos para explorar ideas", tooltip: "Representaciones visuales rápidas de conceptos" },
-        { id: "wireframes", name: "Wireframes", description: "Estructura básica de interfaces sin diseño visual", tooltip: "Esquemas que muestran disposición de elementos sin estilo" },
-        { id: "mockups", name: "Mockups", description: "Representaciones visuales de alta fidelidad", tooltip: "Diseños detallados que muestran apariencia final" }
+      "Prototype": [
+        { id: "sketches", name: "Sketches", description: "Quick drawings to explore ideas", tooltip: "Fast visual representations of concepts" },
+        { id: "wireframes", name: "Wireframes", description: "Basic interface structure without visual design", tooltip: "Layouts showing element arrangement without styling" },
+        { id: "mockups", name: "Mockups", description: "High-fidelity visual representations", tooltip: "Detailed designs showing final appearance" }
       ],
-      "Testear": [
-        { id: "usability-testing", name: "Test de Usabilidad", description: "Evaluación de la facilidad de uso con usuarios reales", tooltip: "Observación directa de usuarios interactuando con el producto" },
-        { id: "ab-testing", name: "A/B Testing", description: "Comparación de dos versiones para ver cuál funciona mejor", tooltip: "Método estadístico para comparar efectividad de variantes" }
+      "Test": [
+        { id: "usability-testing", name: "Usability Testing", description: "Evaluation of ease of use with real users", tooltip: "Direct observation of users interacting with the product" },
+        { id: "ab-testing", name: "A/B Testing", description: "Comparison of two versions to see which works better", tooltip: "Statistical method to compare effectiveness of variants" }
       ]
     },
     "lean-ux": {
-      "Pensar": [
-        { id: "assumptions", name: "Mapeo de Suposiciones", description: "Identificación de creencias sobre usuarios y negocio", tooltip: "Documentación de hipótesis que necesitan validación" },
-        { id: "proto-personas", name: "Proto-Personas", description: "Personas iniciales basadas en suposiciones", tooltip: "Versiones tempranas de personas antes de investigación formal" }
+      "Think": [
+        { id: "assumptions", name: "Assumption Mapping", description: "Identification of beliefs about users and business", tooltip: "Documentation of hypotheses that need validation" },
+        { id: "proto-personas", name: "Proto-Personas", description: "Initial personas based on assumptions", tooltip: "Early versions of personas before formal research" }
       ],
-      "Hacer": [
-        { id: "mvp", name: "MVP Design", description: "Diseño de producto mínimo viable", tooltip: "Versión más simple que permite aprender sobre usuarios" },
-        { id: "wireframes", name: "Wireframes", description: "Estructura básica de interfaces", tooltip: "Esquemas de layout sin elementos visuales detallados" }
+      "Make": [
+        { id: "mvp", name: "MVP Design", description: "Minimum viable product design", tooltip: "Simplest version that allows learning about users" },
+        { id: "wireframes", name: "Wireframes", description: "Basic interface structure", tooltip: "Layout schemes without detailed visual elements" }
       ],
-      "Verificar": [
-        { id: "user-testing", name: "Testing de Usuario", description: "Validación rápida con usuarios reales", tooltip: "Pruebas ágiles para validar hipótesis de diseño" },
-        { id: "analytics", name: "Análisis de Métricas", description: "Evaluación de datos de comportamiento", tooltip: "Interpretación de datos cuantitativos sobre uso del producto" }
+      "Check": [
+        { id: "user-testing", name: "User Testing", description: "Quick validation with real users", tooltip: "Agile testing to validate design hypotheses" },
+        { id: "analytics", name: "Metrics Analysis", description: "Evaluation of behavioral data", tooltip: "Interpretation of quantitative data about product usage" }
       ]
     },
     "double-diamond": {
-      "Descubrir": [
-        { id: "user-research", name: "Investigación de Usuario", description: "Exploración amplia del espacio del problema", tooltip: "Métodos diversos para entender contexto y necesidades" },
-        { id: "market-analysis", name: "Análisis de Mercado", description: "Evaluación del landscape competitivo", tooltip: "Investigación sobre competitors y oportunidades de mercado" }
+      "Discover": [
+        { id: "user-research", name: "User Research", description: "Broad exploration of the problem space", tooltip: "Diverse methods to understand context and needs" },
+        { id: "market-analysis", name: "Market Analysis", description: "Evaluation of competitive landscape", tooltip: "Research on competitors and market opportunities" }
       ],
-      "Definir": [
-        { id: "problem-definition", name: "Definición del Problema", description: "Síntesis de hallazgos en problema específico", tooltip: "Convergencia de insights en problema claro y accionable" },
-        { id: "design-brief", name: "Brief de Diseño", description: "Documento que guía el proceso de diseño", tooltip: "Especificaciones claras sobre qué diseñar y por qué" }
+      "Define": [
+        { id: "problem-definition", name: "Problem Definition", description: "Synthesis of findings into specific problem", tooltip: "Convergence of insights into clear and actionable problem" },
+        { id: "design-brief", name: "Design Brief", description: "Document that guides the design process", tooltip: "Clear specifications about what to design and why" }
       ],
-      "Desarrollar": [
-        { id: "concept-development", name: "Desarrollo de Conceptos", description: "Exploración de múltiples soluciones", tooltip: "Generación y refinamiento de ideas de solución" },
-        { id: "prototyping", name: "Prototipado", description: "Creación de versiones tempranas de la solución", tooltip: "Construcción de representaciones tangibles de ideas" }
+      "Develop": [
+        { id: "concept-development", name: "Concept Development", description: "Exploration of multiple solutions", tooltip: "Generation and refinement of solution ideas" },
+        { id: "prototyping", name: "Prototyping", description: "Creation of early versions of the solution", tooltip: "Building tangible representations of ideas" }
       ],
-      "Entregar": [
-        { id: "final-design", name: "Diseño Final", description: "Refinamiento hasta versión lista para implementar", tooltip: "Solución completamente especificada y validada" },
-        { id: "implementation", name: "Implementación", description: "Traspaso a desarrollo y lanzamiento", tooltip: "Handoff técnico y supervisión de construcción" }
+      "Deliver": [
+        { id: "final-design", name: "Final Design", description: "Refinement to ready-for-implementation version", tooltip: "Fully specified and validated solution" },
+        { id: "implementation", name: "Implementation", description: "Handoff to development and launch", tooltip: "Technical handoff and construction oversight" }
       ]
     }
   };
@@ -83,25 +83,25 @@ const getToolsByFrameworkAndStage = (framework: string, stage: string) => {
 const getSuggestedTools = (projectStage: string) => {
   const suggestions: { [key: string]: any[] } = {
     "research": [
-      { id: "interviews", name: "Entrevistas de Usuario", description: "Ideal para entender necesidades profundas", tooltip: "La base de cualquier buen proceso UX" },
-      { id: "surveys", name: "Encuestas", description: "Para recoger datos de muchos usuarios", tooltip: "Método cuantitativo para validar hipótesis" },
-      { id: "analytics", name: "Análisis de Datos", description: "Insights basados en comportamiento actual", tooltip: "Datos objetivos sobre cómo los usuarios usan productos existentes" }
+      { id: "interviews", name: "User Interviews", description: "Ideal for understanding deep needs", tooltip: "The foundation of any good UX process" },
+      { id: "surveys", name: "Surveys", description: "To collect data from many users", tooltip: "Quantitative method to validate hypotheses" },
+      { id: "analytics", name: "Data Analysis", description: "Insights based on current behavior", tooltip: "Objective data about how users use existing products" }
     ],
     "ideation": [
-      { id: "brainstorming", name: "Lluvia de Ideas", description: "Generación libre de conceptos", tooltip: "Técnica fundamental para explorar posibilidades" },
-      { id: "hmw", name: "¿Cómo Podríamos...?", description: "Reformulación de problemas como oportunidades", tooltip: "Convierte desafíos en preguntas accionables" }
+      { id: "brainstorming", name: "Brainstorming", description: "Free generation of concepts", tooltip: "Fundamental technique to explore possibilities" },
+      { id: "hmw", name: "How Might We...?", description: "Reframe problems as opportunities", tooltip: "Converts challenges into actionable questions" }
     ],
     "design": [
-      { id: "wireframes", name: "Wireframes", description: "Estructura básica de interfaces", tooltip: "Fundación de cualquier diseño digital" },
-      { id: "prototyping", name: "Prototipado", description: "Versiones interactivas de ideas", tooltip: "Permite probar ideas antes de desarrollar" }
+      { id: "wireframes", name: "Wireframes", description: "Basic interface structure", tooltip: "Foundation of any digital design" },
+      { id: "prototyping", name: "Prototyping", description: "Interactive versions of ideas", tooltip: "Allows testing ideas before development" }
     ],
     "testing": [
-      { id: "usability-testing", name: "Test de Usabilidad", description: "Validación con usuarios reales", tooltip: "La mejor forma de saber si tu diseño funciona" },
-      { id: "ab-testing", name: "A/B Testing", description: "Comparación de alternativas", tooltip: "Método científico para optimizar decisiones" }
+      { id: "usability-testing", name: "Usability Testing", description: "Validation with real users", tooltip: "The best way to know if your design works" },
+      { id: "ab-testing", name: "A/B Testing", description: "Comparison of alternatives", tooltip: "Scientific method to optimize decisions" }
     ],
     "implementation": [
-      { id: "design-handoff", name: "Handoff de Diseño", description: "Especificaciones para desarrollo", tooltip: "Comunicación clara entre diseño y desarrollo" },
-      { id: "qa-testing", name: "QA Testing", description: "Validación de implementación", tooltip: "Asegurar que el producto final cumple especificaciones" }
+      { id: "design-handoff", name: "Design Handoff", description: "Specifications for development", tooltip: "Clear communication between design and development" },
+      { id: "qa-testing", name: "QA Testing", description: "Implementation validation", tooltip: "Ensure final product meets specifications" }
     ]
   };
 
@@ -131,7 +131,7 @@ export const ToolSelectionStep = ({ context, projectStage, framework, frameworkS
       <div className="space-y-6">
         <div className="bg-muted/30 p-4 rounded-lg">
           <p className="text-sm text-muted-foreground">
-            <strong>Contexto:</strong> {context.industry} • {context.productType} • {projectStage} 
+            <strong>Context:</strong> {context.industry} • {context.productType} • {projectStage} 
             {framework !== "none" && ` • ${framework} (${frameworkStage})`}
           </p>
         </div>
@@ -139,8 +139,8 @@ export const ToolSelectionStep = ({ context, projectStage, framework, frameworkS
         <div>
           <h3 className="font-semibold mb-3">
             {framework !== "none" 
-              ? `Herramientas recomendadas para ${frameworkStage}` 
-              : `Herramientas recomendadas para ${projectStage}`
+              ? `Recommended tools for ${frameworkStage}` 
+              : `Recommended tools for ${projectStage}`
             }
           </h3>
           <div className="grid gap-3">
@@ -160,11 +160,11 @@ export const ToolSelectionStep = ({ context, projectStage, framework, frameworkS
         <div className="flex justify-between pt-4">
           <Button onClick={onBack} variant="outline" size="lg">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Anterior
+            Previous
           </Button>
           <Button onClick={handleGenerate} disabled={!selectedTool} size="lg">
             <Sparkles className="mr-2 h-4 w-4" />
-            Generar Prompts
+            Generate Prompts
           </Button>
         </div>
       </div>

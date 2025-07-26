@@ -14,38 +14,38 @@ interface ProjectStageStepProps {
 const projectStages = [
   {
     id: "research",
-    name: "Investigación",
-    description: "Estamos investigando el problema y entendiendo a los usuarios",
+    name: "Research",
+    description: "We are researching the problem and understanding users",
     tooltip: "User research, market analysis, problem definition",
-    badge: "Inicio"
+    badge: "Beginning"
   },
   {
     id: "ideation",
-    name: "Ideación",
-    description: "Generando ideas y conceptos para la solución",
+    name: "Ideation",
+    description: "Generating ideas and concepts for the solution",
     tooltip: "Brainstorming, concept development, solution exploration",
-    badge: "Creativo"
+    badge: "Creative"
   },
   {
     id: "design",
-    name: "Diseño",
-    description: "Creando wireframes, prototipos y diseños",
+    name: "Design",
+    description: "Creating wireframes, prototypes and designs",
     tooltip: "Wireframing, prototyping, visual design, interaction design",
     badge: "Visual"
   },
   {
     id: "testing",
     name: "Testing",
-    description: "Validando diseños con usuarios reales",
+    description: "Validating designs with real users",
     tooltip: "Usability testing, A/B testing, user feedback collection",
-    badge: "Validación"
+    badge: "Validation"
   },
   {
     id: "implementation",
-    name: "Implementación",
-    description: "Desarrollando y lanzando el producto",
+    name: "Implementation",
+    description: "Developing and launching the product",
     tooltip: "Development handoff, QA, launch preparation",
-    badge: "Lanzamiento"
+    badge: "Launch"
   }
 ];
 
@@ -62,18 +62,18 @@ export const ProjectStageStep = ({ context, onNext, onBack }: ProjectStageStepPr
     <StepCard
       step={2}
       totalSteps={4}
-      title="Etapa del Proyecto"
-      description="¿En qué etapa se encuentra actualmente tu proyecto?"
+      title="Project Stage"
+      description="What stage is your project currently in?"
     >
       <div className="space-y-6">
         <div className="bg-muted/30 p-4 rounded-lg">
           <p className="text-sm text-muted-foreground">
-            <strong>Contexto:</strong> {context.industry} • {context.productType} • {context.companySize}
+            <strong>Context:</strong> {context.industry} • {context.productType} • {context.companySize}
           </p>
         </div>
 
         <div>
-          <h3 className="font-semibold mb-3">Selecciona la etapa actual de tu proyecto</h3>
+          <h3 className="font-semibold mb-3">Select the current stage of your project</h3>
           <div className="grid gap-3">
             {projectStages.map((stage) => (
               <OptionCard
@@ -92,10 +92,10 @@ export const ProjectStageStep = ({ context, onNext, onBack }: ProjectStageStepPr
         <div className="flex justify-between pt-4">
           <Button onClick={onBack} variant="outline" size="lg">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Anterior
+            Previous
           </Button>
           <Button onClick={handleNext} disabled={!selectedStage} size="lg">
-            Continuar
+            Continue
             <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         </div>
