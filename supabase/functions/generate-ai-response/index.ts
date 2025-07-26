@@ -86,69 +86,6 @@ async function callOpenAI(prompt: string, apiKey: string) {
   return data.choices[0].message.content;
 }
 
-async function callGemini(prompt: string, apiKey: string) {
-  const config = AI_CONFIGS['gemini-1.5-flash'];
-  
-  const response = await fetch(`${config.apiUrl}?key=${apiKey}`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      contents: [
-        {
-          parts: [
-            { text: `${config.systemPrompt}\n\nUsuario: ${prompt}` }
-          ]
-        }
-      ],
-      generationConfig: {
-        temperature: config.temperature,
-        maxOutputTokens: config.maxTokens,
-      }
-    }),
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(`Error de Gemini: ${errorData.error?.message || 'Error desconocido'}`);
-  }
-
-  const data = await response.json();
-  return data.candidates[0].content.parts[0].text;
-}
-
-async function callClaude(prompt: string, apiKey: string) {
-  const config = AI_CONFIGS['claude-3-haiku'];
-  
-  const response = await fetch(config.apiUrl, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01'
-    },
-    body: JSON.stringify({
-      model: config.model,
-      max_tokens: config.maxTokens,
-      temperature: config.temperature,
-      system: config.systemPrompt,
-      messages: [
-        { role: 'user', content: prompt }
-      ]
-    }),
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(`Error de Claude: ${errorData.error?.message || 'Error desconocido'}`);
-  }
-
-  const data = await response.json();
-  return data.content[0].text;
-}
-
 async function callPerplexity(prompt: string, apiKey: string, modelId: string) {
   const config = AI_CONFIGS[modelId as keyof typeof AI_CONFIGS];
   
@@ -273,9 +210,12 @@ serve(async (req) => {
   }
 
   try {
+    console.log('Edge function started');
+    
     // Get the authorization header
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
+      console.error('No authorization header provided');
       throw new Error('No authorization header');
     }
 
@@ -293,17 +233,27 @@ serve(async (req) => {
     // Get current user
     const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
     if (userError || !user) {
+      console.error('User authentication failed:', userError);
       throw new Error('Usuario no autenticado');
     }
 
+    console.log('User authenticated:', user.id);
+
     // Get request body
-    const { prompt, projectContext, selectedFramework, frameworkStage, selectedTool, aiModel = 'gpt-4o-mini' } = await req.json();
+    const requestBody = await req.json();
+    console.log('Request body received');
+    
+    const { prompt, projectContext, selectedFramework, frameworkStage, selectedTool, aiModel = 'llama-3.1-8b' } = requestBody;
 
     if (!prompt) {
+      console.error('No prompt provided');
       throw new Error('Prompt requerido');
     }
 
+    console.log('Using AI model:', aiModel);
+
     if (!AI_CONFIGS[aiModel as keyof typeof AI_CONFIGS]) {
+      console.error('Unsupported AI model:', aiModel);
       throw new Error('Modelo de IA no soportado');
     }
 
