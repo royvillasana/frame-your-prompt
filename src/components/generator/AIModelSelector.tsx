@@ -88,7 +88,7 @@ interface AIModelSelectorProps {
 
 export const AIModelSelector = ({ selectedModel, onModelSelect, disabled }: AIModelSelectorProps) => {
   const { loading, isRegistered, getModelUsage } = useAIUsage();
-  const { hasAPIKey, getConfiguredAPIKeys } = useProfile();
+  const { hasAPIKey, getConfiguredAPIKeys, getAvailableModelsForAPIKey } = useProfile();
 
   const selectedModelData = AI_MODELS.find(m => m.id === selectedModel);
 
@@ -115,30 +115,48 @@ export const AIModelSelector = ({ selectedModel, onModelSelect, disabled }: AIMo
           <SelectContent>
             {AI_MODELS.map((model) => {
               const usage = getModelUsage(model.id);
+              const userHasAPIKey = hasAPIKey(model.id);
+              const isPremium = ['gpt-4o', 'gemini-1.5-pro', 'claude-3.5-sonnet'].includes(model.id);
+              
+              // Solo mostrar modelos premium si el usuario tiene la API key correspondiente
+              const shouldShow = !isPremium || userHasAPIKey;
+              
+              if (!shouldShow) return null;
+              
               return (
                 <SelectItem 
                   key={model.id} 
                   value={model.id}
-                  disabled={!usage.can_use && !loading}
+                  disabled={!usage.can_use && !loading && !userHasAPIKey}
                 >
                   <div className="flex items-center justify-between w-full">
                     <div className="flex items-center gap-2">
                       {model.icon}
                       <span>{model.name}</span>
-                      {hasAPIKey(model.id) && (
+                      {userHasAPIKey && (
                         <Key className="h-3 w-3 text-green-600" />
+                      )}
+                      {isPremium && (
+                        <Badge variant="secondary" className="text-xs">Premium</Badge>
                       )}
                     </div>
                     <div className="flex items-center gap-2 ml-4">
-                      {hasAPIKey(model.id) && (
+                      {userHasAPIKey && (
                         <Badge variant="outline" className="text-green-600 border-green-600">
                           Tu API
                         </Badge>
                       )}
-                      <Badge variant={usage.can_use ? "secondary" : "destructive"}>
-                        {loading ? "..." : `${usage.remaining}/${usage.daily_limit}`}
-                      </Badge>
-                      {!usage.can_use && !loading && (
+                      {!isPremium && (
+                        <Badge variant={usage.can_use ? "secondary" : "destructive"}>
+                          {loading ? "..." : `${usage.remaining}/${usage.daily_limit}`}
+                        </Badge>
+                      )}
+                      {isPremium && (
+                        <Badge variant="secondary">
+                          Ilimitado
+                        </Badge>
+                      )}
+                      {!usage.can_use && !loading && !userHasAPIKey && (
                         <Zap className="h-3 w-3 text-destructive" />
                       )}
                     </div>
@@ -171,17 +189,25 @@ export const AIModelSelector = ({ selectedModel, onModelSelect, disabled }: AIMo
           <CardContent className="pt-0">
             <div className="space-y-2">
               <div className="flex justify-between items-center text-sm">
-                <span>Estado de uso hoy:</span>
+                <span>Estado de uso:</span>
                 <div className="flex items-center gap-2">
                   {loading ? (
                     <Badge variant="outline">Cargando...</Badge>
                   ) : (
                     <>
-                      <Badge variant={getModelUsage(selectedModel).can_use ? "secondary" : "destructive"}>
-                        {getModelUsage(selectedModel).current_usage}/{getModelUsage(selectedModel).daily_limit} usados
-                      </Badge>
-                      {!getModelUsage(selectedModel).can_use && (
-                        <span className="text-destructive text-xs">Sin usos restantes</span>
+                      {hasAPIKey(selectedModel) ? (
+                        <Badge variant="secondary" className="text-green-600">
+                          Ilimitado con tu API
+                        </Badge>
+                      ) : (
+                        <>
+                          <Badge variant={getModelUsage(selectedModel).can_use ? "secondary" : "destructive"}>
+                            {getModelUsage(selectedModel).current_usage}/{getModelUsage(selectedModel).daily_limit} usados
+                          </Badge>
+                          {!getModelUsage(selectedModel).can_use && (
+                            <span className="text-destructive text-xs">Sin usos restantes</span>
+                          )}
+                        </>
                       )}
                     </>
                   )}

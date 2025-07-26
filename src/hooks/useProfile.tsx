@@ -56,6 +56,21 @@ export const useProfile = () => {
     return keys;
   };
 
+  const getAvailableModelsForAPIKey = (apiKeyType: 'openai' | 'gemini' | 'claude') => {
+    if (!profile) return [];
+    
+    switch (apiKeyType) {
+      case 'openai':
+        return profile.openai_api_key ? ['gpt-4o-mini', 'gpt-4o'] : [];
+      case 'gemini':
+        return profile.gemini_api_key ? ['gemini-1.5-flash', 'gemini-1.5-pro'] : [];
+      case 'claude':
+        return profile.claude_api_key ? ['claude-3-haiku', 'claude-3.5-sonnet'] : [];
+      default:
+        return [];
+    }
+  };
+
   const hasAPIKey = (modelId: string) => {
     if (!profile) return false;
     
@@ -78,6 +93,7 @@ export const useProfile = () => {
     profile,
     loading,
     getConfiguredAPIKeys,
+    getAvailableModelsForAPIKey,
     hasAPIKey,
     refreshProfile: loadProfile
   };
