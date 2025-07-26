@@ -30,7 +30,10 @@ export const LanguageSelector = () => {
         {languages.map((lang) => (
           <DropdownMenuItem
             key={lang.code}
-            onClick={() => setLanguage(lang.code)}
+            onClick={() => {
+              console.log('Changing language to:', lang.code);
+              setLanguage(lang.code);
+            }}
             className="flex items-center justify-between cursor-pointer"
           >
             <div className="flex items-center gap-2">
