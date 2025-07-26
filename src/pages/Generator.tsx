@@ -339,27 +339,37 @@ Make sure all recommendations are aligned with ${frameworkText} best practices a
     setCurrentProject(project);
     setSelectedFramework(project.selected_framework);
     
-    // Fetch the latest prompt from this project to pre-fill context
+    // Fetch the latest prompt from this project to pre-fill context and framework
     try {
       const { data: latestPrompt, error } = await supabase
         .from('generated_prompts')
-        .select('project_context')
+        .select('project_context, selected_framework, framework_stage')
         .eq('project_id', project.id)
         .order('created_at', { ascending: false })
         .limit(1)
         .single();
 
-      if (!error && latestPrompt?.project_context) {
+      if (!error && latestPrompt) {
         // Pre-fill project context from the latest prompt
-        const contextData = latestPrompt.project_context as any;
-        if (contextData && typeof contextData === 'object') {
-          setProjectContext({
-            industry: contextData.industry || "",
-            productType: contextData.productType || "",
-            companySize: contextData.companySize || "",
-            productScope: contextData.productScope || "national",
-            userProfile: contextData.userProfile || "b2c"
-          });
+        if (latestPrompt.project_context) {
+          const contextData = latestPrompt.project_context as any;
+          if (contextData && typeof contextData === 'object') {
+            setProjectContext({
+              industry: contextData.industry || "",
+              productType: contextData.productType || "",
+              companySize: contextData.companySize || "",
+              productScope: contextData.productScope || "national",
+              userProfile: contextData.userProfile || "b2c"
+            });
+          }
+        }
+        
+        // Pre-fill framework data from the latest prompt
+        if (latestPrompt.selected_framework) {
+          setSelectedFramework(latestPrompt.selected_framework);
+        }
+        if (latestPrompt.framework_stage) {
+          setFrameworkStage(latestPrompt.framework_stage);
         }
       }
     } catch (error) {
@@ -442,6 +452,8 @@ Make sure all recommendations are aligned with ${frameworkText} best practices a
             onNext={handleFrameworkComplete}
             onBack={() => setCurrentStep("stage")}
             aiRecommendations={aiRecommendations}
+            initialFramework={selectedFramework}
+            initialFrameworkStage={frameworkStage}
           />
         );
       case "tool":

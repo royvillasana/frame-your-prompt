@@ -16,6 +16,8 @@ interface FrameworkStepProps {
     recommendedTool?: string;
     reasoning?: string;
   };
+  initialFramework?: string;
+  initialFrameworkStage?: string;
 }
 
 const frameworks = [
@@ -245,9 +247,9 @@ const getFrameworkStageMapping = (projectStage: string, frameworkId: string): st
   return mappings[frameworkId]?.[projectStage] || "";
 };
 
-export const FrameworkStep = ({ context, projectStage, onNext, onBack, aiRecommendations }: FrameworkStepProps) => {
-  const [selectedFramework, setSelectedFramework] = useState(aiRecommendations?.recommendedFramework || "");
-  const [selectedStage, setSelectedStage] = useState("");
+export const FrameworkStep = ({ context, projectStage, onNext, onBack, aiRecommendations, initialFramework, initialFrameworkStage }: FrameworkStepProps) => {
+  const [selectedFramework, setSelectedFramework] = useState(initialFramework || aiRecommendations?.recommendedFramework || "");
+  const [selectedStage, setSelectedStage] = useState(initialFrameworkStage || "");
   
   const recommendedFramework = getRecommendedFramework(projectStage);
   const currentFramework = frameworks.find(f => f.id === selectedFramework);
@@ -264,13 +266,17 @@ export const FrameworkStep = ({ context, projectStage, onNext, onBack, aiRecomme
     }
   };
 
-  // Auto-select stage when framework is preselected by AI
+  // Auto-select stage when framework is preselected by AI or from previous prompt
   useEffect(() => {
-    if (aiRecommendations?.recommendedFramework && aiRecommendations.recommendedFramework !== "none") {
+    if (initialFrameworkStage) {
+      // Use the framework stage from previous prompt (highest priority)
+      setSelectedStage(initialFrameworkStage);
+    } else if (aiRecommendations?.recommendedFramework && aiRecommendations.recommendedFramework !== "none") {
+      // Fall back to AI recommendation mapping
       const mappedStage = getFrameworkStageMapping(projectStage, aiRecommendations.recommendedFramework);
       setSelectedStage(mappedStage);
     }
-  }, [aiRecommendations, projectStage]);
+  }, [aiRecommendations, projectStage, initialFrameworkStage]);
 
   const handleNext = () => {
     if (selectedFramework && (selectedFramework === "none" || selectedStage)) {
@@ -310,7 +316,8 @@ export const FrameworkStep = ({ context, projectStage, onNext, onBack, aiRecomme
                 title={framework.name}
                 description={framework.description}
                 tooltip={framework.tooltip}
-                badge={framework.id === aiRecommendations?.recommendedFramework ? "AI Recommended" : 
+                badge={framework.id === initialFramework ? "Previously Used" :
+                       framework.id === aiRecommendations?.recommendedFramework ? "AI Recommended" : 
                        framework.id === recommendedFramework ? "Recommended" : undefined}
                 isSelected={selectedFramework === framework.id}
                 onClick={() => handleFrameworkSelect(framework.id)}
