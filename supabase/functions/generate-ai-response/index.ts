@@ -189,33 +189,10 @@ async function callClaude(prompt: string, apiKey: string) {
 async function callFreeModel(prompt: string, modelId: string) {
   const config = AI_CONFIGS[modelId as keyof typeof AI_CONFIGS];
   
-  if (config.provider === 'huggingface') {
-    // Using Hugging Face Inference API (free tier)
-    const response = await fetch(config.apiUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        inputs: `${config.systemPrompt}\n\nUsuario: ${prompt}`,
-        parameters: {
-          max_new_tokens: config.maxTokens,
-          temperature: config.temperature,
-          return_full_text: false
-        }
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error(`Error en modelo gratuito: ${response.statusText}`);
-    }
-
-    const data = await response.json();
-    return data[0]?.generated_text || 'Respuesta generada con modelo gratuito';
-  } else {
-    // For free models without API, generate a structured response
-    return generateStructuredResponse(prompt, config.systemPrompt);
-  }
+  console.log(`Using structured response for free model: ${modelId}`);
+  
+  // Generate a structured response for free models
+  return generateStructuredResponse(prompt, config.systemPrompt);
 }
 
 function generateStructuredResponse(prompt: string, systemPrompt: string): string {
