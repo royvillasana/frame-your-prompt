@@ -42,11 +42,6 @@ export const OptionCard = ({ title, description, tooltip, badge, isSelected = fa
         </div>
         <CardDescription className="text-sm leading-relaxed">{description}</CardDescription>
       </CardHeader>
-      {isSelected && (
-        <CardContent className="pt-0">
-          <Button size="sm" className="w-full">Selected</Button>
-        </CardContent>
-      )}
     </Card>
   );
 };
