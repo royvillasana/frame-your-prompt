@@ -19,8 +19,9 @@ import { LoadingPromptGeneration } from "@/components/generator/LoadingPromptGen
 import ReactMarkdown from "react-markdown";
 
 import { useAIUsage } from "@/hooks/useAIUsage";
+import { AIModelSelector } from "@/components/generator/AIModelSelector";
 
-type Step = "project" | "context" | "stage" | "framework" | "tool" | "result";
+type Step = "project" | "context" | "stage" | "framework" | "tool" | "ai-selection" | "result";
 
 const Generator = () => {
   const { toast } = useToast();
@@ -40,7 +41,7 @@ const Generator = () => {
     recommendedTool?: string;
     reasoning?: string;
   }>({});
-  const [selectedAIModel] = useState("gpt-4o-mini");
+  const [selectedAIModel, setSelectedAIModel] = useState("chatgpt");
   const [generatedPrompt, setGeneratedPrompt] = useState("");
   const [aiResponse, setAiResponse] = useState("");
   const [isGeneratingAI, setIsGeneratingAI] = useState(false);
@@ -114,14 +115,89 @@ const Generator = () => {
   const handleToolComplete = async (tool: string) => {
     setSelectedTool(tool);
     await generatePrompt(tool);
+    setCurrentStep("ai-selection");
+  };
+
+  const handleAIModelSelect = (modelId: string) => {
+    setSelectedAIModel(modelId);
+  };
+
+  const handleAIModelContinue = () => {
+    // Customize the prompt based on the selected AI model
+    customizePromptForAI();
     setCurrentStep("result");
   };
 
-  const generateAIResponse = async () => {
+  const getAIModelDisplayName = (modelId: string): string => {
+    const modelNames: Record<string, string> = {
+      "chatgpt": "ChatGPT",
+      "claude": "Claude", 
+      "gemini": "Gemini",
+      "deepseek": "DeepSeek",
+      "figma-make": "Figma Make",
+      "figjam-ai": "Figjam AI",
+      "miro-ai": "Miro AI",
+      "notion-ai": "Notion AI"
+    };
+    return modelNames[modelId] || "your selected AI tool";
+  };
+
+  const customizePromptForAI = () => {
     if (!generatedPrompt) return;
+
+    // Get the AI model data to customize the prompt
+    const aiModels = [
+      { id: "figma-make", prefix: "As a Figma Make AI assistant, " },
+      { id: "figjam-ai", prefix: "As a Figjam AI assistant for collaborative design, " },
+      { id: "miro-ai", prefix: "As a Miro AI assistant for visual collaboration, " },
+      { id: "notion-ai", prefix: "As a Notion AI assistant, " },
+      { id: "chatgpt", prefix: "As a UX design expert using ChatGPT, " },
+      { id: "claude", prefix: "As a UX design expert using Claude, " },
+      { id: "gemini", prefix: "As a UX design expert using Gemini, " },
+      { id: "deepseek", prefix: "As a UX design expert using DeepSeek, " }
+    ];
+
+    const selectedModel = aiModels.find(model => model.id === selectedAIModel);
+    
+    if (selectedModel && !generatedPrompt.startsWith(selectedModel.prefix)) {
+      // Add the AI-specific prefix to the prompt
+      const customizedPrompt = selectedModel.prefix + generatedPrompt;
+      setGeneratedPrompt(customizedPrompt);
+    }
+  };
+
+  const generateAIResponse = async () => {
+    if (!generatedPrompt) {
+      console.log("No generated prompt available");
+      return;
+    }
+    
+    console.log("Starting AI response generation...");
+    console.log("Selected AI model:", selectedAIModel);
+    console.log("Generated prompt:", generatedPrompt);
     
     setIsGeneratingAI(true);
     try {
+      // Map AI tool names to actual model names
+      const getModelName = (aiTool: string): string => {
+        const modelMapping: Record<string, string> = {
+          "chatgpt": "gpt-4o-mini",
+          "claude": "gpt-4o-mini", // Use OpenAI for Claude responses
+          "gemini": "gpt-4o-mini", // Use OpenAI for Gemini responses
+          "deepseek": "gpt-4o-mini", // Use OpenAI for DeepSeek responses
+          "figma-make": "gpt-4o-mini", // Use OpenAI for Figma Make responses
+          "figjam-ai": "gpt-4o-mini", // Use OpenAI for Figjam AI responses
+          "miro-ai": "gpt-4o-mini", // Use OpenAI for Miro AI responses
+          "notion-ai": "gpt-4o-mini" // Use OpenAI for Notion AI responses
+        };
+        const modelName = modelMapping[aiTool] || "gpt-4o-mini";
+        console.log(`Mapping AI tool "${aiTool}" to model "${modelName}"`);
+        return modelName;
+      };
+
+      const modelName = getModelName(selectedAIModel);
+      console.log("Calling Supabase function with model:", modelName);
+      
       const { data, error } = await supabase.functions.invoke('generate-ai-response', {
         body: {
           prompt: generatedPrompt,
@@ -129,7 +205,7 @@ const Generator = () => {
           selectedFramework,
           frameworkStage,
           selectedTool,
-          aiModel: selectedAIModel,
+          aiModel: modelName,
         }
       });
 
@@ -197,15 +273,44 @@ const Generator = () => {
       stageText = projectStage;
     }
 
-    // Create a meta-prompt to generate the actual UX prompt
-    const metaPrompt = `Act as an expert UX Designer and AI prompt specialist. Your task is to generate a detailed and specific prompt IN ENGLISH to help a UX Designer who is working in the "${stageText}" stage of the ${frameworkText} framework, specifically with ${tool}.
+    // Include project description as additional context
+    const projectDescriptionContext = projectContext?.projectDescription 
+      ? `\n\nAdditional Project Context: ${projectContext.projectDescription}`
+      : '';
 
+    // Debug logging
+    console.log('Project Context for prompt generation:', {
+      projectName: currentProject?.name,
+      industry: projectContext.industry,
+      companySize: projectContext.companySize,
+      productType: projectContext.productType,
+      productScope: projectContext.productScope,
+      userProfile: projectContext.userProfile,
+      projectDescription: projectContext.projectDescription,
+      projectDescriptionContext: projectDescriptionContext
+    });
+
+    if (projectContext.projectDescription) {
+      console.log('🎯 Project Description to be analyzed:', projectContext.projectDescription);
+      console.log('📝 This context will be analyzed to create a tailored prompt');
+    }
+
+    // Create a meta-prompt to generate the actual UX prompt
+    const metaPrompt = `Act as an expert UX Designer and AI prompt specialist. Your task is to ANALYZE the provided project context and generate a HIGHLY TAILORED prompt IN ENGLISH to help a UX Designer who is working in the "${stageText}" stage of the ${frameworkText} framework, specifically with ${tool}.
+
+Project: ${currentProject?.name || 'UX Project'}
 Project context:
 - Industry: ${projectContext.industry}
 - Company type: ${projectContext.companySize}
 - Product: ${projectContext.productType}
 - Scope: ${projectContext.productScope}
-- Target audience: ${projectContext.userProfile}
+- Target audience: ${projectContext.userProfile}${projectDescriptionContext}
+
+ANALYSIS INSTRUCTIONS:
+1. CAREFULLY ANALYZE the additional project context provided above
+2. Identify specific challenges, goals, target users, business objectives, and unique requirements mentioned
+3. Extract key insights about the project's specific needs and constraints
+4. Understand the project's unique characteristics and requirements
 
 CRITICAL INSTRUCTIONS:
 1. Generate a COMPLETE and SPECIFIC prompt IN ENGLISH that the UX Designer can use directly with an AI
@@ -215,10 +320,18 @@ CRITICAL INSTRUCTIONS:
 5. Include specific aspects of ${tool} relevant to ${frameworkText}
 6. Adapt the language and approach according to company size: ${projectContext.companySize}
 7. IMPORTANT: Generate the entire prompt in English language only
+8. CRITICAL: Analyze the additional project context and create a prompt that directly addresses the specific challenges, goals, and requirements mentioned in that context
+9. If specific context is provided, incorporate those details into the prompt to make it more personalized
+10. The generated prompt should reference the specific project details mentioned in the context
+11. Include the project name "${currentProject?.name || 'UX Project'}" in the generated prompt
+12. Make the prompt highly specific to the project's unique characteristics and requirements
+13. Ensure the prompt directly addresses any specific challenges or goals mentioned in the project context
 
 Generate ONLY the final prompt that the UX Designer will use, without additional explanations or introductions. The prompt should begin directly with clear instructions for the AI that will receive it.`;
 
     try {
+      console.log('Calling AI for prompt generation with meta-prompt:', metaPrompt);
+      
       const { data, error } = await supabase.functions.invoke('generate-ai-response', {
         body: {
           prompt: metaPrompt,
@@ -229,6 +342,8 @@ Generate ONLY the final prompt that the UX Designer will use, without additional
           aiModel: "gpt-4o-mini", // Use OpenAI for prompt generation
         }
       });
+
+      console.log('AI response received:', data);
 
       if (error) {
         console.error('Error generating prompt:', error);
@@ -241,9 +356,11 @@ Generate ONLY the final prompt that the UX Designer will use, without additional
       
       setGeneratedPrompt(data.aiResponse);
       
+      console.log('AI-generated prompt:', data.aiResponse);
+      
       toast({
         title: "AI Prompt Generated!",
-        description: "Your personalized prompt has been created specifically for your project.",
+        description: "Your personalized prompt has been created using AI specifically for your project.",
       });
     } catch (error: any) {
       console.error('Error generating prompt:', error);
@@ -251,22 +368,23 @@ Generate ONLY the final prompt that the UX Designer will use, without additional
       // Fallback to basic prompt structure if AI generation fails
       const fallbackPrompt = `As a UX Designer working in the "${stageText}" stage of the ${frameworkText} framework, I need help with ${tool}.
 
+Project: ${currentProject?.name || 'UX Project'}
 Project context:
 - Industry: ${projectContext.industry}
 - Company type: ${projectContext.companySize}
 - Product: ${projectContext.productType}
 - Scope: ${projectContext.productScope}
-- Target audience: ${projectContext.userProfile}
+- Target audience: ${projectContext.userProfile}${projectDescriptionContext}
 
-Using AI capabilities, help me to:
+Based on the specific project context provided above, help me to:
 
-1. Generate 5 specific questions to guide my ${tool} process in this context
-2. Suggest 3 innovative approaches that leverage the unique characteristics of my industry
-3. Identify 4 key metrics I should consider to evaluate success
-4. Recommend 2 complementary tools that enhance this process
-5. Provide a checklist of 6 critical points to validate before moving to the next stage
+1. Generate 5 specific questions to guide my ${tool} process that directly address the unique challenges and goals mentioned in the project context
+2. Suggest 3 innovative approaches that leverage the unique characteristics of my industry and address the specific requirements mentioned
+3. Identify 4 key metrics I should consider to evaluate success, tailored to the project's specific objectives
+4. Recommend 2 complementary tools that enhance this process and address the project's unique needs
+5. Provide a checklist of 6 critical points to validate before moving to the next stage, considering the project's specific constraints and requirements
 
-Make sure all recommendations are aligned with ${frameworkText} best practices and are applicable to ${projectContext.companySize} in ${projectContext.industry} developing ${projectContext.productType} with ${projectContext.productScope} scope.`;
+Make sure all recommendations are aligned with ${frameworkText} best practices and are applicable to ${projectContext.companySize} in ${projectContext.industry} developing ${projectContext.productType} with ${projectContext.productScope} scope.${projectDescriptionContext ? `\n\nIMPORTANT: Analyze the additional context provided and tailor your recommendations to directly address the specific challenges, goals, and requirements mentioned: ${projectDescriptionContext}` : ''}`;
 
       setGeneratedPrompt(fallbackPrompt);
       
@@ -422,6 +540,7 @@ Make sure all recommendations are aligned with ${frameworkText} best practices a
     setSelectedFramework("");
     setFrameworkStage("");
     setSelectedTool("");
+    setSelectedAIModel("chatgpt");
     setGeneratedPrompt("");
     setAiResponse("");
   };
@@ -469,13 +588,21 @@ Make sure all recommendations are aligned with ${frameworkText} best practices a
             aiRecommendations={aiRecommendations}
           />
         );
+      case "ai-selection":
+        return (
+          <AIModelSelector
+            selectedModel={selectedAIModel}
+            onModelSelect={handleAIModelSelect}
+            onContinue={handleAIModelContinue}
+          />
+        );
       case "result":
         return (
           <Card className="bg-gradient-card shadow-medium">
             <CardHeader>
               <CardTitle>Prompt Generated!</CardTitle>
               <CardDescription>
-                Your personalized prompt is ready to use with ChatGPT, Claude or other AI tools
+                Your personalized prompt is customized for {getAIModelDisplayName(selectedAIModel)}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">

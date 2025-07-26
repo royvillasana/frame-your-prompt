@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { StepCard } from "./StepCard";
 import { OptionCard } from "./OptionCard";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { ArrowRight } from "lucide-react";
 
 interface ProjectContextStepProps {
@@ -15,6 +16,7 @@ export interface ProjectContext {
   companySize: string;
   productScope: string;
   userProfile: string;
+  projectDescription?: string; // Add this field
 }
 
 const industries = [
@@ -44,6 +46,7 @@ export const ProjectContextStep = ({ onNext, initialContext }: ProjectContextSte
   const [selectedIndustry, setSelectedIndustry] = useState("");
   const [selectedProductType, setSelectedProductType] = useState("");
   const [selectedCompanySize, setSelectedCompanySize] = useState("");
+  const [additionalContext, setAdditionalContext] = useState("");
 
   // Pre-fill form with initial context if provided
   useEffect(() => {
@@ -51,6 +54,7 @@ export const ProjectContextStep = ({ onNext, initialContext }: ProjectContextSte
       setSelectedIndustry(initialContext.industry || "");
       setSelectedProductType(initialContext.productType || "");
       setSelectedCompanySize(initialContext.companySize || "");
+      setAdditionalContext(initialContext.projectDescription || "");
     }
   }, [initialContext]);
 
@@ -63,7 +67,8 @@ export const ProjectContextStep = ({ onNext, initialContext }: ProjectContextSte
         productType: selectedProductType,
         companySize: selectedCompanySize,
         productScope: "national", // Default value
-        userProfile: "b2c" // Default value
+        userProfile: "b2c", // Default value
+        projectDescription: additionalContext
       });
     }
   };
@@ -122,6 +127,20 @@ export const ProjectContextStep = ({ onNext, initialContext }: ProjectContextSte
               />
             ))}
           </div>
+        </div>
+
+        <div>
+          <h3 className="font-semibold mb-3">Additional Project Context (Optional)</h3>
+          <Textarea
+            value={additionalContext}
+            onChange={(e) => setAdditionalContext(e.target.value)}
+            placeholder="Describe any specific challenges, goals, target users, business objectives, or unique context that would help generate more relevant and personalized prompts for your project..."
+            rows={4}
+            className="resize-none"
+          />
+          <p className="text-sm text-muted-foreground mt-2">
+            This information will be used to create more tailored and specific prompts for your project.
+          </p>
         </div>
 
         <div className="flex justify-end pt-4">

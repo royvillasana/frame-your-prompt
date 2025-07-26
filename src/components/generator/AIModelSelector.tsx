@@ -1,148 +1,205 @@
-import { useState, useEffect } from "react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Sparkles, Zap, Brain, Star } from "lucide-react";
-import { useAIUsage } from "@/hooks/useAIUsage";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Check, Sparkles, Bot, MessageSquare, Palette, FileText, Zap } from "lucide-react";
 
 export interface AIModel {
   id: string;
   name: string;
-  provider: string;
   description: string;
-  freeLimit: number;
-  registeredLimit: number;
+  category: "design" | "general" | "productivity";
   icon: React.ReactNode;
-  color: string;
+  promptPrefix?: string;
+  promptSuffix?: string;
+  instructions?: string;
 }
 
-export const AI_MODELS: AIModel[] = [
-  // Free models that actually work
+const aiModels: AIModel[] = [
+  // Design Tools
   {
-    id: "llama-3.1-8b",
-    name: "Llama 3.1 8B (Free)",
-    provider: "Groq",
-    description: "Fast and reliable free model for UX",
-    freeLimit: 50,
-    registeredLimit: 100,
-    icon: <Zap className="h-4 w-4" />,
-    color: "bg-green-500"
-  },
-  // Premium models (require API keys)
-  {
-    id: "gpt-4o-mini",
-    name: "GPT-4o Mini",
-    provider: "OpenAI",
-    description: "Fast and efficient premium model (Requires OpenAI API Key)",
-    freeLimit: 0,
-    registeredLimit: 999,
-    icon: <Sparkles className="h-4 w-4" />,
-    color: "bg-blue-600"
+    id: "figma-make",
+    name: "Figma Make",
+    description: "AI-powered design assistant in Figma",
+    category: "design",
+    icon: <Palette className="h-5 w-5" />,
+    promptPrefix: "As a Figma Make AI assistant, ",
+    instructions: "Focus on visual design, components, and Figma-specific features"
   },
   {
-    id: "llama-3.1-sonar-small-128k-online",
-    name: "Perplexity Sonar Small",
-    provider: "Perplexity AI",
-    description: "Model with internet access (Requires Perplexity API Key)",
-    freeLimit: 0,
-    registeredLimit: 50,
-    icon: <Brain className="h-4 w-4" />,
-    color: "bg-orange-500"
+    id: "figjam-ai",
+    name: "Figjam AI",
+    description: "AI for collaborative whiteboarding and ideation",
+    category: "design",
+    icon: <FileText className="h-5 w-5" />,
+    promptPrefix: "As a Figjam AI assistant for collaborative design, ",
+    instructions: "Emphasize collaboration, ideation, and visual thinking"
+  },
+  {
+    id: "miro-ai",
+    name: "Miro AI",
+    description: "AI assistant for visual collaboration and mapping",
+    category: "design",
+    icon: <Sparkles className="h-5 w-5" />,
+    promptPrefix: "As a Miro AI assistant for visual collaboration, ",
+    instructions: "Focus on visual mapping, user journey, and collaborative ideation"
+  },
+  {
+    id: "notion-ai",
+    name: "Notion AI",
+    description: "AI assistant for documentation and project management",
+    category: "productivity",
+    icon: <FileText className="h-5 w-5" />,
+    promptPrefix: "As a Notion AI assistant, ",
+    instructions: "Structure information clearly with headers, lists, and organized content"
+  },
+  // General AI
+  {
+    id: "chatgpt",
+    name: "ChatGPT",
+    description: "OpenAI's conversational AI assistant",
+    category: "general",
+    icon: <MessageSquare className="h-5 w-5" />,
+    promptPrefix: "As a UX design expert using ChatGPT, ",
+    instructions: "Provide detailed, conversational responses with examples"
+  },
+  {
+    id: "claude",
+    name: "Claude",
+    description: "Anthropic's AI assistant for detailed analysis",
+    category: "general",
+    icon: <Bot className="h-5 w-5" />,
+    promptPrefix: "As a UX design expert using Claude, ",
+    instructions: "Provide thorough analysis with step-by-step reasoning"
+  },
+  {
+    id: "gemini",
+    name: "Gemini",
+    description: "Google's AI assistant for creative tasks",
+    category: "general",
+    icon: <Sparkles className="h-5 w-5" />,
+    promptPrefix: "As a UX design expert using Gemini, ",
+    instructions: "Focus on creative solutions and innovative approaches"
+  },
+  {
+    id: "deepseek",
+    name: "DeepSeek",
+    description: "Advanced AI for technical and creative tasks",
+    category: "general",
+    icon: <Zap className="h-5 w-5" />,
+    promptPrefix: "As a UX design expert using DeepSeek, ",
+    instructions: "Provide technical depth with practical implementation details"
   }
 ];
 
 interface AIModelSelectorProps {
   selectedModel: string;
   onModelSelect: (modelId: string) => void;
-  disabled?: boolean;
+  onContinue: () => void;
 }
 
-export const AIModelSelector = ({ selectedModel, onModelSelect, disabled }: AIModelSelectorProps) => {
-  const { loading, isRegistered, getModelUsage } = useAIUsage();
+export const AIModelSelector = ({ selectedModel, onModelSelect, onContinue }: AIModelSelectorProps) => {
+  const [selectedCategory, setSelectedCategory] = useState<"all" | "design" | "general" | "productivity">("all");
 
-  const selectedModelData = AI_MODELS.find(m => m.id === selectedModel);
+  const filteredModels = selectedCategory === "all" 
+    ? aiModels 
+    : aiModels.filter(model => model.category === selectedCategory);
+
+  const selectedModelData = aiModels.find(model => model.id === selectedModel);
 
   return (
-    <div className="space-y-4">
-      <div>
-        <label className="text-sm font-medium mb-2 block">
-          Select AI Model
-        </label>
-        <Select value={selectedModel} onValueChange={onModelSelect} disabled={disabled}>
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Select an AI model" />
-          </SelectTrigger>
-          <SelectContent>
-            {AI_MODELS.map((model) => {
-              const usage = getModelUsage(model.id);
-              return (
-                <SelectItem 
-                  key={model.id} 
-                  value={model.id}
-                  disabled={!usage.can_use && !loading}
-                >
-                  <div className="flex items-center justify-between w-full">
-                    <div className="flex items-center gap-2">
+    <Card className="bg-gradient-card shadow-medium">
+      <CardHeader>
+        <CardTitle>Choose Your AI Tool</CardTitle>
+        <CardDescription>
+          Select the AI tool you'll use with this prompt to customize it accordingly
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        {/* Category Filter */}
+        <div className="flex gap-2">
+          {[
+            { id: "all", name: "All" },
+            { id: "design", name: "Design Tools" },
+            { id: "general", name: "General AI" },
+            { id: "productivity", name: "Productivity" }
+          ].map((category) => (
+            <Button
+              key={category.id}
+              variant={selectedCategory === category.id ? "default" : "outline"}
+              size="sm"
+              onClick={() => setSelectedCategory(category.id as "all" | "design" | "general" | "productivity")}
+            >
+              {category.name}
+            </Button>
+          ))}
+        </div>
+
+        {/* AI Models Grid */}
+        <div className="grid gap-3 md:grid-cols-2">
+          {filteredModels.map((model) => (
+            <Card
+              key={model.id}
+              className={`cursor-pointer transition-all hover:shadow-md border-2 ${
+                selectedModel === model.id 
+                  ? "border-primary bg-primary/5" 
+                  : "border-border hover:border-primary/50"
+              }`}
+              onClick={() => onModelSelect(model.id)}
+            >
+              <CardContent className="p-4">
+                <div className="flex items-start gap-3">
+                  <div className="flex-shrink-0">
+                    <div className="p-2 rounded-lg bg-primary/10 text-primary">
                       {model.icon}
-                      <span>{model.name}</span>
-                    </div>
-                    <div className="flex items-center gap-2 ml-4">
-                      <Badge variant={usage.can_use ? "secondary" : "destructive"}>
-                        {loading ? "..." : `${usage.remaining}/${usage.daily_limit}`}
-                      </Badge>
-                      {!usage.can_use && !loading && (
-                        <Zap className="h-3 w-3 text-destructive" />
-                      )}
                     </div>
                   </div>
-                </SelectItem>
-              );
-            })}
-          </SelectContent>
-        </Select>
-      </div>
-
-      {selectedModelData && (
-        <Card>
-          <CardHeader className="pb-3">
-            <div className="flex items-center gap-2">
-              <div className={`w-3 h-3 rounded-full ${selectedModelData.color}`} />
-              <CardTitle className="text-base">{selectedModelData.name}</CardTitle>
-              <Badge variant="outline">{selectedModelData.provider}</Badge>
-            </div>
-            <CardDescription className="text-sm">
-              {selectedModelData.description}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="pt-0">
-            <div className="space-y-2">
-              <div className="flex justify-between items-center text-sm">
-                <span>Usage status today:</span>
-                <div className="flex items-center gap-2">
-                  {loading ? (
-                    <Badge variant="outline">Loading...</Badge>
-                  ) : (
-                    <>
-                      <Badge variant={getModelUsage(selectedModel).can_use ? "secondary" : "destructive"}>
-                        {getModelUsage(selectedModel).current_usage}/{getModelUsage(selectedModel).daily_limit} used
-                      </Badge>
-                      {!getModelUsage(selectedModel).can_use && (
-                        <span className="text-destructive text-xs">No uses remaining</span>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="font-semibold text-sm">{model.name}</h3>
+                      {selectedModel === model.id && (
+                        <Check className="h-4 w-4 text-primary" />
                       )}
-                    </>
-                  )}
+                    </div>
+                    <p className="text-xs text-muted-foreground">{model.description}</p>
+                    <Badge variant="secondary" className="mt-2 text-xs">
+                      {model.category}
+                    </Badge>
+                  </div>
                 </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        {/* Selected Model Details */}
+        {selectedModelData && (
+          <div className="bg-muted/30 p-4 rounded-lg">
+            <h4 className="font-semibold mb-2">Customization for {selectedModelData.name}</h4>
+            <p className="text-sm text-muted-foreground mb-3">
+              {selectedModelData.instructions}
+            </p>
+            {selectedModelData.promptPrefix && (
+              <div className="text-xs bg-background p-2 rounded border">
+                <strong>Prompt prefix:</strong> {selectedModelData.promptPrefix}
               </div>
-              
-              {!isRegistered && (
-                <div className="text-xs text-muted-foreground bg-muted/50 p-2 rounded">
-                  💡 Register to get higher limits: up to {selectedModelData.registeredLimit} daily prompts
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      )}
-    </div>
+            )}
+          </div>
+        )}
+
+        {/* Continue Button */}
+        <div className="flex justify-end pt-4">
+          <Button 
+            onClick={onContinue}
+            disabled={!selectedModel}
+            size="lg"
+            className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
+          >
+            <Sparkles className="mr-2 h-4 w-4" />
+            Use with {selectedModelData?.name || "Selected AI"}
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
   );
 };

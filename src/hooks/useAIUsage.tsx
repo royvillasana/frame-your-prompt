@@ -1,7 +1,36 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "./useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { AI_MODELS } from "@/components/generator/AIModelSelector";
+// Define AI models for usage tracking
+const AI_MODELS = [
+  {
+    id: "llama-3.1-8b",
+    name: "Llama 3.1 8B (Free)",
+    provider: "Groq",
+    description: "Fast and reliable free model for UX",
+    freeLimit: 50,
+    registeredLimit: 100,
+    color: "bg-green-500"
+  },
+  {
+    id: "gpt-4o-mini",
+    name: "GPT-4o Mini",
+    provider: "OpenAI",
+    description: "Fast and efficient premium model (Requires OpenAI API Key)",
+    freeLimit: 0,
+    registeredLimit: 999,
+    color: "bg-blue-600"
+  },
+  {
+    id: "llama-3.1-sonar-small-128k-online",
+    name: "Perplexity Sonar Small",
+    provider: "Perplexity AI",
+    description: "Model with internet access (Requires Perplexity API Key)",
+    freeLimit: 0,
+    registeredLimit: 50,
+    color: "bg-orange-500"
+  }
+];
 
 interface UsageData {
   [modelId: string]: {
