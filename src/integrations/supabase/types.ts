@@ -55,6 +55,7 @@ export type Database = {
           id: string
           original_prompt: string
           project_context: Json
+          project_id: string | null
           selected_framework: string
           selected_tool: string
           user_id: string
@@ -66,6 +67,7 @@ export type Database = {
           id?: string
           original_prompt: string
           project_context: Json
+          project_id?: string | null
           selected_framework: string
           selected_tool: string
           user_id: string
@@ -77,34 +79,79 @@ export type Database = {
           id?: string
           original_prompt?: string
           project_context?: Json
+          project_id?: string | null
           selected_framework?: string
           selected_tool?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "generated_prompts_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
+          claude_api_key: string | null
           created_at: string
           display_name: string | null
+          gemini_api_key: string | null
           id: string
           openai_api_key: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
+          claude_api_key?: string | null
           created_at?: string
           display_name?: string | null
+          gemini_api_key?: string | null
           id?: string
           openai_api_key?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
+          claude_api_key?: string | null
           created_at?: string
           display_name?: string | null
+          gemini_api_key?: string | null
           id?: string
           openai_api_key?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      projects: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          selected_framework: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          selected_framework: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          selected_framework?: string
           updated_at?: string
           user_id?: string
         }
