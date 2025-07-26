@@ -9,6 +9,26 @@ const corsHeaders = {
 
 // API configurations for different AI models
 const AI_CONFIGS = {
+  // Free model that works
+  'llama-3.1-8b': {
+    provider: 'free',
+    apiUrl: 'https://api.groq.com/openai/v1/chat/completions',
+    model: 'llama3-8b-8192',
+    maxTokens: 2000,
+    temperature: 0.7,
+    systemPrompt: `Eres un experto UX Designer especializado en generar contenido detallado y práctico basado en prompts de frameworks UX. 
+    
+    Tu objetivo es proporcionar respuestas estructuradas, específicas y accionables que ayuden a los diseñadores UX en cada etapa de sus proyectos.
+    
+    INSTRUCCIONES IMPORTANTES:
+    1. Siempre responde en español
+    2. Estructura tu respuesta de manera clara y organizada
+    3. Proporciona ejemplos específicos cuando sea relevante
+    4. Asegúrate de que todas las recomendaciones sean prácticas y aplicables
+    5. Mantén un tono profesional pero accesible
+    6. Si el prompt incluye secciones numeradas, responde siguiendo esa estructura exacta`
+  },
+  // Premium models
   'gpt-4o-mini': {
     provider: 'openai',
     apiUrl: 'https://api.openai.com/v1/chat/completions',
@@ -27,72 +47,6 @@ const AI_CONFIGS = {
     5. Mantén un tono profesional pero accesible
     6. Si el prompt incluye secciones numeradas, responde siguiendo esa estructura exacta`
   },
-  'gemini-1.5-flash': {
-    provider: 'google',
-    apiUrl: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent',
-    model: 'gemini-1.5-flash-latest',
-    maxTokens: 2048,
-    temperature: 0.7,
-    systemPrompt: `Eres un experto UX Designer con profundo conocimiento en frameworks de diseño centrado en el usuario. Tu misión es proporcionar análisis detallados y recomendaciones prácticas.
-    
-    PAUTAS DE RESPUESTA:
-    1. Responde exclusivamente en español
-    2. Organiza tu respuesta con estructura clara y jerarquía visual
-    3. Incluye ejemplos específicos y casos de uso reales
-    4. Proporciona recomendaciones accionables y medibles
-    5. Mantén un equilibrio entre teoría y práctica
-    6. Usa un tono profesional pero comprensible`
-  },
-  'claude-3-haiku': {
-    provider: 'anthropic',
-    apiUrl: 'https://api.anthropic.com/v1/messages',
-    model: 'claude-3-haiku-20240307',
-    maxTokens: 2000,
-    temperature: 0.7,
-    systemPrompt: `Eres un UX Designer senior con experiencia en metodologías de diseño centrado en el usuario y frameworks de investigación UX. Tu expertise incluye análisis profundo y pensamiento crítico.
-    
-    DIRECTRICES:
-    1. Todas las respuestas deben ser en español
-    2. Proporciona análisis profundos y consideraciones críticas
-    3. Incluye múltiples perspectivas y enfoques alternativos
-    4. Ofrece ejemplos concretos y estudios de caso
-    5. Estructura las respuestas de forma lógica y progresiva
-    6. Mantén un tono experto pero accesible`
-  },
-  // Free models configurations - using real APIs
-  'gpt-3.5-turbo-free': {
-    provider: 'huggingface',
-    apiUrl: 'https://api-inference.huggingface.co/models/microsoft/DialoGPT-large',
-    model: 'microsoft/DialoGPT-large',
-    maxTokens: 1000,
-    temperature: 0.7,
-    systemPrompt: `Eres un experto UX Designer. Responde en español de manera estructurada y práctica.`
-  },
-  'claude-3-haiku-free': {
-    provider: 'huggingface',
-    apiUrl: 'https://api-inference.huggingface.co/models/meta-llama/Llama-2-7b-chat-hf',
-    model: 'meta-llama/Llama-2-7b-chat-hf',
-    maxTokens: 1000,
-    temperature: 0.7,
-    systemPrompt: `Eres un UX Designer experto. Proporciona respuestas detalladas en español.`
-  },
-  'gemini-1.5-flash-free': {
-    provider: 'huggingface',
-    apiUrl: 'https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium',
-    model: 'microsoft/DialoGPT-medium',
-    maxTokens: 1000,
-    temperature: 0.7,
-    systemPrompt: `Eres un UX Designer profesional. Responde de forma práctica y aplicable en español.`
-  },
-  'llama-3.1-8b': {
-    provider: 'huggingface',
-    apiUrl: 'https://api-inference.huggingface.co/models/meta-llama/Llama-2-13b-chat-hf',
-    model: 'meta-llama/Llama-2-13b-chat-hf',
-    maxTokens: 1500,
-    temperature: 0.7,
-    systemPrompt: `Eres un experto UX Designer especializado en generar contenido detallado y práctico basado en prompts de frameworks UX. Responde en español de manera estructurada.`
-  },
-  // Perplexity AI models
   'llama-3.1-sonar-small-128k-online': {
     provider: 'perplexity',
     apiUrl: 'https://api.perplexity.ai/chat/completions',
@@ -100,14 +54,6 @@ const AI_CONFIGS = {
     maxTokens: 2000,
     temperature: 0.2,
     systemPrompt: `Eres un experto UX Designer con acceso a información actualizada. Proporciona respuestas detalladas, estructuradas y basadas en las mejores prácticas actuales. Responde siempre en español de manera profesional y práctica.`
-  },
-  'llama-3.1-sonar-large-128k-online': {
-    provider: 'perplexity',
-    apiUrl: 'https://api.perplexity.ai/chat/completions',
-    model: 'llama-3.1-sonar-large-128k-online',
-    maxTokens: 2000,
-    temperature: 0.2,
-    systemPrompt: `Eres un UX Designer senior con acceso a información actualizada y capacidades avanzadas de análisis. Proporciona respuestas exhaustivas, bien estructuradas y fundamentadas en investigación reciente. Responde en español con un enfoque profesional y detallado.`
   }
 };
 
