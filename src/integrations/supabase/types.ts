@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_usage: {
+        Row: {
+          ai_model: string
+          created_at: string
+          daily_limit: number
+          id: string
+          last_reset_date: string
+          prompts_used: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          ai_model: string
+          created_at?: string
+          daily_limit?: number
+          id?: string
+          last_reset_date?: string
+          prompts_used?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          ai_model?: string
+          created_at?: string
+          daily_limit?: number
+          id?: string
+          last_reset_date?: string
+          prompts_used?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       generated_prompts: {
         Row: {
           ai_response: string | null
@@ -82,7 +115,18 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      check_and_update_ai_usage: {
+        Args: {
+          p_user_id: string
+          p_ai_model: string
+          p_is_registered?: boolean
+        }
+        Returns: Json
+      }
+      reset_daily_ai_limits: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
