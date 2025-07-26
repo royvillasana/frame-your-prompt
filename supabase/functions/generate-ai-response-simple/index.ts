@@ -218,26 +218,8 @@ serve(async (req) => {
   try {
     console.log('1. Getting auth header...');
     const authHeader = req.headers.get('Authorization');
-    if (!authHeader) {
-      throw new Error('No authorization header');
-    }
-
-    console.log('2. Initializing Supabase client...');
-    const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      { global: { headers: { Authorization: authHeader } } }
-    );
-
-    console.log('3. Getting user...');
-    const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
-    if (userError || !user) {
-      console.error('User error:', userError);
-      throw new Error('Usuario no autenticado');
-    }
-    console.log('User ID:', user.id);
-
-    console.log('4. Parsing request body...');
+    
+    console.log('2. Parsing request body...');
     let body;
     try {
       body = await req.json();
@@ -246,7 +228,7 @@ serve(async (req) => {
       throw new Error('Invalid JSON in request body');
     }
     
-    const { prompt, aiModel = 'llama-3.1-8b' } = body;
+    const { prompt, aiModel = 'gpt-3.5-turbo-free' } = body;
     
     console.log('Request data:', { aiModel, hasPrompt: !!prompt, bodyKeys: Object.keys(body) });
 
@@ -254,43 +236,97 @@ serve(async (req) => {
       throw new Error('Prompt requerido');
     }
 
-    let aiResponse: string;
+    // Verificar si es un modelo gratuito primero
+    const selectedModel = aiModel || 'gpt-3.5-turbo-free';
+    let user = null;
+    let supabaseClient = null;
+
+    // Solo requerir autenticación para modelos premium
+    if (!isFreeModel(selectedModel)) {
+      console.log('3. Premium model detected, checking authentication...');
+      if (!authHeader) {
+        throw new Error('Para usar modelos premium, necesitas autenticarte');
+      }
+
+      console.log('4. Initializing Supabase client...');
+      supabaseClient = createClient(
+        Deno.env.get('SUPABASE_URL') ?? '',
+        Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+        { global: { headers: { Authorization: authHeader } } }
+      );
+
+      console.log('5. Getting user...');
+      const { data: { user: authUser }, error: userError } = await supabaseClient.auth.getUser();
+      if (userError || !authUser) {
+        console.error('User error:', userError);
+        throw new Error('Usuario no autenticado para usar modelos premium');
+      }
+      user = authUser;
+      console.log('User ID:', user.id);
+    } else if (authHeader) {
+      // Para modelos gratuitos, intentar autenticación si está disponible (para límites)
+      console.log('3. Free model with auth header, attempting authentication...');
+      try {
+        supabaseClient = createClient(
+          Deno.env.get('SUPABASE_URL') ?? '',
+          Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+          { global: { headers: { Authorization: authHeader } } }
+        );
+
+        const { data: { user: authUser }, error: userError } = await supabaseClient.auth.getUser();
+        if (!userError && authUser) {
+          user = authUser;
+          console.log('User authenticated for usage tracking:', user.id);
+        }
+      } catch (error) {
+        console.log('Authentication failed but continuing with free model:', error);
+      }
+    } else {
+      console.log('3. Free model without authentication...');
+    }
 
     // Verificar si es un modelo gratuito
-    if (isFreeModel(aiModel)) {
-      console.log('5. Using free model with HuggingFace...');
+    if (isFreeModel(selectedModel)) {
+      console.log('5. Using free model...');
       
-      // Verificar límite de uso para modelos gratuitos
-      console.log('5.1. Checking usage limit for free model...');
-      const { data: usageResult, error: usageError } = await supabaseClient
-        .rpc('check_and_update_ai_usage', {
-          p_user_id: user.id,
-          p_ai_model: aiModel,
-          p_is_registered: true
-        });
+      // Para modelos gratuitos, permitir uso sin autenticación estricta
+      if (user) {
+        // Si el usuario está autenticado, verificar límite de uso
+        console.log('5.1. Checking usage limit for authenticated user...');
+        const { data: usageResult, error: usageError } = await supabaseClient
+          .rpc('check_and_update_ai_usage', {
+            p_user_id: user.id,
+            p_ai_model: selectedModel,
+            p_is_registered: true
+          });
 
-      if (usageError) {
-        console.error('Usage check error:', usageError);
-        throw new Error('Error verificando límites de uso');
+        if (usageError) {
+          console.error('Usage check error:', usageError);
+          // Si hay error con la verificación, continuar con el modelo gratuito
+        } else if (usageResult && !usageResult.can_use) {
+          throw new Error(`Has alcanzado el límite diario para ${selectedModel}. Intenta con otro modelo gratuito o regístrate para obtener más usos.`);
+        }
+      } else {
+        console.log('5.1. Using free model without authentication...');
       }
 
-      if (!usageResult.can_use) {
-        throw new Error(`Has alcanzado el límite diario para ${aiModel}. Intenta con otro modelo gratuito o configura una API key premium en tu perfil.`);
-      }
-
-      aiResponse = await callFreeModel(prompt, aiModel);
+      aiResponse = await callFreeModel(prompt, selectedModel);
     } else {
       console.log('5. Using premium model...');
       
+      if (!user) {
+        throw new Error('Para usar modelos premium, necesitas crear una cuenta y configurar tu API key.');
+      }
+      
       // Para modelos premium, necesitamos API key
-      const apiKey = await getAPIKeyForModel(supabaseClient, user.id, aiModel);
+      const apiKey = await getAPIKeyForModel(supabaseClient, user.id, selectedModel);
       
       if (!apiKey) {
-        throw new Error(`Para usar ${aiModel}, necesitas configurar tu API key en tu perfil. También puedes probar con los modelos gratuitos disponibles.`);
+        throw new Error(`Para usar ${selectedModel}, necesitas configurar tu API key en tu perfil. También puedes probar con los modelos gratuitos disponibles.`);
       }
 
       console.log('5.1. Calling premium AI with user API key...');
-      aiResponse = await callOpenAI(prompt, apiKey, aiModel);
+      aiResponse = await callOpenAI(prompt, apiKey, selectedModel);
     }
     
     console.log('6. AI response received, length:', aiResponse.length);

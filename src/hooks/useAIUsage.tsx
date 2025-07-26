@@ -20,7 +20,31 @@ export const useAIUsage = () => {
   const isRegistered = !!user;
 
   const fetchUsageData = async () => {
+    // Para usuarios no autenticados, usar límites por defecto
     if (!user) {
+      const usage: UsageData = {};
+      
+      AI_MODELS.forEach(model => {
+        // Solo modelos gratuitos están disponibles para usuarios no autenticados
+        if (model.freeLimit > 0) {
+          usage[model.id] = {
+            current_usage: 0,
+            remaining: model.freeLimit,
+            daily_limit: model.freeLimit,
+            can_use: true
+          };
+        } else {
+          // Modelos premium no disponibles sin autenticación
+          usage[model.id] = {
+            current_usage: 0,
+            remaining: 0,
+            daily_limit: 0,
+            can_use: false
+          };
+        }
+      });
+      
+      setUsageData(usage);
       setLoading(false);
       return;
     }
@@ -38,7 +62,7 @@ export const useAIUsage = () => {
       
       AI_MODELS.forEach(model => {
         const modelUsage = data?.find(u => u.ai_model === model.id);
-        const limit = isRegistered ? 999999 : 50; // Usuarios registrados tienen uso ilimitado, no registrados 50 prompts al mes
+        const limit = isRegistered ? model.registeredLimit : model.freeLimit;
         const used = modelUsage?.prompts_used || 0;
         
         usage[model.id] = {
