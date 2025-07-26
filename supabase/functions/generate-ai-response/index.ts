@@ -381,12 +381,15 @@ serve(async (req) => {
     // Get request body
     const { prompt, projectContext, selectedFramework, frameworkStage, selectedTool, aiModel = 'gpt-4o-mini' } = await req.json();
 
+    console.log('Request received:', { aiModel, hasPrompt: !!prompt });
+
     if (!prompt) {
       throw new Error('Prompt requerido');
     }
 
     if (!AI_CONFIGS[aiModel as keyof typeof AI_CONFIGS]) {
-      throw new Error('Modelo de IA no soportado');
+      console.error('AI model not supported:', aiModel, 'Available models:', Object.keys(AI_CONFIGS));
+      throw new Error(`Modelo de IA no soportado: ${aiModel}`);
     }
 
     // Check usage limits using the database function
@@ -400,8 +403,11 @@ serve(async (req) => {
     );
 
     if (usageError) {
+      console.error('Usage check error:', usageError);
       throw new Error(`Error checking usage: ${usageError.message}`);
     }
+
+    console.log('Usage check result:', usageCheck);
 
     if (!usageCheck.can_use) {
       throw new Error(`Has alcanzado el límite diario para ${aiModel}. Límite: ${usageCheck.daily_limit}, usado: ${usageCheck.current_usage}. Prueba con otro modelo.`);
@@ -415,33 +421,44 @@ serve(async (req) => {
       .single();
 
     if (profileError) {
+      console.error('Profile error:', profileError);
       throw new Error('Error al obtener el perfil del usuario');
     }
+
+    console.log('Profile loaded, checking API keys for model:', aiModel);
 
     let aiResponse: string;
     const config = AI_CONFIGS[aiModel as keyof typeof AI_CONFIGS];
 
     // Call the appropriate AI service based on the selected model and API keys
+    console.log('Calling AI service for provider:', config.provider);
     switch (config.provider) {
       case 'openai':
         if (!profile?.openai_api_key) {
+          console.error('Missing OpenAI API key for model:', aiModel);
           throw new Error('API key de OpenAI no configurada. Ve a tu perfil para configurarla.');
         }
+        console.log('Calling OpenAI with model:', config.model);
         aiResponse = await callOpenAI(prompt, profile.openai_api_key, aiModel);
         break;
       case 'google':
         if (!profile?.gemini_api_key) {
+          console.error('Missing Gemini API key for model:', aiModel);
           throw new Error('API key de Google Gemini no configurada. Ve a tu perfil para configurarla.');
         }
+        console.log('Calling Gemini with model:', config.model);
         aiResponse = await callGemini(prompt, profile.gemini_api_key, aiModel);
         break;
       case 'anthropic':
         if (!profile?.claude_api_key) {
+          console.error('Missing Claude API key for model:', aiModel);
           throw new Error('API key de Claude no configurada. Ve a tu perfil para configurarla.');
         }
+        console.log('Calling Claude with model:', config.model);
         aiResponse = await callClaude(prompt, profile.claude_api_key, aiModel);
         break;
       default:
+        console.error('Unsupported provider:', config.provider);
         throw new Error('Proveedor de IA no soportado');
     }
 
