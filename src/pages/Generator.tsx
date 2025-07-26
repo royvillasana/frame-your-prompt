@@ -58,7 +58,12 @@ const Generator = () => {
 
     // Handle project integration from URL params
     if (projectId && framework) {
-      // Set framework and optionally stage from URL
+      // Set current project from URL params
+      setCurrentProject({
+        id: projectId,
+        name: 'Existing Project', // Will be loaded later if needed
+        framework: framework
+      });
       setSelectedFramework(framework);
       if (stage) {
         setFrameworkStage(stage);
@@ -253,6 +258,33 @@ const Generator = () => {
       }
       
       setAiResponse(data.aiResponse);
+      
+      // Save the prompt to database if we have a current project
+      if (currentProject?.id && user) {
+        try {
+          await supabase
+            .from('generated_prompts')
+            .insert([
+              {
+                user_id: user.id,
+                project_id: currentProject.id,
+                project_context: projectContext as any, // Convert to Json type
+                selected_framework: selectedFramework,
+                framework_stage: frameworkStage,
+                selected_tool: selectedTool,
+                original_prompt: generatedPrompt,
+                ai_response: data.aiResponse,
+              }
+            ]);
+          
+          console.log('Prompt saved to project successfully');
+          sonnerToast.success("¡Prompt guardado en el proyecto!");
+        } catch (saveError) {
+          console.error('Error saving prompt to project:', saveError);
+          // Don't show error to user as the main function worked
+        }
+      }
+      
       refreshUsage(); // Refresh usage data after successful AI response
       sonnerToast.success("¡Respuesta generada con IA!");
     } catch (error: any) {
