@@ -365,7 +365,7 @@ Tu consulta toca temas importantes de UX. Te recomiendo considerar:
 
 function generateUXStructuredResponse(prompt: string): string {
   // This is the original structured response for UX framework prompts
-  const response = \`
+  const response = `
 **Respuesta generada con modelo gratuito**
 
 Basándome en tu prompt sobre UX Design, aquí tienes una respuesta estructurada:
@@ -407,7 +407,7 @@ Tu prompt se enfoca en metodologías UX y requiere un enfoque práctico y estruc
 
 ---
 *Nota: Esta respuesta fue generada con un modelo gratuito. Para respuestas más personalizadas y detalladas, configura una API key en tu perfil.*
-  \`;
+  `;
   
   return response.trim();
 }
