@@ -39,15 +39,21 @@ async function callOpenAI(prompt: string, apiKey: string, model: string) {
     
     // Handle specific OpenAI errors
     if (response.status === 429) {
-      const errorJson = JSON.parse(errorData);
-      if (errorJson.error?.code === 'insufficient_quota') {
-        throw new Error('Tu API key de OpenAI ha excedido la cuota disponible. Por favor revisa tu plan y facturación en OpenAI.');
+      try {
+        const errorJson = JSON.parse(errorData);
+        if (errorJson.error?.code === 'insufficient_quota') {
+          throw new Error(`La IA ${model} ha agotado sus créditos disponibles. Puedes intentar con otra IA o configurar una API key propia en tu perfil.`);
+        }
+        throw new Error(`La IA ${model} está temporalmente no disponible (límite de tasa). Intenta nuevamente en unos minutos o usa otra IA.`);
+      } catch (parseError) {
+        throw new Error(`La IA ${model} está temporalmente no disponible. Intenta con otra IA.`);
       }
-      throw new Error('API de OpenAI temporalmente no disponible. Intenta nuevamente en unos minutos.');
     } else if (response.status === 401) {
-      throw new Error('API key de OpenAI inválida. Por favor verifica tu clave en el perfil.');
+      throw new Error(`API key inválida para ${model}. Por favor verifica tu configuración en el perfil.`);
+    } else if (response.status === 403) {
+      throw new Error(`Acceso denegado para ${model}. Verifica los permisos de tu API key.`);
     } else {
-      throw new Error(`Error de OpenAI (${response.status}): ${errorData}`);
+      throw new Error(`Error en ${model} (${response.status}): Intenta con otra IA o revisa tu configuración.`);
     }
   }
 
@@ -108,7 +114,7 @@ serve(async (req) => {
 
     console.log('6. Checking API key...');
     if (!profile?.openai_api_key) {
-      throw new Error('API key de OpenAI no configurada. Ve a tu perfil para configurarla.');
+      throw new Error(`Para usar ${aiModel}, necesitas configurar tu API key de OpenAI en tu perfil. También puedes probar con otras IAs disponibles.`);
     }
 
     console.log('7. Calling OpenAI...');
@@ -119,7 +125,8 @@ serve(async (req) => {
     console.log('9. Returning successful response...');
     return new Response(JSON.stringify({ 
       aiResponse,
-      usage: { can_use: true, remaining: 999999, daily_limit: 999999, current_usage: 0 }
+      // Sin límites artificiales - el límite es el de cada IA individualmente
+      usage: { can_use: true, remaining: "unlimited", daily_limit: "unlimited", current_usage: 0 }
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
