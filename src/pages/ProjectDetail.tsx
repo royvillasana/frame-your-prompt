@@ -297,11 +297,11 @@ export const ProjectDetail = () => {
                   No prompts created for this stage yet.
                 </div>
                 <Button
-                  onClick={() => navigate(`/generator?project=${project.id}&framework=${project.selected_framework}&stage=${selectedStage}`)}
+                  onClick={() => navigate(`/generator?project=${project.id}&framework=${project.selected_framework}&stage=${selectedStage}&quickStart=true`)}
                   className="gap-2"
                 >
                   <Plus className="h-4 w-4" />
-                  Create First Prompt
+                  Generate First Prompt
                 </Button>
               </div>
             ) : (

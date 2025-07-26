@@ -50,6 +50,7 @@ const Generator = () => {
     const framework = searchParams.get('framework'); 
     const stage = searchParams.get('stage');
     const editPromptId = searchParams.get('edit');
+    const quickStart = searchParams.get('quickStart') === 'true';
 
     // Handle editing existing prompt
     if (editPromptId) {
@@ -66,12 +67,26 @@ const Generator = () => {
         framework: framework
       });
       setSelectedFramework(framework);
+      
       if (stage) {
         setFrameworkStage(stage);
-        // When coming from existing project, start with context step instead of jumping to tools
-        setCurrentStep("context");
+        
+        // If quickStart is true, skip context step and go directly to tool selection
+        if (quickStart) {
+          // Set default project context for quick start
+          setProjectContext({
+            industry: 'saas',
+            productType: 'web',
+            companySize: 'startup',
+            productScope: 'digital',
+            userProfile: 'general'
+          });
+          setCurrentStep("tool");
+        } else {
+          setCurrentStep("context");
+        }
       } else {
-        setCurrentStep("context"); // Always start with context when coming from project
+        setCurrentStep("context");
       }
     }
 
