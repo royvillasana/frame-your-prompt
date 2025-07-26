@@ -4,21 +4,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { UX_FRAMEWORKS } from "@/types/project";
 import { ArrowRight, FolderPlus } from "lucide-react";
 interface ProjectConfigStepProps {
-  onNext: (projectName: string, description: string, framework: string) => void;
+  onNext: (projectName: string, description: string) => void;
 }
 export const ProjectConfigStep = ({
   onNext
 }: ProjectConfigStepProps) => {
   const [projectName, setProjectName] = useState("");
   const [description, setDescription] = useState("");
-  const [selectedFramework, setSelectedFramework] = useState("");
+  
   const handleNext = () => {
-    if (!projectName.trim() || !selectedFramework) return;
-    onNext(projectName.trim(), description.trim(), selectedFramework);
+    if (!projectName.trim()) return;
+    onNext(projectName.trim(), description.trim());
   };
   return <Card className="bg-gradient-card shadow-medium">
       <CardHeader className="text-center">
@@ -41,26 +39,10 @@ export const ProjectConfigStep = ({
           <Label htmlFor="description">Descripción (Opcional)</Label>
           <Textarea id="description" value={description} onChange={e => setDescription(e.target.value)} placeholder="Breve descripción de tu proyecto..." rows={3} />
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="framework">Framework de UX*</Label>
-          <Select value={selectedFramework} onValueChange={setSelectedFramework}>
-            <SelectTrigger>
-              <SelectValue placeholder="Selecciona un framework..." />
-            </SelectTrigger>
-            <SelectContent>
-              {UX_FRAMEWORKS.map((framework) => (
-                <SelectItem key={framework.id} value={framework.id}>
-                  {framework.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
         
         <div className="flex justify-end pt-4">
-          <Button onClick={handleNext} disabled={!projectName.trim() || !selectedFramework} className="gap-2">
-            Continuar con Contexto
+          <Button onClick={handleNext} disabled={!projectName.trim()} className="gap-2">
+            Crear Proyecto
             <ArrowRight className="h-4 w-4" />
           </Button>
         </div>

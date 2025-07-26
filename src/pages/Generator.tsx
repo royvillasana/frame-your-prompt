@@ -138,9 +138,9 @@ const Generator = () => {
     }
   };
 
-  const handleProjectConfigComplete = async (projectName: string, description: string, framework: string) => {
+  const handleProjectConfigComplete = async (projectName: string, description: string) => {
     try {
-      // Create the project
+      // Create the project without framework (will be set when framework is selected)
       const { data: project, error } = await supabase
         .from('projects')
         .insert([
@@ -148,7 +148,7 @@ const Generator = () => {
             user_id: user!.id,
             name: projectName,
             description,
-            selected_framework: framework,
+            selected_framework: '', // Will be updated when framework is selected
           }
         ])
         .select()
@@ -164,13 +164,12 @@ const Generator = () => {
         return;
       }
 
-      // Set current project and framework
+      // Set current project
       setCurrentProject({
         id: project.id,
         name: project.name,
-        framework: project.selected_framework
+        framework: '' // Will be set later
       });
-      setSelectedFramework(framework);
       
       toast({
         title: "¡Proyecto creado!",
@@ -183,7 +182,7 @@ const Generator = () => {
       console.error('Error creating project:', error);
       toast({
         title: "Error",
-        description: "No se pudo crear el proyecto",
+        description: "Error inesperado al crear el proyecto",
         variant: "destructive",
       });
     }
@@ -199,9 +198,25 @@ const Generator = () => {
     setCurrentStep("framework");
   };
 
-  const handleFrameworkComplete = (framework: string, stage: string) => {
+  const handleFrameworkComplete = async (framework: string, stage: string) => {
     setSelectedFramework(framework);
     setFrameworkStage(stage);
+    
+    // Update project with selected framework if we have a current project
+    if (currentProject?.id) {
+      try {
+        await supabase
+          .from('projects')
+          .update({ selected_framework: framework })
+          .eq('id', currentProject.id);
+          
+        // Update current project state
+        setCurrentProject(prev => prev ? { ...prev, framework } : null);
+      } catch (error) {
+        console.error('Error updating project framework:', error);
+      }
+    }
+    
     setCurrentStep("tool");
   };
 
