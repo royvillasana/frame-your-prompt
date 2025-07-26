@@ -18,7 +18,7 @@ export const ProjectDetail = () => {
   const { projectId } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { getProjectPrompts } = useProjects();
+  // Removed getProjectPrompts hook to avoid dependency loops
   
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
@@ -58,11 +58,23 @@ export const ProjectDetail = () => {
 
         setProject(projectData);
 
-        // Load prompts and organize by stage
-        const prompts = await getProjectPrompts(projectId);
+        // Load prompts directly in this component to avoid dependency issues
+        console.log('Loading prompts for project:', projectId);
+        const { data: prompts, error: promptsError } = await supabase
+          .from('generated_prompts')
+          .select('*')
+          .eq('project_id', projectId)
+          .order('created_at', { ascending: false });
+
+        console.log('Prompts loaded:', { promptsCount: prompts?.length || 0, promptsError });
+
+        if (promptsError) {
+          console.error('Error loading prompts:', promptsError);
+        }
+
+        // Organize prompts by stage
         const organized: PromptsByStage = {};
-        
-        prompts.forEach(prompt => {
+        (prompts || []).forEach(prompt => {
           const stage = prompt.framework_stage?.toLowerCase().replace(/\s+/g, '-') || 'uncategorized';
           if (!organized[stage]) {
             organized[stage] = [];
@@ -76,7 +88,7 @@ export const ProjectDetail = () => {
         const framework = getFrameworkById(projectData.selected_framework);
         if (framework?.stages.length) {
           // Find the most recent prompt to determine default stage
-          const allPrompts = prompts.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+          const allPrompts = (prompts || []).sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
           const mostRecentPrompt = allPrompts[0];
           
           if (mostRecentPrompt) {
@@ -104,7 +116,7 @@ export const ProjectDetail = () => {
     };
 
     loadProject();
-  }, [projectId, navigate, toast, getProjectPrompts]);
+  }, [projectId, navigate, toast]); // Removed getProjectPrompts dependency
 
   const deletePrompt = async (promptId: string) => {
     try {
@@ -122,11 +134,21 @@ export const ProjectDetail = () => {
         return;
       }
 
-      // Refresh prompts
-      const prompts = await getProjectPrompts(projectId!);
+      // Refresh prompts directly instead of using getProjectPrompts
+      const { data: prompts, error: promptsError } = await supabase
+        .from('generated_prompts')
+        .select('*')
+        .eq('project_id', projectId!)
+        .order('created_at', { ascending: false });
+
+      if (promptsError) {
+        console.error('Error refreshing prompts:', promptsError);
+        return;
+      }
+
+      // Reorganize prompts by stage
       const organized: PromptsByStage = {};
-      
-      prompts.forEach(prompt => {
+      (prompts || []).forEach(prompt => {
         const stage = prompt.framework_stage?.toLowerCase().replace(/\s+/g, '-') || 'uncategorized';
         if (!organized[stage]) {
           organized[stage] = [];
