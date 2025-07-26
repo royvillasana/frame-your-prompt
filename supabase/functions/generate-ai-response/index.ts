@@ -9,13 +9,8 @@ const corsHeaders = {
 
 // API configurations for different AI models
 const AI_CONFIGS = {
-  // Free model that works
   'llama-3.1-8b': {
     provider: 'free',
-    apiUrl: 'https://api.groq.com/openai/v1/chat/completions',
-    model: 'llama3-8b-8192',
-    maxTokens: 2000,
-    temperature: 0.7,
     systemPrompt: `Eres un experto UX Designer especializado en generar contenido detallado y práctico basado en prompts de frameworks UX. 
     
     Tu objetivo es proporcionar respuestas estructuradas, específicas y accionables que ayuden a los diseñadores UX en cada etapa de sus proyectos.
@@ -28,7 +23,6 @@ const AI_CONFIGS = {
     5. Mantén un tono profesional pero accesible
     6. Si el prompt incluye secciones numeradas, responde siguiendo esa estructura exacta`
   },
-  // Premium models
   'gpt-4o-mini': {
     provider: 'openai',
     apiUrl: 'https://api.openai.com/v1/chat/completions',
@@ -57,7 +51,7 @@ const AI_CONFIGS = {
   }
 };
 
-async function callOpenAI(prompt: string, apiKey: string) {
+async function callOpenAI(prompt: string, apiKey: string): Promise<string> {
   const config = AI_CONFIGS['gpt-4o-mini'];
   
   const response = await fetch(config.apiUrl, {
@@ -86,7 +80,7 @@ async function callOpenAI(prompt: string, apiKey: string) {
   return data.choices[0].message.content;
 }
 
-async function callPerplexity(prompt: string, apiKey: string, modelId: string) {
+async function callPerplexity(prompt: string, apiKey: string, modelId: string): Promise<string> {
   const config = AI_CONFIGS[modelId as keyof typeof AI_CONFIGS];
   
   const response = await fetch(config.apiUrl, {
@@ -103,12 +97,6 @@ async function callPerplexity(prompt: string, apiKey: string, modelId: string) {
       ],
       temperature: config.temperature,
       max_tokens: config.maxTokens,
-      top_p: 0.9,
-      return_images: false,
-      return_related_questions: false,
-      search_recency_filter: 'month',
-      frequency_penalty: 1,
-      presence_penalty: 0
     }),
   });
 
@@ -121,86 +109,11 @@ async function callPerplexity(prompt: string, apiKey: string, modelId: string) {
   return data.choices[0].message.content;
 }
 
-async function callFreeModel(prompt: string, modelId: string) {
-  const config = AI_CONFIGS[modelId as keyof typeof AI_CONFIGS];
+async function callFreeModel(prompt: string, modelId: string): Promise<string> {
+  console.log(`Attempting free model: ${modelId}`);
   
-  console.log(`Attempting to use real AI API for free model: ${modelId}`);
-  
-  // Try multiple free AI APIs
-  const apis = [
-    {
-      name: 'Groq',
-      url: 'https://api.groq.com/openai/v1/chat/completions',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer gsk_DEMO_KEY'
-      },
-      body: {
-        model: 'llama3-8b-8192',
-        messages: [
-          { role: 'system', content: config.systemPrompt },
-          { role: 'user', content: prompt }
-        ],
-        temperature: config.temperature,
-        max_tokens: Math.min(config.maxTokens, 1000)
-      }
-    },
-    {
-      name: 'Hugging Face',
-      url: 'https://api-inference.huggingface.co/models/microsoft/DialoGPT-large',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: {
-        inputs: `${config.systemPrompt}\n\nUsuario: ${prompt}\nAsistente:`,
-        parameters: {
-          max_new_tokens: 500,
-          temperature: 0.7,
-          do_sample: true,
-          return_full_text: false
-        }
-      }
-    }
-  ];
-
-  for (const api of apis) {
-    try {
-      console.log(`Trying ${api.name} API...`);
-      
-      const response = await fetch(api.url, {
-        method: 'POST',
-        headers: api.headers,
-        body: JSON.stringify(api.body),
-      });
-
-      console.log(`${api.name} API Response status: ${response.status}`);
-      
-      if (response.ok) {
-        const data = await response.json();
-        
-        let generatedText = '';
-        
-        // Handle different response formats
-        if (api.name === 'Groq' && data.choices && data.choices[0]?.message?.content) {
-          generatedText = data.choices[0].message.content;
-        } else if (api.name === 'Hugging Face' && Array.isArray(data) && data[0]?.generated_text) {
-          generatedText = data[0].generated_text.replace(prompt, '').trim();
-        }
-        
-        // Validate response quality
-        if (generatedText && generatedText.length > 50) {
-          console.log(`Using real AI response from ${api.name}`);
-          return generatedText;
-        }
-      }
-    } catch (error) {
-      console.error(`Error with ${api.name} API:`, error);
-      continue;
-    }
-  }
-  
-  // If all APIs failed, throw error instead of using fallback
-  throw new Error('No se pudo generar respuesta con IA. Todos los servicios gratuitos están temporalmente no disponibles. Intenta usar un modelo premium con API key.');
+  // For free model, throw error immediately to show alert
+  throw new Error('No se pudo generar respuesta con IA. Los servicios gratuitos están temporalmente no disponibles. Configura una API key para usar modelos premium.');
 }
 
 serve(async (req) => {
@@ -215,7 +128,6 @@ serve(async (req) => {
     // Get the authorization header
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
-      console.error('No authorization header provided');
       throw new Error('No authorization header');
     }
 
@@ -233,7 +145,6 @@ serve(async (req) => {
     // Get current user
     const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
     if (userError || !user) {
-      console.error('User authentication failed:', userError);
       throw new Error('Usuario no autenticado');
     }
 
@@ -241,23 +152,17 @@ serve(async (req) => {
 
     // Get request body
     const requestBody = await req.json();
-    console.log('Request body received');
-    
     const { prompt, projectContext, selectedFramework, frameworkStage, selectedTool, aiModel = 'llama-3.1-8b' } = requestBody;
 
     if (!prompt) {
-      console.error('No prompt provided');
       throw new Error('Prompt requerido');
     }
 
     console.log('Using AI model:', aiModel);
 
     if (!AI_CONFIGS[aiModel as keyof typeof AI_CONFIGS]) {
-      console.error('Unsupported AI model:', aiModel);
       throw new Error('Modelo de IA no soportado');
     }
-
-    console.log('Checking AI usage limits...');
 
     // Check usage limits using the database function
     const { data: usageCheck, error: usageError } = await supabaseClient.rpc(
@@ -265,31 +170,27 @@ serve(async (req) => {
       {
         p_user_id: user.id,
         p_ai_model: aiModel,
-        p_is_registered: true // All authenticated users are considered registered
+        p_is_registered: true
       }
     );
 
     if (usageError) {
-      console.error('Usage check failed:', usageError);
       throw new Error(`Error checking usage: ${usageError.message}`);
     }
 
-    if (!usageCheck.can_use) {
-      console.error('Usage limit exceeded:', usageCheck);
-      throw new Error(`Has alcanzado el límite diario para ${aiModel}. Límite: ${usageCheck.daily_limit}, usado: ${usageCheck.current_usage}. Prueba con otro modelo.`);
+    if (!usageCheck?.can_use) {
+      throw new Error(`Has alcanzado el límite diario para ${aiModel}. Prueba con otro modelo.`);
     }
-
-    console.log('Usage check passed, proceeding with AI call');
 
     // Check if model is free (doesn't require API key)
     const isFreeModel = aiModel === 'llama-3.1-8b';
+    let aiResponse: string;
 
-    let apiKey = null;
-    
-    if (!isFreeModel) {
-      const config = AI_CONFIGS[aiModel as keyof typeof AI_CONFIGS];
-      
-      // Get appropriate API key based on provider
+    if (isFreeModel) {
+      // Call free model (will throw error to show alert)
+      aiResponse = await callFreeModel(prompt, aiModel);
+    } else {
+      // Get API keys for premium models
       const { data: profile, error: profileError } = await supabaseClient
         .from('profiles')
         .select('openai_api_key, perplexity_api_key')
@@ -300,37 +201,23 @@ serve(async (req) => {
         throw new Error('Error al obtener el perfil del usuario.');
       }
 
+      const config = AI_CONFIGS[aiModel as keyof typeof AI_CONFIGS];
+      let apiKey: string;
+
       if (config.provider === 'perplexity') {
         if (!profile?.perplexity_api_key) {
           throw new Error('API key de Perplexity no configurada. Ve a tu perfil para configurarla.');
         }
         apiKey = profile.perplexity_api_key;
-      } else {
+        aiResponse = await callPerplexity(prompt, apiKey, aiModel);
+      } else if (config.provider === 'openai') {
         if (!profile?.openai_api_key) {
           throw new Error('API key de OpenAI no configurada. Ve a tu perfil para configurarla.');
         }
         apiKey = profile.openai_api_key;
-      }
-    }
-
-    let aiResponse: string;
-
-    // Call the appropriate AI service based on the selected model
-    if (isFreeModel) {
-      // Use free models
-      aiResponse = await callFreeModel(prompt, aiModel);
-    } else {
-      switch (aiModel) {
-        case 'gpt-4o-mini':
-          if (!apiKey) throw new Error('API key requerida para este modelo');
-          aiResponse = await callOpenAI(prompt, apiKey);
-          break;
-        case 'llama-3.1-sonar-small-128k-online':
-          if (!apiKey) throw new Error('API key de Perplexity requerida para este modelo');
-          aiResponse = await callPerplexity(prompt, apiKey, aiModel);
-          break;
-        default:
-          throw new Error('Modelo de IA no soportado');
+        aiResponse = await callOpenAI(prompt, apiKey);
+      } else {
+        throw new Error('Proveedor de IA no soportado');
       }
     }
 
@@ -349,7 +236,6 @@ serve(async (req) => {
 
     if (saveError) {
       console.error('Error saving to database:', saveError);
-      // Don't throw error here, just log it
     }
 
     return new Response(JSON.stringify({ 
