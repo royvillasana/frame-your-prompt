@@ -27,6 +27,22 @@ const AI_CONFIGS = {
     5. Mantén un tono profesional pero accesible
     6. Si el prompt incluye secciones numeradas, responde siguiendo esa estructura exacta`
   },
+  'gpt-4o': {
+    provider: 'openai',
+    apiUrl: 'https://api.openai.com/v1/chat/completions',
+    model: 'gpt-4o',
+    maxTokens: 4000,
+    temperature: 0.7,
+    systemPrompt: `Eres un experto UX Designer senior con amplia experiencia en investigación y metodologías de diseño. Tu expertise incluye análisis profundo y pensamiento estratégico.
+    
+    DIRECTRICES AVANZADAS:
+    1. Responde exclusivamente en español con alta calidad y detalle
+    2. Proporciona análisis profundos y consideraciones estratégicas
+    3. Incluye múltiples perspectivas y enfoques innovadores
+    4. Ofrece ejemplos específicos y casos de estudio detallados
+    5. Estructura las respuestas de forma lógica y comprehensiva
+    6. Mantén un nivel experto pero accesible`
+  },
   'gemini-1.5-flash': {
     provider: 'google',
     apiUrl: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent',
@@ -43,6 +59,22 @@ const AI_CONFIGS = {
     5. Mantén un equilibrio entre teoría y práctica
     6. Usa un tono profesional pero comprensible`
   },
+  'gemini-1.5-pro': {
+    provider: 'google',
+    apiUrl: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent',
+    model: 'gemini-1.5-pro-latest',
+    maxTokens: 4096,
+    temperature: 0.7,
+    systemPrompt: `Eres un UX Director con experiencia ejecutiva en diseño centrado en el usuario y estrategia de producto. Tu expertise incluye visión estratégica y liderazgo en UX.
+    
+    PAUTAS EJECUTIVAS:
+    1. Responde en español con perspectiva estratégica
+    2. Proporciona análisis profundos a nivel directivo
+    3. Incluye consideraciones de negocio y ROI
+    4. Ofrece frameworks y metodologías avanzadas
+    5. Estructura respuestas con enfoque ejecutivo
+    6. Mantén tono experto y visionario`
+  },
   'claude-3-haiku': {
     provider: 'anthropic',
     apiUrl: 'https://api.anthropic.com/v1/messages',
@@ -58,11 +90,27 @@ const AI_CONFIGS = {
     4. Ofrece ejemplos concretos y estudios de caso
     5. Estructura las respuestas de forma lógica y progresiva
     6. Mantén un tono experto pero accesible`
+  },
+  'claude-3.5-sonnet': {
+    provider: 'anthropic',
+    apiUrl: 'https://api.anthropic.com/v1/messages',
+    model: 'claude-3-5-sonnet-20241022',
+    maxTokens: 4000,
+    temperature: 0.7,
+    systemPrompt: `Eres un UX Research Director con experiencia avanzada en metodologías de investigación y análisis comportamental. Tu expertise incluye pensamiento sistémico y análisis crítico profundo.
+    
+    DIRECTRICES AVANZADAS:
+    1. Responde en español con máximo nivel de expertise
+    2. Proporciona análisis críticos y consideraciones sistémicas
+    3. Incluye múltiples perspectivas y enfoques disruptivos
+    4. Ofrece marcos teóricos avanzados y estudios de caso complejos
+    5. Estructura respuestas con rigor académico pero aplicabilidad práctica
+    6. Mantén tono de investigador senior y pensador crítico`
   }
 };
 
-async function callOpenAI(prompt: string, apiKey: string) {
-  const config = AI_CONFIGS['gpt-4o-mini'];
+async function callOpenAI(prompt: string, apiKey: string, modelId: string) {
+  const config = AI_CONFIGS[modelId as keyof typeof AI_CONFIGS];
   
   const response = await fetch(config.apiUrl, {
     method: 'POST',
@@ -90,8 +138,8 @@ async function callOpenAI(prompt: string, apiKey: string) {
   return data.choices[0].message.content;
 }
 
-async function callGemini(prompt: string, apiKey: string) {
-  const config = AI_CONFIGS['gemini-1.5-flash'];
+async function callGemini(prompt: string, apiKey: string, modelId: string) {
+  const config = AI_CONFIGS[modelId as keyof typeof AI_CONFIGS];
   
   const response = await fetch(`${config.apiUrl}?key=${apiKey}`, {
     method: 'POST',
@@ -122,8 +170,8 @@ async function callGemini(prompt: string, apiKey: string) {
   return data.candidates[0].content.parts[0].text;
 }
 
-async function callClaude(prompt: string, apiKey: string) {
-  const config = AI_CONFIGS['claude-3-haiku'];
+async function callClaude(prompt: string, apiKey: string, modelId: string) {
+  const config = AI_CONFIGS[modelId as keyof typeof AI_CONFIGS];
   
   const response = await fetch(config.apiUrl, {
     method: 'POST',
@@ -215,35 +263,39 @@ serve(async (req) => {
     // Get API keys from user profile
     const { data: profile, error: profileError } = await supabaseClient
       .from('profiles')
-      .select('openai_api_key')
+      .select('openai_api_key, gemini_api_key, claude_api_key')
       .eq('user_id', user.id)
       .single();
 
-    // For now, we'll use the OpenAI API key for all models
-    // In the future, you could add separate columns for different API keys
-    if (profileError || !profile?.openai_api_key) {
-      throw new Error('API key no configurada. Ve a tu perfil para configurarla.');
+    if (profileError) {
+      throw new Error('Error al obtener el perfil del usuario');
     }
 
     let aiResponse: string;
+    const config = AI_CONFIGS[aiModel as keyof typeof AI_CONFIGS];
 
-    // Call the appropriate AI service based on the selected model
-    switch (aiModel) {
-      case 'gpt-4o-mini':
-        aiResponse = await callOpenAI(prompt, profile.openai_api_key);
+    // Call the appropriate AI service based on the selected model and API keys
+    switch (config.provider) {
+      case 'openai':
+        if (!profile?.openai_api_key) {
+          throw new Error('API key de OpenAI no configurada. Ve a tu perfil para configurarla.');
+        }
+        aiResponse = await callOpenAI(prompt, profile.openai_api_key, aiModel);
         break;
-      case 'gemini-1.5-flash':
-        // For demo purposes, we'll use OpenAI for all models
-        // In production, you'd need separate API keys for each service
-        aiResponse = await callOpenAI(prompt, profile.openai_api_key);
+      case 'google':
+        if (!profile?.gemini_api_key) {
+          throw new Error('API key de Google Gemini no configurada. Ve a tu perfil para configurarla.');
+        }
+        aiResponse = await callGemini(prompt, profile.gemini_api_key, aiModel);
         break;
-      case 'claude-3-haiku':
-        // For demo purposes, we'll use OpenAI for all models
-        // In production, you'd need separate API keys for each service
-        aiResponse = await callOpenAI(prompt, profile.openai_api_key);
+      case 'anthropic':
+        if (!profile?.claude_api_key) {
+          throw new Error('API key de Claude no configurada. Ve a tu perfil para configurarla.');
+        }
+        aiResponse = await callClaude(prompt, profile.claude_api_key, aiModel);
         break;
       default:
-        throw new Error('Modelo de IA no soportado');
+        throw new Error('Proveedor de IA no soportado');
     }
 
     // Save the generated prompt and response to database
