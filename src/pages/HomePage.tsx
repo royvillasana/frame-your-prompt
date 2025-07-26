@@ -15,11 +15,8 @@ import {
   Layers
 } from "lucide-react";
 import heroImage from "@/assets/hero-image.jpg";
-import { useLanguage } from "@/contexts/LanguageContext";
 
 const HomePage = () => {
-  const { t } = useLanguage();
-  
   const frameworks = [
     "Design Thinking",
     "Lean UX", 
@@ -77,24 +74,28 @@ const HomePage = () => {
                   AI-Powered UX Prompts
                 </Badge>
                 <h1 className="text-4xl lg:text-6xl font-bold tracking-tight">
-                  {t("home.title")}
+                  Generate AI-powered{" "}
+                  <span className="bg-gradient-primary bg-clip-text text-transparent">
+                    UX prompts
+                  </span>{" "}
+                  tailored to your framework
                 </h1>
                 <p className="text-xl text-muted-foreground max-w-2xl">
-                  {t("home.subtitle")}
+                  Accelerate your UX process using intelligent, structured, editable AI prompts designed for Design Thinking, Lean UX, and other popular frameworks.
                 </p>
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link to="/generator">
                   <Button variant="hero" size="lg" className="w-full sm:w-auto">
-                    {t("home.cta.generate")}
+                    Start Prompting Free
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
                 <Link to="/library">
                   <Button variant="outline" size="lg" className="w-full sm:w-auto">
                     <BookOpen className="mr-2 h-4 w-4" />
-                    {t("home.cta.learn")}
+                    Browse Prompt Library
                   </Button>
                 </Link>
               </div>
