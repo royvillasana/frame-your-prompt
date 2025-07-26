@@ -48,10 +48,10 @@ export const useProfile = () => {
     if (!profile) return [];
     
     const keys = [];
-    // Priorizar modelos premium cuando hay API key configurada
-    if (profile.openai_api_key) keys.push('gpt-4o');
-    if (profile.gemini_api_key) keys.push('gemini-1.5-pro');
-    if (profile.claude_api_key) keys.push('claude-3.5-sonnet');
+    // Priorizar modelos más avanzados cuando hay API key configurada
+    if (profile.openai_api_key) keys.push('gpt-4.1');
+    if (profile.gemini_api_key) keys.push('gemini-2.5-pro');
+    if (profile.claude_api_key) keys.push('claude-opus-4');
     
     return keys;
   };
@@ -61,11 +61,11 @@ export const useProfile = () => {
     
     switch (apiKeyType) {
       case 'openai':
-        return profile.openai_api_key ? ['gpt-4o-mini', 'gpt-4o'] : [];
+        return profile.openai_api_key ? ['gpt-4o-mini', 'gpt-4o', 'gpt-4.1', 'gpt-4.1-mini'] : [];
       case 'gemini':
-        return profile.gemini_api_key ? ['gemini-1.5-flash', 'gemini-1.5-pro'] : [];
+        return profile.gemini_api_key ? ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-2.0-flash', 'gemini-2.5-flash', 'gemini-2.5-pro'] : [];
       case 'claude':
-        return profile.claude_api_key ? ['claude-3-haiku', 'claude-3.5-sonnet'] : [];
+        return profile.claude_api_key ? ['claude-3-haiku', 'claude-3.5-haiku', 'claude-3.5-sonnet', 'claude-3.7-sonnet', 'claude-sonnet-4', 'claude-opus-4'] : [];
       default:
         return [];
     }
@@ -77,12 +77,21 @@ export const useProfile = () => {
     switch (modelId) {
       case 'gpt-4o-mini':
       case 'gpt-4o':
+      case 'gpt-4.1':
+      case 'gpt-4.1-mini':
         return !!profile.openai_api_key;
       case 'gemini-1.5-flash':
       case 'gemini-1.5-pro':
+      case 'gemini-2.0-flash':
+      case 'gemini-2.5-flash':
+      case 'gemini-2.5-pro':
         return !!profile.gemini_api_key;
       case 'claude-3-haiku':
+      case 'claude-3.5-haiku':
       case 'claude-3.5-sonnet':
+      case 'claude-3.7-sonnet':
+      case 'claude-sonnet-4':
+      case 'claude-opus-4':
         return !!profile.claude_api_key;
       default:
         return false;

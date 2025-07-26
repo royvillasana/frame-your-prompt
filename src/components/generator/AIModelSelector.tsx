@@ -18,6 +18,7 @@ export interface AIModel {
 }
 
 export const AI_MODELS: AIModel[] = [
+  // OpenAI Models
   {
     id: "gpt-4o-mini",
     name: "GPT-4o Mini",
@@ -32,12 +33,33 @@ export const AI_MODELS: AIModel[] = [
     id: "gpt-4o",
     name: "GPT-4o",
     provider: "OpenAI",
-    description: "Modelo premium de OpenAI para análisis avanzados de UX",
+    description: "Modelo versátil de alta inteligencia para UX avanzado",
     freeLimit: 0,
     registeredLimit: 0,
     icon: <Sparkles className="h-4 w-4" />,
     color: "bg-green-600"
   },
+  {
+    id: "gpt-4.1",
+    name: "GPT-4.1",
+    provider: "OpenAI",
+    description: "Modelo más avanzado con mejoras en codificación y contexto largo",
+    freeLimit: 0,
+    registeredLimit: 0,
+    icon: <Sparkles className="h-4 w-4" />,
+    color: "bg-green-700"
+  },
+  {
+    id: "gpt-4.1-mini",
+    name: "GPT-4.1 Mini",
+    provider: "OpenAI",
+    description: "Versión optimizada de GPT-4.1 para mejor rendimiento",
+    freeLimit: 0,
+    registeredLimit: 0,
+    icon: <Sparkles className="h-4 w-4" />,
+    color: "bg-green-600"
+  },
+  // Google Gemini Models
   {
     id: "gemini-1.5-flash",
     name: "Gemini 1.5 Flash",
@@ -52,12 +74,43 @@ export const AI_MODELS: AIModel[] = [
     id: "gemini-1.5-pro",
     name: "Gemini 1.5 Pro",
     provider: "Google",
-    description: "Modelo premium de Google para tareas complejas de UX",
+    description: "Modelo premium para razonamiento complejo en UX",
     freeLimit: 0,
     registeredLimit: 0,
     icon: <Star className="h-4 w-4" />,
     color: "bg-blue-600"
   },
+  {
+    id: "gemini-2.0-flash",
+    name: "Gemini 2.0 Flash",
+    provider: "Google",
+    description: "Funciones de próxima generación con velocidad y streaming",
+    freeLimit: 0,
+    registeredLimit: 0,
+    icon: <Star className="h-4 w-4" />,
+    color: "bg-blue-700"
+  },
+  {
+    id: "gemini-2.5-flash",
+    name: "Gemini 2.5 Flash",
+    provider: "Google",
+    description: "Mejor relación precio-rendimiento con pensamiento adaptativo",
+    freeLimit: 0,
+    registeredLimit: 0,
+    icon: <Star className="h-4 w-4" />,
+    color: "bg-blue-800"
+  },
+  {
+    id: "gemini-2.5-pro",
+    name: "Gemini 2.5 Pro",
+    provider: "Google",
+    description: "Modelo de pensamiento avanzado para problemas complejos de UX",
+    freeLimit: 0,
+    registeredLimit: 0,
+    icon: <Star className="h-4 w-4" />,
+    color: "bg-blue-900"
+  },
+  // Anthropic Claude Models
   {
     id: "claude-3-haiku",
     name: "Claude 3 Haiku",
@@ -69,14 +122,54 @@ export const AI_MODELS: AIModel[] = [
     color: "bg-purple-500"
   },
   {
-    id: "claude-3.5-sonnet",
-    name: "Claude 3.5 Sonnet",
+    id: "claude-3.5-haiku",
+    name: "Claude 3.5 Haiku",
     provider: "Anthropic",
-    description: "Modelo premium de Anthropic para análisis profundo de UX",
+    description: "Modelo más rápido con inteligencia a velocidades ultrarrápidas",
     freeLimit: 0,
     registeredLimit: 0,
     icon: <Brain className="h-4 w-4" />,
     color: "bg-purple-600"
+  },
+  {
+    id: "claude-3.5-sonnet",
+    name: "Claude 3.5 Sonnet",
+    provider: "Anthropic",
+    description: "Modelo inteligente anterior con alto nivel de capacidad",
+    freeLimit: 0,
+    registeredLimit: 0,
+    icon: <Brain className="h-4 w-4" />,
+    color: "bg-purple-700"
+  },
+  {
+    id: "claude-3.7-sonnet",
+    name: "Claude 3.7 Sonnet",
+    provider: "Anthropic",
+    description: "Modelo de alto rendimiento con pensamiento extendido",
+    freeLimit: 0,
+    registeredLimit: 0,
+    icon: <Brain className="h-4 w-4" />,
+    color: "bg-purple-800"
+  },
+  {
+    id: "claude-sonnet-4",
+    name: "Claude Sonnet 4",
+    provider: "Anthropic",
+    description: "Modelo de alto rendimiento con razonamiento excepcional",
+    freeLimit: 0,
+    registeredLimit: 0,
+    icon: <Brain className="h-4 w-4" />,
+    color: "bg-purple-900"
+  },
+  {
+    id: "claude-opus-4",
+    name: "Claude Opus 4",
+    provider: "Anthropic",
+    description: "El modelo más capaz e inteligente para UX avanzado",
+    freeLimit: 0,
+    registeredLimit: 0,
+    icon: <Brain className="h-4 w-4" />,
+    color: "bg-purple-950"
   }
 ];
 
@@ -116,7 +209,12 @@ export const AIModelSelector = ({ selectedModel, onModelSelect, disabled }: AIMo
             {AI_MODELS.map((model) => {
               const usage = getModelUsage(model.id);
               const userHasAPIKey = hasAPIKey(model.id);
-              const isPremium = ['gpt-4o', 'gemini-1.5-pro', 'claude-3.5-sonnet'].includes(model.id);
+              const premiumModels = [
+                'gpt-4o', 'gpt-4.1', 'gpt-4.1-mini',
+                'gemini-1.5-pro', 'gemini-2.0-flash', 'gemini-2.5-flash', 'gemini-2.5-pro',
+                'claude-3.5-haiku', 'claude-3.5-sonnet', 'claude-3.7-sonnet', 'claude-sonnet-4', 'claude-opus-4'
+              ];
+              const isPremium = premiumModels.includes(model.id);
               
               // Solo mostrar modelos premium si el usuario tiene la API key correspondiente
               const shouldShow = !isPremium || userHasAPIKey;

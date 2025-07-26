@@ -63,7 +63,11 @@ export const useAIUsage = () => {
 
   const getModelUsage = (modelId: string) => {
     // Los modelos premium solo están disponibles con API key propia
-    const premiumModels = ['gpt-4o', 'gemini-1.5-pro', 'claude-3.5-sonnet'];
+    const premiumModels = [
+      'gpt-4o', 'gpt-4.1', 'gpt-4.1-mini',
+      'gemini-1.5-pro', 'gemini-2.0-flash', 'gemini-2.5-flash', 'gemini-2.5-pro',
+      'claude-3.5-haiku', 'claude-3.5-sonnet', 'claude-3.7-sonnet', 'claude-sonnet-4', 'claude-opus-4'
+    ];
     const isPremium = premiumModels.includes(modelId);
     
     if (isPremium) {
