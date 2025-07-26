@@ -6,6 +6,7 @@ import { useProjects } from "@/hooks/useProjects";
 import { ProjectCard } from "./ProjectCard";
 import { CreateProjectDialog } from "./CreateProjectDialog";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 
 interface ProjectPromptCounts {
@@ -14,29 +15,52 @@ interface ProjectPromptCounts {
 
 export const ProjectsView = () => {
   const navigate = useNavigate();
-  const { projects, loading, createProject, deleteProject, getProjectPrompts } = useProjects();
+  const { projects, loading, createProject, deleteProject } = useProjects();
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [projectToDelete, setProjectToDelete] = useState<string | null>(null);
   const [promptCounts, setPromptCounts] = useState<ProjectPromptCounts>({});
 
-  // Load prompt counts for all projects
+  // Load prompt counts for all projects in a single optimized query
   useEffect(() => {
     const loadPromptCounts = async () => {
-      const counts: ProjectPromptCounts = {};
-      
-      for (const project of projects) {
-        const prompts = await getProjectPrompts(project.id);
-        counts[project.id] = prompts.length;
+      if (projects.length === 0) {
+        setPromptCounts({});
+        return;
       }
+
+      console.log('Loading prompt counts for', projects.length, 'projects');
       
-      setPromptCounts(counts);
+      try {
+        // Get all project IDs
+        const projectIds = projects.map(p => p.id);
+        
+        // Single query to get all prompts for all projects
+        const { data: allPrompts, error } = await supabase
+          .from('generated_prompts')
+          .select('project_id')
+          .in('project_id', projectIds);
+
+        if (error) {
+          console.error('Error loading prompt counts:', error);
+          return;
+        }
+
+        // Count prompts per project
+        const counts: ProjectPromptCounts = {};
+        projectIds.forEach(id => {
+          counts[id] = allPrompts?.filter(prompt => prompt.project_id === id).length || 0;
+        });
+        
+        console.log('Prompt counts loaded:', counts);
+        setPromptCounts(counts);
+      } catch (error) {
+        console.error('Error loading prompt counts:', error);
+      }
     };
 
-    if (projects.length > 0) {
-      loadPromptCounts();
-    }
-  }, [projects, getProjectPrompts]);
+    loadPromptCounts();
+  }, [projects.length]); // Only depend on projects.length to avoid infinite loops
 
   const handleDeleteProject = async () => {
     if (!projectToDelete) return;
