@@ -50,9 +50,9 @@ const Auth = () => {
 
       if (error) throw error;
       
-      toast.success("¡Cuenta creada exitosamente! Revisa tu email para confirmar.");
+      toast.success("Account created successfully! Check your email to confirm.");
     } catch (error: any) {
-      toast.error(error.message || "Error al crear la cuenta");
+      toast.error(error.message || "Error creating account");
     } finally {
       setLoading(false);
     }
@@ -70,9 +70,9 @@ const Auth = () => {
 
       if (error) throw error;
       
-      toast.success("¡Bienvenido de vuelta!");
+      toast.success("Welcome back!");
     } catch (error: any) {
-      toast.error(error.message || "Error al iniciar sesión");
+      toast.error(error.message || "Error signing in");
     } finally {
       setLoading(false);
     }
@@ -89,7 +89,7 @@ const Auth = () => {
 
       if (error) throw error;
     } catch (error: any) {
-      toast.error(error.message || "Error al iniciar sesión con Google");
+      toast.error(error.message || "Error signing in with Google");
     }
   };
 
@@ -99,15 +99,15 @@ const Auth = () => {
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold">FramePromptly</CardTitle>
           <CardDescription>
-            Accede a tu cuenta para generar prompts con IA
+            Access your account to generate AI prompts
           </CardDescription>
         </CardHeader>
         
         <CardContent>
           <Tabs defaultValue="signin" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="signin">Iniciar Sesión</TabsTrigger>
-              <TabsTrigger value="signup">Registrarse</TabsTrigger>
+              <TabsTrigger value="signin">Sign In</TabsTrigger>
+              <TabsTrigger value="signup">Sign Up</TabsTrigger>
             </TabsList>
             
             <TabsContent value="signin" className="space-y-4">
@@ -117,7 +117,7 @@ const Auth = () => {
                   <Input
                     id="email"
                     type="email"
-                    placeholder="tu@email.com"
+                    placeholder="your@email.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
@@ -125,11 +125,11 @@ const Auth = () => {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="password">Contraseña</Label>
+                  <Label htmlFor="password">Password</Label>
                   <Input
                     id="password"
                     type="password"
-                    placeholder="Tu contraseña"
+                    placeholder="Your password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
@@ -141,7 +141,7 @@ const Auth = () => {
                   className="w-full" 
                   disabled={loading}
                 >
-                  {loading ? "Iniciando..." : "Iniciar Sesión"}
+                  {loading ? "Signing in..." : "Sign In"}
                 </Button>
               </form>
             </TabsContent>
@@ -153,7 +153,7 @@ const Auth = () => {
                   <Input
                     id="signup-email"
                     type="email"
-                    placeholder="tu@email.com"
+                    placeholder="your@email.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
@@ -161,11 +161,11 @@ const Auth = () => {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="signup-password">Contraseña</Label>
+                  <Label htmlFor="signup-password">Password</Label>
                   <Input
                     id="signup-password"
                     type="password"
-                    placeholder="Mínimo 6 caracteres"
+                    placeholder="Minimum 6 characters"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
@@ -178,7 +178,7 @@ const Auth = () => {
                   className="w-full" 
                   disabled={loading}
                 >
-                  {loading ? "Creando cuenta..." : "Crear Cuenta"}
+                  {loading ? "Creating account..." : "Create Account"}
                 </Button>
               </form>
             </TabsContent>
