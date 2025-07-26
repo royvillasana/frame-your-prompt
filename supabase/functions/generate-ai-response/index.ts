@@ -196,8 +196,176 @@ async function callFreeModel(prompt: string, modelId: string) {
 }
 
 function generateStructuredResponse(prompt: string, systemPrompt: string): string {
-  // This is a fallback for free models - generates a structured response based on the prompt
-  const response = `
+  // Extract key information from the prompt to create a dynamic response
+  const lowerPrompt = prompt.toLowerCase();
+  
+  // Check if this is a chat conversation (contains conversation history)
+  const isConversational = lowerPrompt.includes('conversación anterior') || 
+                           lowerPrompt.includes('usuario:') || 
+                           lowerPrompt.includes('asistente:');
+  
+  if (isConversational) {
+    // Extract the last user message for contextual response
+    const userMessages = prompt.split('Usuario:').slice(-1)[0];
+    const lastUserMessage = userMessages ? userMessages.split('Asistente:')[0].trim() : '';
+    
+    return generateConversationalResponse(lastUserMessage);
+  }
+  
+  // For structured UX prompts, provide comprehensive response
+  return generateUXStructuredResponse(prompt);
+}
+
+function generateConversationalResponse(userMessage: string): string {
+  const lowerMessage = userMessage.toLowerCase();
+  
+  // Analyze the user's message and provide contextual responses
+  if (lowerMessage.includes('research') || lowerMessage.includes('investigación')) {
+    return `
+## 🔍 Investigación UX
+
+Excelente pregunta sobre investigación UX. Aquí te ayudo:
+
+**Métodos de investigación recomendados:**
+- **Entrevistas cualitativas**: Para entender motivaciones profundas
+- **Encuestas cuantitativas**: Para validar hipótesis con datos
+- **Testing de usabilidad**: Para identificar fricciones en la experiencia
+- **Análisis competitivo**: Para entender el mercado y oportunidades
+
+**Pasos siguientes:**
+1. Define tus objetivos de investigación específicos
+2. Selecciona el método más apropiado
+3. Recluta usuarios representativos
+4. Documenta y analiza los insights
+
+¿Hay algún aspecto específico de la investigación que te gustaría profundizar?
+
+*Respuesta generada con modelo gratuito - Para análisis más detallados, configura una API key.*`;
+  }
+  
+  if (lowerMessage.includes('prototype') || lowerMessage.includes('prototipo')) {
+    return `
+## 🛠️ Prototipado UX
+
+Te ayudo con el prototipado:
+
+**Tipos de prototipado:**
+- **Sketches/Wireframes**: Rápidos para explorar ideas
+- **Prototipos de baja fidelidad**: Para testear flujos
+- **Prototipos de alta fidelidad**: Para validar detalles visuales
+- **Prototipos funcionales**: Para testear interacciones complejas
+
+**Herramientas recomendadas:**
+- Figma (colaborativo y versátil)
+- Adobe XD (robusto para diseño)
+- Sketch (Mac, amplio ecosistema)
+- InVision (para prototipos clickeables)
+
+**Mejores prácticas:**
+1. Comienza siempre con baja fidelidad
+2. Testea temprano y frecuentemente
+3. Itera basándote en feedback
+4. Documenta decisiones de diseño
+
+¿En qué etapa del prototipado te encuentras?
+
+*Respuesta generada con modelo gratuito - Para guías más específicas, configura una API key.*`;
+  }
+  
+  if (lowerMessage.includes('testing') || lowerMessage.includes('prueba')) {
+    return `
+## 🧪 Testing de Usabilidad
+
+Perfecto tema sobre testing:
+
+**Tipos de testing:**
+- **Testing moderado**: Con facilitador presente
+- **Testing no moderado**: Usuarios solos con tareas
+- **A/B Testing**: Para comparar variantes
+- **Testing de guerrilla**: Rápido y informal
+
+**Pasos para un buen test:**
+1. **Objetivos claros**: ¿Qué quieres aprender?
+2. **Tareas realistas**: Basadas en casos de uso reales
+3. **Usuarios representativos**: De tu audiencia objetivo
+4. **Ambiente controlado**: Sin distracciones
+5. **Análisis sistemático**: Patrones en el comportamiento
+
+**Métricas importantes:**
+- Tasa de completación de tareas
+- Tiempo en completar tareas
+- Número de errores
+- Satisfacción del usuario (SUS)
+
+¿Qué aspecto del testing te interesa más?
+
+*Respuesta generada con modelo gratuito - Para metodologías avanzadas, configura una API key.*`;
+  }
+  
+  if (lowerMessage.includes('design system') || lowerMessage.includes('sistema de diseño')) {
+    return `
+## 🎨 Design Systems
+
+Excelente pregunta sobre sistemas de diseño:
+
+**Componentes esenciales:**
+- **Tokens de diseño**: Colores, tipografías, espaciado
+- **Componentes UI**: Botones, formularios, navegación
+- **Patrones**: Layouts comunes y comportamientos
+- **Guidelines**: Principios y mejores prácticas
+
+**Beneficios:**
+- Consistencia visual y funcional
+- Eficiencia en desarrollo
+- Escalabilidad del producto
+- Colaboración mejorada entre equipos
+
+**Herramientas recomendadas:**
+- Figma (para documentación visual)
+- Storybook (para componentes de desarrollo)
+- Zeroheight (para documentación completa)
+
+**Pasos para implementar:**
+1. Audita tu diseño actual
+2. Define tokens base
+3. Crea componentes atómicos
+4. Documenta patrones de uso
+5. Evangeliza con el equipo
+
+¿Tienes un design system existente o empezarías desde cero?
+
+*Respuesta generada con modelo gratuito - Para estrategias específicas, configura una API key.*`;
+  }
+  
+  // Generic helpful response for other questions
+  return `
+## 💡 Respuesta UX
+
+Gracias por tu pregunta. Basándome en lo que compartes:
+
+**Mi análisis:**
+Tu consulta toca temas importantes de UX. Te recomiendo considerar:
+
+1. **Contexto del usuario**: Siempre partir de las necesidades reales
+2. **Iteración continua**: El diseño es un proceso, no un destino
+3. **Validación temprana**: Testea ideas antes de invertir mucho tiempo
+4. **Colaboración**: Involucra a todo el equipo en el proceso
+
+**Recursos útiles:**
+- Nielsen Norman Group para principios fundamentales
+- UX Planet para casos de estudio
+- Interaction Design Foundation para metodologías
+- Dribbble/Behance para inspiración visual
+
+**Pregunta de seguimiento:**
+¿Podrías darme más contexto sobre tu proyecto específico? Así puedo ayudarte de manera más precisa.
+
+*Respuesta generada con modelo gratuito - Para análisis más detallados y personalizados, configura una API key en tu perfil.*`;
+}
+
+function generateUXStructuredResponse(prompt: string): string {
+  // This is the original structured response for UX framework prompts
+  const response = \`
 **Respuesta generada con modelo gratuito**
 
 Basándome en tu prompt sobre UX Design, aquí tienes una respuesta estructurada:
@@ -239,7 +407,7 @@ Tu prompt se enfoca en metodologías UX y requiere un enfoque práctico y estruc
 
 ---
 *Nota: Esta respuesta fue generada con un modelo gratuito. Para respuestas más personalizadas y detalladas, configura una API key en tu perfil.*
-  `;
+  \`;
   
   return response.trim();
 }
