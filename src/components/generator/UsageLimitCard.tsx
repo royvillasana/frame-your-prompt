@@ -11,9 +11,10 @@ import { useNavigate } from "react-router-dom";
 interface UsageData {
   can_use: boolean;
   remaining: number;
-  daily_limit: number;
+  monthly_limit: number;
   current_usage: number;
   user_type: 'guest' | 'registered_free' | 'registered_premium';
+  reset_period: 'monthly';
 }
 
 export const UsageLimitCard = () => {
@@ -49,23 +50,24 @@ export const UsageLimitCard = () => {
         .maybeSingle();
 
       let userType: 'guest' | 'registered_free' | 'registered_premium' = 'registered_free';
-      let dailyLimit = 6;
+      let monthlyLimit = 6;
       let currentUsage = usage?.prompts_used || 0;
 
       if (hasApiKey) {
         userType = 'registered_premium';
-        dailyLimit = 999999;
+        monthlyLimit = 999999;
       } else {
         userType = 'registered_free';
-        dailyLimit = 6;
+        monthlyLimit = 6;
       }
 
       setUsageData({
-        can_use: currentUsage < dailyLimit,
-        remaining: Math.max(0, dailyLimit - currentUsage),
-        daily_limit: dailyLimit,
+        can_use: currentUsage < monthlyLimit,
+        remaining: Math.max(0, monthlyLimit - currentUsage),
+        monthly_limit: monthlyLimit,
         current_usage: currentUsage,
-        user_type: userType
+        user_type: userType,
+        reset_period: 'monthly'
       });
     } catch (error) {
       console.error('Error checking usage:', error);
@@ -94,7 +96,7 @@ export const UsageLimitCard = () => {
           label: "Gratuito",
           color: "text-blue-600",
           bgColor: "bg-blue-50 border-blue-200",
-          description: "6 prompts diarios gratuitos"
+          description: "6 prompts mensuales gratuitos"
         };
       case 'guest':
         return {
@@ -102,7 +104,7 @@ export const UsageLimitCard = () => {
           label: "Invitado",
           color: "text-orange-600",
           bgColor: "bg-orange-50 border-orange-200",
-          description: "2 prompts diarios para usuarios no registrados"
+          description: "2 prompts mensuales para usuarios no registrados"
         };
     }
   };
@@ -110,7 +112,7 @@ export const UsageLimitCard = () => {
   const typeInfo = getTypeInfo();
   const usagePercentage = usageData.user_type === 'registered_premium' 
     ? 0 
-    : (usageData.current_usage / usageData.daily_limit) * 100;
+    : (usageData.current_usage / usageData.monthly_limit) * 100;
 
   return (
     <Card className={`${typeInfo.bgColor} border-2`}>
@@ -140,9 +142,9 @@ export const UsageLimitCard = () => {
         {usageData.user_type !== 'registered_premium' ? (
           <div className="space-y-3">
             <div className="flex items-center justify-between text-sm">
-              <span>Prompts usados hoy</span>
+              <span>Prompts usados este mes</span>
               <Badge variant={usageData.can_use ? "secondary" : "destructive"}>
-                {usageData.current_usage} / {usageData.daily_limit}
+                {usageData.current_usage} / {usageData.monthly_limit}
               </Badge>
             </div>
             
@@ -153,7 +155,7 @@ export const UsageLimitCard = () => {
             
             {!usageData.can_use && (
               <div className="text-xs text-muted-foreground">
-                <p>Has alcanzado tu límite diario. {usageData.user_type === 'registered_free' 
+                <p>Has alcanzado tu límite mensual. {usageData.user_type === 'registered_free' 
                   ? 'Configura una API key para acceso ilimitado.' 
                   : 'Regístrate para obtener más prompts.'}</p>
               </div>

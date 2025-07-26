@@ -199,11 +199,11 @@ serve(async (req) => {
       let limitMessage = '';
       
       if (userType === 'registered_free') {
-        limitMessage = `Has alcanzado tu límite diario de ${usageCheck?.daily_limit || 6} prompts. Configura una API key en tu perfil para obtener acceso ilimitado.`;
+        limitMessage = `Has alcanzado tu límite mensual de ${usageCheck?.monthly_limit || 6} prompts. Configura una API key en tu perfil para obtener acceso ilimitado.`;
       } else if (userType === 'guest') {
-        limitMessage = `Has alcanzado tu límite diario de ${usageCheck?.daily_limit || 2} prompts. Regístrate para obtener más prompts gratuitos.`;
+        limitMessage = `Has alcanzado tu límite mensual de ${usageCheck?.monthly_limit || 2} prompts. Regístrate para obtener más prompts gratuitos.`;
       } else {
-        limitMessage = `Has alcanzado el límite diario para ${aiModel}.`;
+        limitMessage = `Has alcanzado el límite mensual para ${aiModel}.`;
       }
       
       throw new Error(limitMessage);
