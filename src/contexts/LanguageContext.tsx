@@ -346,14 +346,23 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   }, [language]);
 
   const t = (key: string): string => {
-    const keys = key.split('.');
-    let value: any = translations[language];
-    
-    for (const k of keys) {
-      value = value?.[k];
+    try {
+      const keys = key.split('.');
+      let value: any = translations[language];
+      
+      for (const k of keys) {
+        if (value && typeof value === 'object') {
+          value = value[k];
+        } else {
+          return key; // Return key if path doesn't exist
+        }
+      }
+      
+      return typeof value === 'string' ? value : key;
+    } catch (error) {
+      console.error('Translation error for key:', key, error);
+      return key;
     }
-    
-    return value || key;
   };
 
   return (
