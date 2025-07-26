@@ -356,14 +356,17 @@ serve(async (req) => {
     } else {
       switch (aiModel) {
         case 'gpt-4o-mini':
+          if (!apiKey) throw new Error('API key requerida para este modelo');
           aiResponse = await callOpenAI(prompt, apiKey);
           break;
         case 'gemini-1.5-flash':
+          if (!apiKey) throw new Error('API key requerida para este modelo');
           // For demo purposes, we'll use OpenAI for all models
           // In production, you'd need separate API keys for each service
           aiResponse = await callOpenAI(prompt, apiKey);
           break;
         case 'claude-3-haiku':
+          if (!apiKey) throw new Error('API key requerida para este modelo');
           // For demo purposes, we'll use OpenAI for all models
           // In production, you'd need separate API keys for each service
           aiResponse = await callOpenAI(prompt, apiKey);

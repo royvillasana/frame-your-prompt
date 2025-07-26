@@ -17,35 +17,77 @@ export interface AIModel {
 }
 
 export const AI_MODELS: AIModel[] = [
+  // Free models (no API key required)
+  {
+    id: "gpt-3.5-turbo-free",
+    name: "GPT-3.5 Turbo (Gratuito)",
+    provider: "OpenAI",
+    description: "Modelo gratuito básico para tareas generales de UX",
+    freeLimit: 100,
+    registeredLimit: 200,
+    icon: <Sparkles className="h-4 w-4" />,
+    color: "bg-green-500"
+  },
+  {
+    id: "claude-3-haiku-free",
+    name: "Claude Haiku (Gratuito)",
+    provider: "Anthropic",
+    description: "Modelo gratuito para análisis UX básico",
+    freeLimit: 80,
+    registeredLimit: 150,
+    icon: <Brain className="h-4 w-4" />,
+    color: "bg-purple-500"
+  },
+  {
+    id: "gemini-1.5-flash-free",
+    name: "Gemini Flash (Gratuito)",
+    provider: "Google",
+    description: "Modelo gratuito rápido para creatividad UX",
+    freeLimit: 90,
+    registeredLimit: 180,
+    icon: <Star className="h-4 w-4" />,
+    color: "bg-blue-500"
+  },
+  {
+    id: "llama-3.1-8b",
+    name: "Llama 3.1 8B (Gratuito)",
+    provider: "Meta",
+    description: "Modelo open source gratuito para UX",
+    freeLimit: 100,
+    registeredLimit: 200,
+    icon: <Zap className="h-4 w-4" />,
+    color: "bg-orange-500"
+  },
+  // Premium models (API key required)
   {
     id: "gpt-4o-mini",
     name: "GPT-4o Mini",
     provider: "OpenAI",
-    description: "Rápido y eficiente para tareas generales de UX",
+    description: "Rápido y eficiente para tareas generales de UX (Requiere API Key)",
     freeLimit: 5,
     registeredLimit: 50,
     icon: <Sparkles className="h-4 w-4" />,
-    color: "bg-green-500"
+    color: "bg-green-600"
   },
   {
     id: "gemini-1.5-flash",
     name: "Gemini 1.5 Flash",
     provider: "Google",
-    description: "Excelente para análisis detallados y creatividad",
+    description: "Excelente para análisis detallados y creatividad (Requiere API Key)",
     freeLimit: 5,
     registeredLimit: 100,
     icon: <Star className="h-4 w-4" />,
-    color: "bg-blue-500"
+    color: "bg-blue-600"
   },
   {
     id: "claude-3-haiku",
     name: "Claude 3 Haiku",
     provider: "Anthropic",
-    description: "Perfecto para tareas de UX complejas y análisis profundo",
+    description: "Perfecto para tareas de UX complejas y análisis profundo (Requiere API Key)",
     freeLimit: 5,
     registeredLimit: 30,
     icon: <Brain className="h-4 w-4" />,
-    color: "bg-purple-500"
+    color: "bg-purple-600"
   }
 ];
 

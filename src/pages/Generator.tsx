@@ -30,7 +30,7 @@ const Generator = () => {
   const [selectedFramework, setSelectedFramework] = useState("");
   const [frameworkStage, setFrameworkStage] = useState("");
   const [selectedTool, setSelectedTool] = useState("");
-  const [selectedAIModel, setSelectedAIModel] = useState("gpt-4o-mini");
+  const [selectedAIModel, setSelectedAIModel] = useState("gpt-3.5-turbo-free");
   const [generatedPrompt, setGeneratedPrompt] = useState("");
   const [aiResponse, setAiResponse] = useState("");
   const [isGeneratingAI, setIsGeneratingAI] = useState(false);
