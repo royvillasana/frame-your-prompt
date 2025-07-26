@@ -41,6 +41,31 @@ const Generator = () => {
       return;
     }
 
+    // Check URL parameters for project integration
+    const searchParams = new URLSearchParams(location.search);
+    const projectId = searchParams.get('project');
+    const framework = searchParams.get('framework'); 
+    const stage = searchParams.get('stage');
+    const editPromptId = searchParams.get('edit');
+
+    // Handle editing existing prompt
+    if (editPromptId) {
+      loadPromptForEditing(editPromptId);
+      return;
+    }
+
+    // Handle project integration from URL params
+    if (projectId && framework) {
+      // Set framework and optionally stage from URL
+      setSelectedFramework(framework);
+      if (stage) {
+        setFrameworkStage(stage);
+        setCurrentStep("tool");
+      } else {
+        setCurrentStep("framework");
+      }
+    }
+
     // Check if coming from chat with result data
     const state = location.state as {
       showResult?: boolean;
@@ -72,7 +97,44 @@ const Generator = () => {
       }
       setCurrentStep("result");
     }
-  }, [user, navigate, location.state]);
+  }, [user, navigate, location.state, location.search]);
+
+  const loadPromptForEditing = async (promptId: string) => {
+    try {
+      const { data: prompt, error } = await supabase
+        .from('generated_prompts')
+        .select('*')
+        .eq('id', promptId)
+        .single();
+
+      if (error || !prompt) {
+        toast({
+          title: "Error",
+          description: "Prompt not found",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Pre-fill the form with existing prompt data
+      setProjectContext((prompt.project_context as unknown as ProjectContext) || null);
+      setSelectedFramework(prompt.selected_framework);
+      setFrameworkStage(prompt.framework_stage);
+      setSelectedTool(prompt.selected_tool);
+      setGeneratedPrompt(prompt.original_prompt);
+      if (prompt.ai_response) {
+        setAiResponse(prompt.ai_response);
+      }
+      setCurrentStep("result");
+    } catch (error) {
+      console.error('Error loading prompt for editing:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load prompt",
+        variant: "destructive",
+      });
+    }
+  };
 
   const handleContextComplete = (context: ProjectContext) => {
     setProjectContext(context);
