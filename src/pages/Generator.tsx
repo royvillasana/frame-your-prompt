@@ -13,7 +13,7 @@ import { ProjectContextStep, ProjectContext } from "@/components/generator/Proje
 import { ProjectStageStep } from "@/components/generator/ProjectStageStep";
 import { FrameworkStep } from "@/components/generator/FrameworkStep";
 import { ToolSelectionStep } from "@/components/generator/ToolSelectionStep";
-import { AIModelSelector } from "@/components/generator/AIModelSelector";
+
 import { useAIUsage } from "@/hooks/useAIUsage";
 
 type Step = "context" | "stage" | "framework" | "tool" | "result";
@@ -30,7 +30,7 @@ const Generator = () => {
   const [selectedFramework, setSelectedFramework] = useState("");
   const [frameworkStage, setFrameworkStage] = useState("");
   const [selectedTool, setSelectedTool] = useState("");
-  const [selectedAIModel, setSelectedAIModel] = useState("gpt-3.5-turbo-free");
+  const [selectedAIModel] = useState("gpt-4o-mini");
   const [generatedPrompt, setGeneratedPrompt] = useState("");
   const [aiResponse, setAiResponse] = useState("");
   const [isGeneratingAI, setIsGeneratingAI] = useState(false);
@@ -269,11 +269,6 @@ Asegúrate de que todas las recomendaciones estén alineadas con las mejores pr�
                 />
               </div>
               
-              <AIModelSelector 
-                selectedModel={selectedAIModel}
-                onModelSelect={setSelectedAIModel}
-                disabled={isGeneratingAI}
-              />
               
               <div className="flex flex-wrap gap-2">
                 <Button onClick={copyToClipboard} variant="outline" size="sm">
