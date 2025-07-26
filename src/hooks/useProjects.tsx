@@ -170,11 +170,8 @@ export const useProjects = () => {
 
   const getProjectPrompts = async (projectId: string) => {
     if (!user) {
-      console.log('No user found when getting project prompts');
       return [];
     }
-
-    console.log('Getting prompts for project:', projectId, 'user:', user.id);
 
     try {
       const { data, error } = await supabase
@@ -183,8 +180,6 @@ export const useProjects = () => {
         .eq('project_id', projectId)
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
-
-      console.log('Prompts query result:', { data, error });
 
       if (error) {
         console.error('Error loading project prompts:', error);

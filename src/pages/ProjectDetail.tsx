@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Plus, Calendar, Settings, Trash2, Edit3 } from "lucide-react";
-import { useProjects } from "@/hooks/useProjects";
+// Removed useProjects import to avoid dependency loops
 import { Project, getFrameworkById, getStagesByFramework } from "@/types/project";
 import { formatDistanceToNow } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
@@ -28,22 +28,16 @@ export const ProjectDetail = () => {
   useEffect(() => {
     const loadProject = async () => {
       if (!projectId) {
-        console.log('No projectId provided');
         return;
       }
-
-      console.log('Loading project with ID:', projectId);
       
       try {
         // Load project details
-        console.log('Making Supabase query for project...');
         const { data: projectData, error: projectError } = await supabase
           .from('projects')
           .select('*')
           .eq('id', projectId)
           .single();
-
-        console.log('Supabase response:', { projectData, projectError });
 
         if (projectError) {
           console.error('Error loading project:', projectError);
@@ -59,14 +53,11 @@ export const ProjectDetail = () => {
         setProject(projectData);
 
         // Load prompts directly in this component to avoid dependency issues
-        console.log('Loading prompts for project:', projectId);
         const { data: prompts, error: promptsError } = await supabase
           .from('generated_prompts')
           .select('*')
           .eq('project_id', projectId)
           .order('created_at', { ascending: false });
-
-        console.log('Prompts loaded:', { promptsCount: prompts?.length || 0, promptsError });
 
         if (promptsError) {
           console.error('Error loading prompts:', promptsError);
