@@ -528,27 +528,50 @@ Make sure all recommendations are aligned with ${frameworkText} best practices a
                 </Button>
               </div>
 
-              {aiResponse && (
+{aiResponse && (
                 <div className="mt-6 p-4 bg-gradient-to-br from-primary/5 to-accent/5 rounded-lg border">
                   <div className="flex items-center gap-2 mb-3">
                     <Sparkles className="h-5 w-5 text-primary" />
                     <h3 className="font-semibold text-lg">AI Response</h3>
-                    <Button 
-                      onClick={() => navigate('/chat', { 
-                        state: { 
-                          initialPrompt: generatedPrompt, 
-                          initialResponse: aiResponse,
-                          projectContext 
-                        } 
-                      })}
-                      size="sm"
-                      className="ml-auto"
-                    >
-                      Continue in Chat
-                    </Button>
+                    <div className="ml-auto flex gap-2">
+                      <Button 
+                        onClick={() => {
+                          navigator.clipboard.writeText(aiResponse);
+                          toast({
+                            title: "Copied!",
+                            description: "AI response copied to clipboard.",
+                          });
+                        }}
+                        size="sm"
+                        variant="outline"
+                      >
+                        <Copy className="mr-2 h-4 w-4" />
+                        Copy Response
+                      </Button>
+                      <Button 
+                        onClick={() => navigate('/chat', { 
+                          state: { 
+                            initialPrompt: generatedPrompt, 
+                            initialResponse: aiResponse,
+                            projectContext 
+                          } 
+                        })}
+                        size="sm"
+                      >
+                        Continue in Chat
+                      </Button>
+                    </div>
                   </div>
                   <div className="bg-background/50 p-4 rounded-md max-h-96 overflow-y-auto">
-                    <div className="whitespace-pre-wrap text-sm">{aiResponse}</div>
+                    <div 
+                      className="prose prose-sm max-w-none dark:prose-invert"
+                      dangerouslySetInnerHTML={{
+                        __html: aiResponse
+                          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold text
+                          .replace(/__(.*?)__/g, '<u>$1</u>') // Underline text
+                          .replace(/\n/g, '<br>') // Line breaks
+                      }}
+                    />
                   </div>
                 </div>
               )}
