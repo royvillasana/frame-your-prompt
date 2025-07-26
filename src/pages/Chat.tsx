@@ -99,7 +99,7 @@ Continúa la conversación de manera natural y útil, manteniendo el contexto de
           selectedFramework: 'conversational',
           frameworkStage: 'iterative',
           selectedTool: 'chat',
-          aiModel: 'llama-3.1-8b', // Use the working free model
+          aiModel: 'gpt-4o-mini', // Use OpenAI premium model for chat
         }
       });
 
