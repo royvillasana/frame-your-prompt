@@ -16,6 +16,7 @@ import { ToolSelectionStep } from "@/components/generator/ToolSelectionStep";
 import { ProjectSelectionStep } from "@/components/generator/ProjectSelectionStep";
 import { UsageLimitCard } from "@/components/generator/UsageLimitCard";
 import { LoadingPromptGeneration } from "@/components/generator/LoadingPromptGeneration";
+import ReactMarkdown from "react-markdown";
 
 import { useAIUsage } from "@/hooks/useAIUsage";
 
@@ -563,15 +564,9 @@ Make sure all recommendations are aligned with ${frameworkText} best practices a
                     </div>
                   </div>
                   <div className="bg-background/50 p-4 rounded-md max-h-96 overflow-y-auto">
-                    <div 
-                      className="prose prose-sm max-w-none dark:prose-invert"
-                      dangerouslySetInnerHTML={{
-                        __html: aiResponse
-                          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold text
-                          .replace(/__(.*?)__/g, '<u>$1</u>') // Underline text
-                          .replace(/\n/g, '<br>') // Line breaks
-                      }}
-                    />
+                    <div className="prose prose-sm max-w-none dark:prose-invert prose-headings:text-foreground prose-p:text-foreground prose-strong:text-foreground prose-em:text-foreground prose-code:text-foreground prose-pre:bg-muted prose-blockquote:border-primary prose-li:text-foreground">
+                      <ReactMarkdown>{aiResponse}</ReactMarkdown>
+                    </div>
                   </div>
                 </div>
               )}
