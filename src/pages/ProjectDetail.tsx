@@ -190,7 +190,11 @@ const ProjectDetail = () => {
             ) : (
               <div className="grid gap-4">
                 {prompts.map((prompt) => (
-                  <Card key={prompt.id} className="cursor-pointer hover:shadow-md transition-shadow">
+                  <Card 
+                    key={prompt.id} 
+                    className="cursor-pointer hover:shadow-md transition-shadow"
+                    onClick={() => navigate(`/prompt/${prompt.id}`)}
+                  >
                     <CardContent className="p-4">
                       <div className="flex items-start justify-between mb-3">
                         <div className="flex gap-2">

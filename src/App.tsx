@@ -14,6 +14,7 @@ import Profile from "./pages/Profile";
 import Chat from "./pages/Chat";
 import PromptLibrary from "./pages/PromptLibrary";
 import ProjectDetail from "./pages/ProjectDetail";
+import PromptDetail from "./pages/PromptDetail";
 import NotFound from "./pages/NotFound";
 import { AuthProvider } from "./hooks/useAuth";
 
@@ -38,6 +39,7 @@ const App = () => (
               <Route path="/chat" element={<Chat />} />
               <Route path="/prompt-library" element={<PromptLibrary />} />
               <Route path="/project/:projectId" element={<ProjectDetail />} />
+              <Route path="/prompt/:promptId" element={<PromptDetail />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
