@@ -47,7 +47,7 @@ const AI_CONFIGS = {
   'gpt-4.1': {
     provider: 'openai',
     apiUrl: 'https://api.openai.com/v1/chat/completions',
-    model: 'gpt-4.1-2025-04-14',
+    model: 'gpt-4.1',
     maxTokens: 8000,
     temperature: 0.7,
     systemPrompt: `Eres un UX Director ejecutivo con experiencia visionaria en diseño centrado en el usuario y estrategia de producto. Tu expertise incluye liderazgo en UX y visión a largo plazo.
@@ -63,7 +63,7 @@ const AI_CONFIGS = {
   'gpt-4.1-mini': {
     provider: 'openai',
     apiUrl: 'https://api.openai.com/v1/chat/completions',
-    model: 'gpt-4.1-mini-2025-04-14',
+    model: 'gpt-4.1-mini',
     maxTokens: 4000,
     temperature: 0.7,
     systemPrompt: `Eres un UX Designer senior con especialización en eficiencia y optimización de procesos de diseño. Tu expertise incluye metodologías ágiles y entrega rápida de valor.
