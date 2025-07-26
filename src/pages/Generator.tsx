@@ -463,7 +463,7 @@ Make sure all recommendations are aligned with ${frameworkText} best practices a
                       size="sm"
                       className="ml-auto"
                     >
-                      Continuar en Chat
+                      Continue in Chat
                     </Button>
                   </div>
                   <div className="bg-background/50 p-4 rounded-md max-h-96 overflow-y-auto">
@@ -508,10 +508,10 @@ Make sure all recommendations are aligned with ${frameworkText} best practices a
         <div className="text-center mb-12">
           <div className="flex items-center justify-center gap-2 mb-4">
             <Sparkles className="h-8 w-8 text-primary" />
-            <h1 className="text-4xl font-bold">Generador de Prompts</h1>
+            <h1 className="text-4xl font-bold">Prompt Generator</h1>
           </div>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Genera prompts de IA personalizados para UX siguiendo un proceso paso a paso
+            Generate personalized AI prompts for UX following a step-by-step process
           </p>
         </div>
 
