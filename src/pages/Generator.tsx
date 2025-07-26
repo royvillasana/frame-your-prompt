@@ -118,7 +118,7 @@ const Generator = () => {
       }
 
       if (data?.error) {
-        console.error('OpenAI API error:', data.error);
+        console.error('AI API error:', data.error);
         throw new Error(data.error);
       }
       
@@ -129,13 +129,18 @@ const Generator = () => {
       console.error('Full error:', error);
       const errorMessage = error.message || "Error al generar respuesta con IA";
       
-      // Check for specific OpenAI errors and provide helpful messages
+      // Check for specific API errors and provide helpful messages
       if (errorMessage.includes("exceeded your current quota")) {
         sonnerToast.error("Tu API key de OpenAI ha excedido la cuota. Revisa tu plan y facturación en OpenAI.");
-      } else if (errorMessage.includes("API key de OpenAI no configurada")) {
-        sonnerToast.error("Configura tu API key de OpenAI en tu perfil primero.");
+      } else if (errorMessage.includes("API key no configurada")) {
+        sonnerToast.error("Debes configurar una API key en tu perfil para usar esta función.", {
+          action: {
+            label: "Ir a Perfil",
+            onClick: () => navigate('/profile')
+          }
+        });
       } else if (errorMessage.includes("Incorrect API key")) {
-        sonnerToast.error("Tu API key de OpenAI es incorrecta. Verifica en tu perfil.");
+        sonnerToast.error("Tu API key es incorrecta. Verifica en tu perfil.");
       } else {
         sonnerToast.error(errorMessage);
       }
