@@ -15,6 +15,127 @@ import {
   Layers
 } from "lucide-react";
 import heroImage from "@/assets/hero-image.jpg";
+import { useEffect, useRef } from "react";
+
+function AnimatedBokehLavaLampCanvas({ className = "" }) {
+  const canvasRef = useRef(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    let ctx = canvas.getContext('2d');
+    let animationFrameId;
+
+    const rand = (min, max) => Math.random() * (max - min) + min;
+    const resize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = 480; // Fixed height for hero banner
+      ctx = canvas.getContext('2d');
+      ctx.globalCompositeOperation = 'lighter';
+    };
+    resize();
+    window.addEventListener('resize', resize);
+
+    let backgroundColors = [ '#18181b', '#18181b' ]; // dark gray
+    let colors = [
+      [ '#002aff', "#009ff2" ],
+      [ '#0054ff', '#27e49b' ], 
+      [ '#202bc5' ,'#873dcc' ]
+    ];
+    let count = 70;
+    let blur = [ 12, 70 ];
+    let radius = [ 1, 120 ];
+
+    ctx.clearRect( 0, 0, canvas.width, canvas.height );
+    ctx.globalCompositeOperation = 'lighter';
+    let grd = ctx.createLinearGradient(0, canvas.height, canvas.width, 0);
+    grd.addColorStop(0, backgroundColors[0]);
+    grd.addColorStop(1, backgroundColors[1]);
+    ctx.fillStyle = grd;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    let items = [];
+    let tempCount = count;
+    while(tempCount--) {
+      let thisRadius = rand( radius[0], radius[1] );
+      let thisBlur = rand( blur[0], blur[1] );
+      let x = rand( -100, canvas.width + 100 );
+      let y = rand( -100, canvas.height + 100 );
+      let colorIndex = Math.floor(rand(0, 299) / 100);
+      let colorOne = colors[colorIndex][0];
+      let colorTwo = colors[colorIndex][1];
+      ctx.beginPath();
+      ctx.filter = `blur(${thisBlur}px)`;
+      let grd = ctx.createLinearGradient(x - thisRadius / 2, y - thisRadius / 2, x + thisRadius, y + thisRadius);
+      grd.addColorStop(0, colorOne);
+      grd.addColorStop(1, colorTwo);
+      ctx.fillStyle = grd;
+      ctx.fill();
+      ctx.arc( x, y, thisRadius, 0, Math.PI * 2 );
+      ctx.closePath();
+      let directionX = Math.round(rand(-99, 99) / 100);
+      let directionY = Math.round(rand(-99, 99) / 100);
+      items.push({
+        x: x,
+        y: y,
+        blur: thisBlur,
+        radius: thisRadius,
+        initialXDirection: directionX,
+        initialYDirection: directionY,
+        initialBlurDirection: directionX,
+        colorOne: colorOne,
+        colorTwo: colorTwo,
+        gradient: [ x - thisRadius / 2, y - thisRadius / 2, x + thisRadius, y + thisRadius ],
+      });
+    }
+
+    function changeCanvas() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      let adjX = 2;
+      let adjY = 2;
+      let adjBlur = 1;
+      items.forEach(function(item) {
+        if(item.x + (item.initialXDirection * adjX) >= canvas.width && item.initialXDirection !== 0 || item.x + (item.initialXDirection * adjX) <= 0 && item.initialXDirection !== 0) {
+          item.initialXDirection = item.initialXDirection * -1;
+        }
+        if(item.y + (item.initialYDirection * adjY) >= canvas.height && item.initialYDirection !== 0 || item.y + (item.initialYDirection * adjY) <= 0 && item.initialYDirection !== 0) {
+          item.initialYDirection = item.initialYDirection * -1;
+        }
+        if(item.blur + (item.initialBlurDirection * adjBlur) >= radius[1] && item.initialBlurDirection !== 0 || item.blur + (item.initialBlurDirection * adjBlur) <= radius[0] && item.initialBlurDirection !== 0) {
+          item.initialBlurDirection *= -1;
+        }
+        item.x += (item.initialXDirection * adjX);
+        item.y += (item.initialYDirection * adjY);
+        item.blur += (item.initialBlurDirection * adjBlur);
+        ctx.beginPath();
+        ctx.filter = `blur(${item.blur}px)`;
+        let grd = ctx.createLinearGradient(item.gradient[0], item.gradient[1], item.gradient[2], item.gradient[3]);
+        grd.addColorStop(0, item.colorOne);
+        grd.addColorStop(1, item.colorTwo);
+        ctx.fillStyle = grd;
+        ctx.arc( item.x, item.y, item.radius, 0, Math.PI * 2 );
+        ctx.fill();
+        ctx.closePath();
+      });
+      animationFrameId = window.requestAnimationFrame(changeCanvas);
+    }
+    animationFrameId = window.requestAnimationFrame(changeCanvas);
+    return () => {
+      window.cancelAnimationFrame(animationFrameId);
+      window.removeEventListener('resize', resize);
+    };
+  }, []);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className={"absolute left-0 top-0 w-full h-full object-cover z-0 " + className}
+      aria-hidden="true"
+      tabIndex={-1}
+      style={{ pointerEvents: 'none', minHeight: 480 }}
+    />
+  );
+}
 
 const HomePage = () => {
   const frameworks = [
@@ -64,59 +185,61 @@ const HomePage = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-subtle">
-        <div className="container px-4 py-20 lg:py-32">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-8">
-              <div className="space-y-4">
-                <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
-                  <Sparkles className="h-3 w-3 mr-1" />
-                  AI-Powered UX Prompts
-                </Badge>
-                <h1 className="text-4xl lg:text-6xl font-bold tracking-tight">
-                  Generate AI-powered{" "}
-                  <span className="bg-gradient-primary bg-clip-text text-transparent">
-                    UX prompts
-                  </span>{" "}
-                  tailored to your framework
-                </h1>
-                <p className="text-xl text-muted-foreground max-w-2xl">
-                  Accelerate your UX process using intelligent, structured, editable AI prompts designed for Design Thinking, Lean UX, and other popular frameworks.
-                </p>
-              </div>
+      <section className="relative overflow-hidden bg-gradient-subtle" style={{ minHeight: 480 }}>
+        {/* Dark blur overlay BELOW the canvas */}
+        <div className="absolute inset-0 w-full h-full z-0 backdrop-blur-md" style={{ background: '#0a174eCC' }} aria-hidden="true" />
+        {/* Animated background */}
+        <AnimatedBokehLavaLampCanvas className="z-10" />
+        <div className="container px-4 py-20 lg:py-32 relative z-20 flex items-center justify-center min-h-[480px]">
+          <div className="w-full flex flex-col items-center justify-center text-center space-y-8">
+            <div className="space-y-4">
+              <Badge variant="secondary" className="bg-primary/10 text-white border-primary/20">
+                <Sparkles className="h-3 w-3 mr-1" />
+                AI-Powered UX Prompts
+              </Badge>
+              <h1 className="text-4xl lg:text-6xl font-bold tracking-tight text-white">
+                Generate AI-powered{" "}
+                <span
+               className="bg-gradient-primary bg-clip-text text-transparent stroke-white-stroke"
 
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Link to="/generator">
-                  <Button variant="hero" size="lg" className="w-full sm:w-auto">
-                    Start Prompting Free
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </Link>
-                <Link to="/library">
-                  <Button variant="outline" size="lg" className="w-full sm:w-auto">
-                    <BookOpen className="mr-2 h-4 w-4" />
-                    Browse Prompt Library
-                  </Button>
-                </Link>
-              </div>
-
-              <div className="flex flex-wrap gap-2">
-                <span className="text-sm text-muted-foreground">Supports:</span>
-                {frameworks.map((framework) => (
-                  <Badge key={framework} variant="outline" className="text-xs">
-                    {framework}
-                  </Badge>
-                ))}
-              </div>
+                >
+                  UX prompts
+                </span>{" "}
+                tailored to your framework
+              </h1>
+              <p className="text-xl text-white max-w-2xl mx-auto">
+                Accelerate your UX process using intelligent, structured, editable AI prompts designed for Design Thinking, Lean UX, and other popular frameworks.
+              </p>
             </div>
-
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-primary opacity-20 blur-3xl rounded-full"></div>
-              <img 
-                src={heroImage} 
-                alt="UX Design Workspace" 
-                className="relative z-10 rounded-2xl shadow-strong w-full h-auto"
-              />
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link to="/generator">
+                <Button
+                  variant="hero"
+                  size="lg"
+                  className="w-full sm:w-auto stroke-white-stroke"
+                  style={{
+                    boxShadow: "0 0 0 2px #fff, 0 0 0 4px rgba(255,255,255,0.2)",
+                    WebkitBoxShadow: "0 0 0 2px #fff, 0 0 0 4px rgba(255,255,255,0.2)"
+                  }}
+                >
+                  Start Prompting Free
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+              <Link to="/library">
+                <Button variant="outline" size="lg" className="w-full sm:w-auto">
+                  <BookOpen className="mr-2 h-4 w-4" />
+                  Browse Prompt Library
+                </Button>
+              </Link>
+            </div>
+            <div className="flex flex-wrap gap-2 justify-center">
+              <span className="text-sm text-white">Supports:</span>
+              {frameworks.map((framework) => (
+                <Badge key={framework} variant="outline" className="text-xs text-white border-white/30">
+                  {framework}
+                </Badge>
+              ))}
             </div>
           </div>
         </div>
