@@ -11,17 +11,21 @@ const corsHeaders = {
 const AI_CONFIGS = {
   'llama-3.1-8b': {
     provider: 'free',
-    systemPrompt: `You are an expert UX Designer specialized in generating detailed and practical content based on UX framework prompts. 
-    
-    Your objective is to provide structured, specific, and actionable responses that help UX designers at each stage of their projects.
-    
-    IMPORTANT INSTRUCTIONS:
-    1. Always respond in English
-    2. Structure your response clearly and organized
-    3. Provide specific examples when relevant
-    4. Ensure all recommendations are practical and applicable
-    5. Maintain a professional but accessible tone
-    6. If the prompt includes numbered sections, respond following that exact structure`
+    systemPrompt: `You are an expert UX Designer specialized in generating detailed and practical content based on UX framework prompts.
+
+Your objective is to provide structured, specific, and actionable responses that help UX designers at each stage of their projects.
+
+IMPORTANT INSTRUCTIONS:
+1. Always respond in English
+2. Structure your response clearly and organized
+3. Provide specific examples when relevant
+4. Ensure all recommendations are practical and applicable
+5. Maintain a professional but accessible tone
+6. If the prompt includes numbered sections, respond following that exact structure
+7. Do not include any commentary, explanations, or formatting. Just return the prompt only
+8. Do not explain what the prompt does—just return the full prompt ready to copy and paste
+9. Do not use markdown, bullets, or titles. Just raw prompt content
+10. Your only job is to generate a prompt to be used in another AI. Return only the raw prompt text. No commentary, no explanation, no headers, no markdown formatting. The output should be a single block of plain text that I can copy and paste directly`
   },
   'gpt-4o-mini': {
     provider: 'openai',
@@ -29,17 +33,21 @@ const AI_CONFIGS = {
     model: 'gpt-4o-mini',
     maxTokens: 2000,
     temperature: 0.7,
-    systemPrompt: `You are an expert UX Designer specialized in generating detailed and practical content based on UX framework prompts. 
-    
-    Your objective is to provide structured, specific, and actionable responses that help UX designers at each stage of their projects.
-    
-    IMPORTANT INSTRUCTIONS:
-    1. Always respond in English
-    2. Structure your response clearly and organized
-    3. Provide specific examples when relevant
-    4. Ensure all recommendations are practical and applicable
-    5. Maintain a professional but accessible tone
-    6. If the prompt includes numbered sections, respond following that exact structure`
+    systemPrompt: `You are an expert UX Designer specialized in generating detailed and practical content based on UX framework prompts.
+
+Your objective is to provide structured, specific, and actionable responses that help UX designers at each stage of their projects.
+
+IMPORTANT INSTRUCTIONS:
+1. Always respond in English
+2. Structure your response clearly and organized
+3. Provide specific examples when relevant
+4. Ensure all recommendations are practical and applicable
+5. Maintain a professional but accessible tone
+6. If the prompt includes numbered sections, respond following that exact structure
+7. Do not include any commentary, explanations, or formatting. Just return the prompt only
+8. Do not explain what the prompt does—just return the full prompt ready to copy and paste
+9. Do not use markdown, bullets, or titles. Just raw prompt content
+10. Your only job is to generate a prompt to be used in another AI. Return only the raw prompt text. No commentary, no explanation, no headers, no markdown formatting. The output should be a single block of plain text that I can copy and paste directly`
   },
   'llama-3.1-sonar-small-128k-online': {
     provider: 'perplexity',
@@ -47,10 +55,84 @@ const AI_CONFIGS = {
     model: 'llama-3.1-sonar-small-128k-online',
     maxTokens: 2000,
     temperature: 0.2,
-    systemPrompt: `You are an expert UX Designer with access to updated information. Provide detailed, structured responses based on current best practices. Always respond in English in a professional and practical manner.`
+    systemPrompt: `You are an expert UX Designer specialized in generating detailed and practical content based on UX framework prompts.
+
+Your objective is to provide structured, specific, and actionable responses that help UX designers at each stage of their projects.
+
+IMPORTANT INSTRUCTIONS:
+1. Always respond in English
+2. Structure your response clearly and organized
+3. Provide specific examples when relevant
+4. Ensure all recommendations are practical and applicable
+5. Maintain a professional but accessible tone
+6. If the prompt includes numbered sections, respond following that exact structure
+7. Do not include any commentary, explanations, or formatting. Just return the prompt only
+8. Do not explain what the prompt does—just return the full prompt ready to copy and paste
+9. Do not use markdown, bullets, or titles. Just raw prompt content
+10. Your only job is to generate a prompt to be used in another AI. Return only the raw prompt text. No commentary, no explanation, no headers, no markdown formatting. The output should be a single block of plain text that I can copy and paste directly`
   }
 };
 
+// Add validation for both input and output
+function validatePromptFormat(prompt: string): { isValid: boolean; error?: string } {
+  // Check for markdown formatting
+  if (prompt.includes('```') || prompt.includes('###') || prompt.includes('---')) {
+    return { isValid: false, error: 'Response contains markdown formatting' };
+  }
+
+  // Check for explanatory text or commentary
+  if (prompt.toLowerCase().includes('here\'s') || 
+      prompt.toLowerCase().includes('note:') ||
+      prompt.toLowerCase().includes('explanation:')) {
+    return { isValid: false, error: 'Response contains commentary or explanations' };
+  }
+
+  // Check for bullet points or numbered lists that aren't part of the content
+  const bulletRegex = /^\s*[-•*]\s/m;
+  const numberedListRegex = /^\s*\d+\.\s/m;
+  if (bulletRegex.test(prompt) || numberedListRegex.test(prompt)) {
+    return { isValid: false, error: 'Response contains bullet points or numbered lists' };
+  }
+
+  // Check for headers or titles
+  const headerRegex = /^\s*[A-Z][^\n.!?]*:\s*$/m;
+  if (headerRegex.test(prompt)) {
+    return { isValid: false, error: 'Response contains headers or titles' };
+  }
+
+  return { isValid: true };
+}
+
+function validateAIResponse(response: string): { isValid: boolean; error?: string } {
+  // Check for markdown formatting
+  if (response.includes('```') || response.includes('###') || response.includes('---')) {
+    return { isValid: false, error: 'Response contains markdown formatting' };
+  }
+
+  // Check for explanatory text or commentary
+  if (response.toLowerCase().includes('here\'s') || 
+      response.toLowerCase().includes('note:') ||
+      response.toLowerCase().includes('explanation:')) {
+    return { isValid: false, error: 'Response contains commentary or explanations' };
+  }
+
+  // Check for bullet points or numbered lists that aren't part of the content
+  const bulletRegex = /^\s*[-•*]\s/m;
+  const numberedListRegex = /^\s*\d+\.\s/m;
+  if (bulletRegex.test(response) || numberedListRegex.test(response)) {
+    return { isValid: false, error: 'Response contains bullet points or numbered lists' };
+  }
+
+  // Check for headers or titles
+  const headerRegex = /^\s*[A-Z][^\n.!?]*:\s*$/m;
+  if (headerRegex.test(response)) {
+    return { isValid: false, error: 'Response contains headers or titles' };
+  }
+
+  return { isValid: true };
+}
+
+// Modify the AI call functions to include validation
 async function callOpenAI(prompt: string, apiKey: string, maxTokens: number = 2000): Promise<string> {
   const config = AI_CONFIGS['gpt-4o-mini'];
   
@@ -67,7 +149,7 @@ async function callOpenAI(prompt: string, apiKey: string, maxTokens: number = 20
         { role: 'user', content: prompt }
       ],
       temperature: config.temperature,
-      max_tokens: Math.min(maxTokens, config.maxTokens), // Use the smaller value
+      max_tokens: Math.min(maxTokens, config.maxTokens),
     }),
   });
 
@@ -77,7 +159,15 @@ async function callOpenAI(prompt: string, apiKey: string, maxTokens: number = 20
   }
 
   const data = await response.json();
-  return data.choices[0].message.content;
+  const aiResponse = data.choices[0].message.content;
+
+  // Validate the response
+  const validation = validateAIResponse(aiResponse);
+  if (!validation.isValid) {
+    throw new Error(`Invalid AI response format: ${validation.error}. Please try again.`);
+  }
+
+  return aiResponse;
 }
 
 async function callPerplexity(prompt: string, apiKey: string, modelId: string): Promise<string> {
@@ -106,17 +196,18 @@ async function callPerplexity(prompt: string, apiKey: string, modelId: string): 
   }
 
   const data = await response.json();
-  return data.choices[0].message.content;
+  const aiResponse = data.choices[0].message.content;
+
+  // Validate the response
+  const validation = validateAIResponse(aiResponse);
+  if (!validation.isValid) {
+    throw new Error(`Invalid AI response format: ${validation.error}. Please try again.`);
+  }
+
+  return aiResponse;
 }
 
-async function callFreeModel(prompt: string, modelId: string): Promise<string> {
-  console.log(`Attempting free model: ${modelId}`);
-  
-  // For free model, throw error immediately to show alert
-  throw new Error('No se pudo generar respuesta con IA. Los servicios gratuitos están temporalmente no disponibles. Configura una API key para usar modelos premium.');
-}
-
-serve(async (req) => {
+async function serve(req) {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -272,6 +363,12 @@ serve(async (req) => {
 
     if (saveError) {
       console.error('Error saving to database:', saveError);
+    }
+
+    // Validate the input prompt format
+    const validation = validatePromptFormat(prompt);
+    if (!validation.isValid) {
+      throw new Error(`Invalid prompt format: ${validation.error}`);
     }
 
     return new Response(JSON.stringify({ 
