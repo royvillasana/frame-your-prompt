@@ -104,22 +104,29 @@ const Generator = () => {
     }
 
     try {
-      // Save the prompt to the project_prompts table
+      // Create a structured project context that includes all relevant information
+      const fullProjectContext = {
+        project: {
+          name: currentProject.name,
+          description: currentProject.description
+        },
+        basicInfo,
+        details: projectContext,
+        stage: projectStage
+      };
+
       const { data, error } = await supabase
         .from('generated_prompts')
         .insert([
           {
-            project_id: currentProject.id,
-            prompt: generatedPrompt,
-            ai_response: aiResponse,
-            context: {
-              projectContext,
-              projectStage,
-              selectedFramework,
-              frameworkStage,
-              selectedTool
-            },
-            created_by: user.id
+            user_id: user.id,
+            project_id: currentProject.id, // Add this line
+            project_context: fullProjectContext,
+            selected_framework: selectedFramework,
+            framework_stage: frameworkStage,
+            selected_tool: selectedTool,
+            original_prompt: generatedPrompt,
+            ai_response: aiResponse
           }
         ])
         .select()
@@ -132,12 +139,10 @@ const Generator = () => {
         description: "Prompt saved to project successfully."
       });
 
-      // Navigate to the project view with the saved data
       navigate(`/projects/${currentProject.id}`, {
         state: { 
           savedPrompt: generatedPrompt,
-          projectContext,
-          projectStage,
+          projectContext: fullProjectContext,
           selectedFramework,
           frameworkStage,
           selectedTool,
@@ -152,7 +157,7 @@ const Generator = () => {
         variant: "destructive",
       });
     }
-};
+  };
 
   const generatePrompt = async (tool: string) => {
     if (!projectContext || !projectStage || !selectedFramework || !frameworkStage || !currentProject || !basicInfo) {
@@ -170,6 +175,16 @@ const Generator = () => {
   
     try {
       const frameworkContext = getFrameworkContext(selectedFramework, frameworkStage, tool);
+      const fullProjectContext = {
+        project: {
+          name: currentProject.name,
+          description: currentProject.description
+        },
+        basicInfo,
+        details: projectContext,
+        stage: projectStage
+      };
+
       const initialPrompt = `As a UX expert, I need to perform the following task: ${tool}.
 
     Project Information:
@@ -210,7 +225,7 @@ const Generator = () => {
     const { data, error } = await supabase.functions.invoke('generate-ai-response', {
       body: {
         prompt: initialPrompt,
-        projectContext,
+        projectContext: fullProjectContext,
         selectedFramework,
         frameworkStage,
         selectedTool: tool,
@@ -309,8 +324,8 @@ const Generator = () => {
     setCurrentStep("basic-info");
   };
 
-  const handleNewProject = (name: string, description: string) => {
-    setCurrentProject({ name, description });
+  const handleNewProject = (project: any) => {
+    setCurrentProject(project);
     setCurrentStep("basic-info");
   };
 
