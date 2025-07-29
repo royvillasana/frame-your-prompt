@@ -242,11 +242,26 @@ async function serve(req) {
     console.log('User authenticated:', user.id);
 
     // Get request body
-    const requestBody = await req.json();
+    let requestBody;
+    try {
+      requestBody = await req.json();
+    } catch (e) {
+      console.error('Error parsing request body:', e);
+      throw new Error('Invalid request body');
+    }
+    console.log('Request body:', JSON.stringify(requestBody, null, 2));
+
     const { prompt, projectContext, selectedFramework, frameworkStage, selectedTool, aiModel = 'llama-3.1-8b' } = requestBody;
 
-    if (!prompt) {
-      throw new Error('Prompt requerido');
+    // Log received context
+    console.log('Received prompt:', prompt ? 'Present' : 'Missing');
+    console.log('Received projectContext:', projectContext ? 'Present' : 'Missing');
+    console.log('Received selectedFramework:', selectedFramework ? 'Present' : 'Missing');
+    console.log('Received frameworkStage:', frameworkStage ? 'Present' : 'Missing');
+    console.log('Received selectedTool:', selectedTool ? 'Present' : 'Missing');
+
+    if (!prompt || !projectContext) {
+      throw new Error('Missing required context to generate a new prompt.');
     }
 
     console.log('Using AI model:', aiModel);
@@ -387,4 +402,4 @@ async function serve(req) {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
-});
+}

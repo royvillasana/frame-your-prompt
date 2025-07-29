@@ -3,6 +3,8 @@ import { StepCard } from "./StepCard";
 import { OptionCard } from "./OptionCard";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 
 interface ProjectBasicInfoStepProps {
   onNext: (info: ProjectBasicInfo) => void;
@@ -13,6 +15,7 @@ export interface ProjectBasicInfo {
   industry: string;
   productType: string;
   companySize: string;
+  targetAudience: string;
 }
 
 const industries = [
@@ -42,6 +45,7 @@ export const ProjectBasicInfoStep = ({ onNext, initialInfo }: ProjectBasicInfoSt
   const [selectedIndustry, setSelectedIndustry] = useState("");
   const [selectedProductType, setSelectedProductType] = useState("");
   const [selectedCompanySize, setSelectedCompanySize] = useState("");
+  const [targetAudience, setTargetAudience] = useState("");
 
   // Pre-fill form with initial info if provided
   useEffect(() => {
@@ -49,17 +53,19 @@ export const ProjectBasicInfoStep = ({ onNext, initialInfo }: ProjectBasicInfoSt
       setSelectedIndustry(initialInfo.industry || "");
       setSelectedProductType(initialInfo.productType || "");
       setSelectedCompanySize(initialInfo.companySize || "");
+      setTargetAudience(initialInfo.targetAudience || "");
     }
   }, [initialInfo]);
 
-  const canProceed = selectedIndustry && selectedProductType && selectedCompanySize;
+  const canProceed = selectedIndustry && selectedProductType && selectedCompanySize && targetAudience;
 
   const handleNext = () => {
     if (canProceed) {
       onNext({
         industry: selectedIndustry,
         productType: selectedProductType,
-        companySize: selectedCompanySize
+        companySize: selectedCompanySize,
+        targetAudience: targetAudience,
       });
     }
   };
@@ -118,6 +124,18 @@ export const ProjectBasicInfoStep = ({ onNext, initialInfo }: ProjectBasicInfoSt
               />
             ))}
           </div>
+        </div>
+
+        <div>
+          <Label htmlFor="target-audience" className="font-semibold">Who is your target audience?</Label>
+          <p className="text-sm text-muted-foreground mb-2">Describe your ideal user or customer. This will help tailor the AI response.</p>
+          <Textarea
+            id="target-audience"
+            placeholder="e.g., Young professionals aged 25-35 who are interested in personal finance..."
+            value={targetAudience}
+            onChange={(e) => setTargetAudience(e.target.value)}
+            rows={4}
+          />
         </div>
 
         <div className="flex justify-end pt-4">
