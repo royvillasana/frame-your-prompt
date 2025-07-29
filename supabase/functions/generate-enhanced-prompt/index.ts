@@ -1,16 +1,14 @@
 // supabase/functions/generate-enhanced-prompt/index.ts
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+;
 
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
+import { corsHeaders } from '../_shared/cors.ts';
 
 serve(async (req) => {
   // This is needed if you're planning to invoke your function from a browser.
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders });
+    return new Response(null, { headers: corsHeaders })
   }
 
   try {
@@ -30,7 +28,7 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: 'You are an expert prompt engineer. Your task is to enhance the user-provided prompt to make it more detailed, structured, and effective for an AI assistant. Your response must be a JSON object containing a single key, "enhancedPrompt", with the improved prompt as its value. Do not include any other text, commentary, or markdown.'
+            content: 'You are an expert prompt engineer. Your task is to enhance the user-provided prompt to make it more detailed, structured, and effective for an AI assistant. If the user prompt includes a "Document Content" section, you must incorporate the key information from this document into your enhanced prompt to provide specific context. Your response must be a JSON object containing a single key, "enhancedPrompt", with the improved prompt as its value. Do not include any other text, commentary, or markdown.'
           },
           {
             role: 'user',

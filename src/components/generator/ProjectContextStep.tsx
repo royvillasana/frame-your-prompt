@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { FileUpload } from "@/components/ui/file-upload";
 import { ArrowRight, Sparkles } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface ProjectContextStepProps {
   onNext: (context: ProjectContext) => void;
@@ -18,11 +20,15 @@ interface ProjectContextStepProps {
 export interface ProjectContext {
   projectDescription?: string;
   contextFiles?: File[];
+  documentContent?: string;
 }
 
 export const ProjectContextStep = ({ onNext, onBack, initialContext, basicInfo }: ProjectContextStepProps) => {
   const [projectDescription, setProjectDescription] = useState("");
   const [contextFiles, setContextFiles] = useState<File[]>([]);
+  const [documentContent, setDocumentContent] = useState<string>("");
+  const [isProcessing, setIsProcessing] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     if (initialContext) {
@@ -34,15 +40,55 @@ export const ProjectContextStep = ({ onNext, onBack, initialContext, basicInfo }
     onNext({
       projectDescription: projectDescription,
       contextFiles: contextFiles.length > 0 ? contextFiles : undefined,
+      documentContent: documentContent,
     });
   };
 
-  const handleFilesSelected = (files: File[]) => {
-    setContextFiles([...contextFiles, ...files]);
+  const handleFilesSelected = async (files: File[]) => {
+    if (files.length === 0) return;
+    const file = files[0];
+    setContextFiles([file]);
+    setIsProcessing(true);
+    setDocumentContent("");
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const { data, error } = await supabase.functions.invoke('process-document', {
+        body: formData,
+      });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      // The 'data' from invoke is the parsed JSON response body.
+      // If the function returns { documentContent: '...' }, this is correct.
+      // We'll add a check to ensure it's a string before setting.
+      if (typeof data.documentContent === 'string') {
+        setDocumentContent(data.documentContent);
+      } else {
+        // If the structure is different, we'll handle it gracefully.
+        const content = JSON.stringify(data, null, 2);
+        setDocumentContent(content);
+        console.warn('Received unexpected data structure:', data);
+      }
+
+      toast({ title: "File processed successfully!" });
+
+    } catch (error: any) {
+      console.error('Error processing file:', error);
+      toast({ title: "Error processing file", description: error.message, variant: "destructive" });
+      setContextFiles([]);
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   const handleFileRemove = (fileToRemove: File) => {
     setContextFiles(contextFiles.filter(file => file !== fileToRemove));
+    setDocumentContent("");
   };
 
   const [isEnhancing, setIsEnhancing] = useState(false);
@@ -113,7 +159,15 @@ export const ProjectContextStep = ({ onNext, onBack, initialContext, basicInfo }
             onFilesSelected={handleFilesSelected}
             onFileRemove={handleFileRemove}
             selectedFiles={contextFiles}
+            disabled={isProcessing}
           />
+          {isProcessing && <p className="text-sm text-gray-500">Processing file, please wait...</p>}
+          {documentContent && (
+            <div className="p-4 border rounded-lg bg-gray-50">
+              <h4 className="font-semibold">Document Content:</h4>
+              <p className="text-sm text-gray-700 mt-2 italic">{documentContent.substring(0, 200)}...</p>
+            </div>
+          )}
         </div>
       </div>
 
