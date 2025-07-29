@@ -4,7 +4,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, FolderOpen, Calendar, MessageSquare } from "lucide-react";
+import { Plus, FolderOpen, Calendar, MessageSquare, Tag } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
@@ -211,7 +212,15 @@ export const ProjectSelectionStep = ({ onNewProject, onExistingProject }: Projec
                   onClick={() => onExistingProject(project)}
                 >
                   <CardContent className="p-4">
-                    <h3 className="font-semibold text-lg mb-2">{project.name}</h3>
+                    <div className="flex items-center gap-2 mb-2">
+                      <h3 className="font-semibold text-lg">{project.name}</h3>
+                      {project.selected_framework && project.selected_framework !== "None" && (
+                        <Badge variant="outline" className="text-xs">
+                          <Tag className="w-3 h-3 mr-1" />
+                          {project.selected_framework}
+                        </Badge>
+                      )}
+                    </div>
                     {project.description && (
                       <p className="text-muted-foreground text-sm mb-3 line-clamp-2">{project.description}</p>
                     )}
@@ -223,9 +232,6 @@ export const ProjectSelectionStep = ({ onNewProject, onExistingProject }: Projec
                       <div className="flex items-center gap-1">
                         <MessageSquare className="h-3 w-3" />
                         {project.generated_prompts?.[0]?.count || 0} prompts
-                      </div>
-                      <div className="px-2 py-1 bg-primary/10 text-primary rounded-full">
-                        {project.selected_framework}
                       </div>
                     </div>
                   </CardContent>

@@ -15,14 +15,20 @@ import {
   Layers
 } from "lucide-react";
 import heroImage from "@/assets/hero-image.jpg";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 function AnimatedBokehLavaLampCanvas({ className = "" }) {
   const canvasRef = useRef(null);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
+    // Detect mobile device
+    const mobileCheck = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    setIsMobile(mobileCheck);
+
     const canvas = canvasRef.current;
     if (!canvas) return;
+    
     let ctx = canvas.getContext('2d');
     let animationFrameId;
 
@@ -31,23 +37,26 @@ function AnimatedBokehLavaLampCanvas({ className = "" }) {
       canvas.width = window.innerWidth;
       canvas.height = 480; // Fixed height for hero banner
       ctx = canvas.getContext('2d');
-      ctx.globalCompositeOperation = 'lighter';
+      ctx.globalCompositeOperation = isMobile ? 'screen' : 'lighter';
     };
+    
     resize();
     window.addEventListener('resize', resize);
-
-    let backgroundColors = [ '#18181b', '#18181b' ]; // dark gray
+    
+    // Adjust parameters based on device
+    let count = isMobile ? 30 : 70; // Fewer particles on mobile
+    let blur = isMobile ? [15, 35] : [30, 70]; // Reduced blur on mobile
+    let radius = isMobile ? [5, 60] : [10, 120]; // Smaller radius on mobile
+    
+    let backgroundColors = [ '#000000', '#18181b' ]; // dark gray
     let colors = [
       [ '#002aff', "#009ff2" ],
       [ '#0054ff', '#27e49b' ], 
       [ '#202bc5' ,'#873dcc' ]
     ];
-    let count = 70;
-    let blur = [ 12, 70 ];
-    let radius = [ 1, 120 ];
 
     ctx.clearRect( 0, 0, canvas.width, canvas.height );
-    ctx.globalCompositeOperation = 'lighter';
+    ctx.globalCompositeOperation = isMobile ? 'screen' : 'lighter';
     let grd = ctx.createLinearGradient(0, canvas.height, canvas.width, 0);
     grd.addColorStop(0, backgroundColors[0]);
     grd.addColorStop(1, backgroundColors[1]);
@@ -132,7 +141,20 @@ function AnimatedBokehLavaLampCanvas({ className = "" }) {
       className={"absolute left-0 top-0 w-full h-full object-cover z-0 " + className}
       aria-hidden="true"
       tabIndex={-1}
-      style={{ pointerEvents: 'none', minHeight: 480 }}
+      style={{
+        pointerEvents: 'none',
+        minHeight: 480,
+        // Improve mobile rendering
+        transform: 'translateZ(0)',
+        backfaceVisibility: 'hidden',
+        WebkitBackfaceVisibility: 'hidden',
+        // Prevent white flashes on mobile
+        backgroundColor: '#000000',
+        // Optimize GPU acceleration
+        willChange: 'transform',
+        // Better image rendering
+        imageRendering: isMobile ? 'crisp-edges' : 'auto'
+      }}
     />
   );
 }
