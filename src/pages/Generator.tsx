@@ -312,18 +312,87 @@ const Generator = () => {
     }
   }, [user, navigate, location.state]);
 
-  const handleProjectSelect = (project: any) => {
+  const handleProjectSelect = async (project: any) => {
     setCurrentProject(project);
-    setCurrentStep("basic-info");
+    
+    // If the project has basic info, set it
+    if (project.product_type || project.industry || project.target_audience) {
+      setBasicInfo({
+        productType: project.product_type || "",
+        industry: project.industry || "",
+        targetAudience: project.target_audience || ""
+      });
+    }
+    
+    // If the project has context, set it
+    if (project.project_description || project.document_content) {
+      setProjectContext({
+        projectDescription: project.project_description || "",
+        documentContent: project.document_content || ""
+      });
+    }
+    
+    // If the project has a framework selected, pre-select it
+    if (project.selected_framework && project.selected_framework !== "None") {
+      setSelectedFramework(project.selected_framework);
+      // If the project has a framework stage, pre-select it as well
+      if (project.framework_stage) {
+        setFrameworkStage(project.framework_stage);
+      }
+      // If we have all context, go to framework step, otherwise to context
+      if (project.project_description && project.document_content) {
+        setCurrentStep("framework");
+      } else {
+        setCurrentStep("context");
+      }
+    } else {
+      // If no framework is set, go to basic info
+      setCurrentStep("basic-info");
+    }
   };
 
-  const handleBasicInfoComplete = (info: ProjectBasicInfo) => {
+  const handleBasicInfoComplete = async (info: ProjectBasicInfo) => {
     setBasicInfo(info);
+    
+    // Update the project with the basic info
+    if (currentProject) {
+      const { error } = await supabase
+        .from('projects')
+        .update({
+          product_type: info.productType,
+          industry: info.industry,
+          target_audience: info.targetAudience,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', currentProject.id);
+      
+      if (error) {
+        console.error("Error updating project with basic info:", error);
+      }
+    }
+    
     setCurrentStep("context");
   };
 
-  const handleContextComplete = (context: ProjectContext) => {
+  const handleContextComplete = async (context: ProjectContext) => {
     setProjectContext(context);
+    
+    // Update the project with the context
+    if (currentProject) {
+      const { error } = await supabase
+        .from('projects')
+        .update({
+          project_description: context.projectDescription,
+          document_content: context.documentContent,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', currentProject.id);
+      
+      if (error) {
+        console.error("Error updating project with context:", error);
+      }
+    }
+    
     setCurrentStep("stage");
   };
 

@@ -30,18 +30,33 @@ export const ProjectContextStep = ({ onNext, onBack, initialContext, basicInfo }
   const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
 
+  // Check if this context is from a project with existing context
+  const hasExistingContext = initialContext?.projectDescription || initialContext?.documentContent;
+  const [hasEdited, setHasEdited] = useState(false);
+
   useEffect(() => {
     if (initialContext) {
       setProjectDescription(initialContext.projectDescription || "");
+      setDocumentContent(initialContext.documentContent || "");
     }
   }, [initialContext]);
 
   const handleNext = () => {
-    onNext({
-      projectDescription: projectDescription,
-      contextFiles: contextFiles.length > 0 ? contextFiles : undefined,
-      documentContent: documentContent,
-    });
+    if (!hasEdited && hasExistingContext) {
+      // If user didn't edit and there's existing context, just proceed
+      onNext({
+        projectDescription: projectDescription,
+        contextFiles: [],
+        documentContent: documentContent,
+      });
+    } else {
+      // Otherwise, include any new files
+      onNext({
+        projectDescription: projectDescription,
+        contextFiles: contextFiles.length > 0 ? contextFiles : undefined,
+        documentContent: documentContent,
+      });
+    }
   };
 
   const handleFilesSelected = async (files: File[]) => {
@@ -126,8 +141,17 @@ export const ProjectContextStep = ({ onNext, onBack, initialContext, basicInfo }
       step={1}
       totalSteps={4}
       title="Project Context"
-      description="Tell us about your project to generate more relevant prompts"
+      description={hasExistingContext && !hasEdited 
+        ? "Review and update the project context if needed" 
+        : "Tell us about your project to generate more relevant prompts"}
     >
+      {hasExistingContext && !hasEdited && (
+        <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+          <p className="text-sm text-blue-700 dark:text-blue-300">
+            This project already has context information. You can review and update it below if needed.
+          </p>
+        </div>
+      )}
       <div className="space-y-6">
         <div className="p-4 border rounded-lg space-y-2">
           <h3 className="font-semibold">Project Context</h3>
