@@ -114,9 +114,17 @@ Deno.serve(async (req) => {
       aiResponse = await callPremiumModel(prompt, apiKey, config);
     }
 
-    return Response.json({ aiResponse }, {
-      headers: { ...corsHeadersWithOrigin, 'Content-Type': 'application/json' },
-    });
+    try {
+      const parsedResponse = JSON.parse(aiResponse);
+      return Response.json({ aiResponse: parsedResponse }, {
+        headers: { ...corsHeadersWithOrigin, 'Content-Type': 'application/json' },
+      });
+    } catch (e) {
+      // If parsing fails, return the raw string
+      return Response.json({ aiResponse }, {
+        headers: { ...corsHeadersWithOrigin, 'Content-Type': 'application/json' },
+      });
+    }
 
   } catch (error) {
     return Response.json({ error: error.message }, {

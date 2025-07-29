@@ -112,7 +112,7 @@ export const ProjectContextStep = ({ onNext, onBack, initialContext, basicInfo }
           <FileUpload
             onFilesSelected={handleFilesSelected}
             onFileRemove={handleFileRemove}
-            files={contextFiles}
+            selectedFiles={contextFiles}
           />
         </div>
       </div>

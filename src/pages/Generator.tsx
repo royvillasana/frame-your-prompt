@@ -22,6 +22,42 @@ type Step = "project" | "basic-info" | "context" | "stage" | "framework" | "tool
 import { supabase } from "@/integrations/supabase/client";
 
 // Add this helper function to get framework-specific context
+const formatEnhancedPrompt = (prompt: any): string => {
+  if (typeof prompt === 'string') return prompt;
+  if (typeof prompt !== 'object' || prompt === null) return "";
+
+  let markdown = ``;
+
+  if (prompt.project) markdown += `# Prompt for ${prompt.project}\n\n`;
+  if (prompt.description) markdown += `## Description\n${prompt.description}\n\n`;
+  if (prompt.task) markdown += `## Task\n${prompt.task}\n\n`;
+
+  if (prompt.productType) markdown += `**Product Type:** ${prompt.productType}\n`;
+  if (prompt.industry) markdown += `**Industry:** ${prompt.industry}\n`;
+
+  if (prompt.targetAudience) {
+    markdown += `**Target Audience:** ${prompt.targetAudience.ageGroup} interested in ${prompt.targetAudience.interests}.\n`;
+  }
+
+  markdown += `\n## Context\n`;
+  if (prompt.currentUXStage) markdown += `**UX Stage:** ${prompt.currentUXStage}\n`;
+  if (prompt.framework) markdown += `**Framework:** ${prompt.framework} (${prompt.frameworkStage} stage)\n`;
+  if (prompt.selectedToolMethod) markdown += `**Method:** ${prompt.selectedToolMethod}\n`;
+
+  if (prompt.promptDetails) {
+    markdown += `\n## Prompt Details\n`;
+    const { objectives, specificRequirements, examples, practicalRecommendations } = prompt.promptDetails;
+    if (objectives) markdown += `### Objectives\n${objectives.map((o: string) => `- ${o}`).join('\n')}\n\n`;
+    if (specificRequirements) markdown += `### Specific Requirements\n${specificRequirements.map((r: string) => `- ${r}`).join('\n')}\n\n`;
+    if (examples) markdown += `### Examples\n${examples.map((e: string) => `- ${e}`).join('\n')}\n\n`;
+    if (practicalRecommendations) markdown += `### Practical Recommendations\n${practicalRecommendations.map((r: string) => `- ${r}`).join('\n')}\n\n`;
+  }
+
+  return markdown;
+};
+
+
+
 const getFrameworkContext = (framework: string, stage: string, tool: string) => {
   // This is a placeholder. In a real application, you'd fetch this from a CMS or a config file.
   const frameworkMap: { [key: string]: { [key: string]: { tools: string[], aiUse: string[] } } } = {
@@ -165,8 +201,9 @@ const Generator = () => {
 
       if (error) throw new Error(error.message);
       
-      const finalPrompt = data?.enhancedPrompt || initialPrompt;
-      setGeneratedPrompt(finalPrompt);
+      const finalPrompt = data.enhancedPrompt;
+      const formattedPrompt = formatEnhancedPrompt(finalPrompt);
+      setGeneratedPrompt(formattedPrompt);
       return finalPrompt;
 
     } catch (error) {
@@ -214,7 +251,7 @@ const Generator = () => {
       });
 
       if (error) throw new Error(error.message);
-      setAiResponse(data?.aiResponse || "Failed to generate AI response.");
+      setAiResponse(data.aiResponse);
     } catch (error) {
       console.error("Error generating AI response:", error);
       toast({
