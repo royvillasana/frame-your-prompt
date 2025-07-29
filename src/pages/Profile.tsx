@@ -178,7 +178,7 @@ const Profile = () => {
                       <Card 
                         key={project.id} 
                         className="cursor-pointer hover:shadow-md transition-shadow"
-                        onClick={() => navigate(`/project/${project.id}`)}
+                        onClick={() => navigate(`/projects/${project.id}`)}
                       >
                         <CardContent className="p-4">
                           <div className="flex items-start justify-between">

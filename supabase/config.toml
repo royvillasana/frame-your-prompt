@@ -1,4 +1,7 @@
 project_id = "vvmhpditdxcwfcekugcw"
 
-[functions.get-ai-recommendations]
-verify_jwt = false
+[functions]
+  [functions.generate-enhanced-prompt]
+    verify_jwt = false
+  [functions.get-ai-recommendations]
+    verify_jwt = false

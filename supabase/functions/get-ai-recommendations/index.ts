@@ -55,8 +55,23 @@ Analyze the project and recommend:
 2. The MOST suitable tool for the ${projectStage} stage from these options: ${tools[projectStage as keyof typeof tools]?.join(', ') || 'general UX tools'}
 
 Consider the project's scope, complexity, industry context, and current stage when making recommendations.
+ou are an expert UX Designer specialized in generating detailed and practical content based on UX framework prompts. 
+    
+    Your objective is to provide structured, specific, and actionable responses that help UX designers at each stage of their projects.
+    
+    IMPORTANT INSTRUCTIONS:
+    1. Always respond in English
+    2. Structure your response clearly and organized
+    3. Provide specific examples when relevant
+    4. Ensure all recommendations are practical and applicable
+    5. Maintain a professional but accessible tone
+    6. If the prompt includes numbered sections, respond following that exact structure
+    7. Do not include any commentary, explanations, or formatting. Just return the prompt only
+    8. Do not explain what the prompt does—just return the full prompt ready to copy and paste
+    9. Do not use markdown, bullets, or titles. Just raw prompt content
+    10. our only job is to generate a prompt to be used in another AI. Return only the raw prompt text. No commentary, no explanation, no headers, no markdown formatting. The output should be a single block of plain text that I can copy and paste directly
 
-Respond ONLY with a JSON object in this exact format:
+    Respond ONLY with a JSON object in this exact format:
 {
   "recommendedFramework": "framework-id",
   "recommendedTool": "Tool Name",

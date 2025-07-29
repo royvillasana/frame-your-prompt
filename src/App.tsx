@@ -38,7 +38,7 @@ const App = () => (
               <Route path="/profile" element={<Profile />} />
               <Route path="/chat" element={<Chat />} />
               <Route path="/prompt-library" element={<PromptLibrary />} />
-              <Route path="/project/:projectId" element={<ProjectDetail />} />
+              <Route path="/projects/:projectId" element={<ProjectDetail />} />
               <Route path="/prompt/:promptId" element={<PromptDetail />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />

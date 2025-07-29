@@ -19,7 +19,7 @@ const PromptDetail = () => {
   const [project, setProject] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [isGeneratingAI, setIsGeneratingAI] = useState(false);
-
+  
   useEffect(() => {
     if (user && promptId) {
       loadPromptDetails();
@@ -160,7 +160,7 @@ const PromptDetail = () => {
       
       // Return to project or profile
       if (project) {
-        navigate(`/project/${project.id}`);
+        navigate(`/projects/${project.id}`);
       } else {
         navigate('/profile');
       }
@@ -169,6 +169,7 @@ const PromptDetail = () => {
       console.error(error);
     }
   };
+
 
   if (loading) {
     return (
@@ -205,7 +206,7 @@ const PromptDetail = () => {
         <div className="mb-8">
           <Button 
             variant="ghost" 
-            onClick={() => project ? navigate(`/project/${project.id}`) : navigate('/profile')}
+            onClick={() => project ? navigate(`/projects/${project.id}`) : navigate('/profile')}
             className="mb-4"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />

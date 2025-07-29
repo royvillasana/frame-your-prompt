@@ -6,9 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Copy, RefreshCw, Save, Download, Sparkles, RotateCcw, Library } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { toast as sonnerToast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
-import { supabase } from "@/integrations/supabase/client";
 import { ProjectContextStep, ProjectContext } from "@/components/generator/ProjectContextStep";
 import { ProjectStageStep } from "@/components/generator/ProjectStageStep";
 import { FrameworkStep } from "@/components/generator/FrameworkStep";
@@ -17,16 +15,88 @@ import { ProjectSelectionStep } from "@/components/generator/ProjectSelectionSte
 import { UsageLimitCard } from "@/components/generator/UsageLimitCard";
 import { LoadingPromptGeneration } from "@/components/generator/LoadingPromptGeneration";
 import ReactMarkdown from "react-markdown";
+import { ProjectBasicInfoStep, ProjectBasicInfo } from "@/components/generator/ProjectBasicInfoStep";
 
-import { useAIUsage } from "@/hooks/useAIUsage";
-import { AIModelSelector } from "@/components/generator/AIModelSelector";
+type Step = "project" | "basic-info" | "context" | "stage" | "framework" | "tool" | "result";
 
-type Step = "project" | "context" | "stage" | "framework" | "tool" | "ai-selection" | "result";
+import { supabase } from "@/integrations/supabase/client";
+
+// Add this helper function to get framework-specific context
+const formatEnhancedPrompt = (prompt: any): string => {
+  if (typeof prompt === 'string') return prompt;
+  if (typeof prompt !== 'object' || prompt === null) return "";
+
+  let markdown = ``;
+
+  if (prompt.project) markdown += `# Prompt for ${prompt.project}\n\n`;
+  if (prompt.description) markdown += `## Description\n${prompt.description}\n\n`;
+  if (prompt.task) markdown += `## Task\n${prompt.task}\n\n`;
+
+  if (prompt.productType) markdown += `**Product Type:** ${prompt.productType}\n`;
+  if (prompt.industry) markdown += `**Industry:** ${prompt.industry}\n`;
+
+  if (prompt.targetAudience) {
+    markdown += `**Target Audience:** ${prompt.targetAudience.ageGroup} interested in ${prompt.targetAudience.interests}.\n`;
+  }
+
+  markdown += `\n## Context\n`;
+  if (prompt.currentUXStage) markdown += `**UX Stage:** ${prompt.currentUXStage}\n`;
+  if (prompt.framework) markdown += `**Framework:** ${prompt.framework} (${prompt.frameworkStage} stage)\n`;
+  if (prompt.selectedToolMethod) markdown += `**Method:** ${prompt.selectedToolMethod}\n`;
+
+  if (prompt.promptDetails) {
+    markdown += `\n## Prompt Details\n`;
+    const { objectives, specificRequirements, examples, practicalRecommendations } = prompt.promptDetails;
+    if (objectives) markdown += `### Objectives\n${objectives.map((o: string) => `- ${o}`).join('\n')}\n\n`;
+    if (specificRequirements) markdown += `### Specific Requirements\n${specificRequirements.map((r: string) => `- ${r}`).join('\n')}\n\n`;
+    if (examples) markdown += `### Examples\n${examples.map((e: string) => `- ${e}`).join('\n')}\n\n`;
+    if (practicalRecommendations) markdown += `### Practical Recommendations\n${practicalRecommendations.map((r: string) => `- ${r}`).join('\n')}\n\n`;
+  }
+
+  return markdown;
+};
+
+
+
+const getFrameworkContext = (framework: string, stage: string, tool: string) => {
+  // This is a placeholder. In a real application, you'd fetch this from a CMS or a config file.
+  const frameworkMap: { [key: string]: { [key: string]: { tools: string[], aiUse: string[] } } } = {
+    'design-thinking': {
+      'empathize': {
+        tools: ['Interviews', 'Contextual Inquiry', 'Diary Studies', 'Empathy Maps', 'Field Studies', 'Stakeholder Maps'],
+        aiUse: ['Transcribe interviews (NLP)', 'cluster qualitative data', 'synthesize empathy maps', 'sentiment analysis']
+      },
+      'define': {
+        tools: ['Affinity Diagrams', 'Point-of-View Statements', 'Problem Statements', 'Journey Maps', 'How Might We questions'],
+        aiUse: ['Generate POVs', 'synthesize user needs', 'identify patterns', 'write user personas']
+      },
+      'ideate': {
+        tools: ['Brainstorming', 'Mind Mapping', 'Storyboarding', 'Crazy 8s', 'SCAMPER'],
+        aiUse: ['Generate creative ideas', 'develop concepts', 'create scenarios', 'visualize solutions']
+      },
+      'prototype': {
+        tools: ['Paper Prototyping', 'Wireframing', 'Interactive Prototypes', 'Mockups'],
+        aiUse: ['Generate UI mockups', 'create interactive prototypes', 'design user flows', 'write microcopy']
+      },
+      'test': {
+        tools: ['Usability Testing', 'A/B Testing', 'Heuristic Evaluation', 'Surveys', 'Feedback Analysis'],
+        aiUse: ['Analyze usability data', 'summarize user feedback', 'identify pain points', 'generate test reports']
+      }
+    },
+  };
+
+  const frameworkInfo = frameworkMap[framework.toLowerCase()];
+  if (!frameworkInfo) return 'Using free methodology approach';
+
+  const stageInfo = frameworkInfo[stage.toLowerCase()];
+  if (!stageInfo) return `Working in the ${stage} stage`;
+
+  return `Framework: ${framework}\nStage: ${stage}\nRecommended Tools: ${stageInfo.tools.join(', ')}\nAI Use Cases: ${stageInfo.aiUse.join(', ')}\nSelected Tool: ${tool}`;
+};
 
 const Generator = () => {
   const { toast } = useToast();
   const { user } = useAuth();
-  const { refreshUsage } = useAIUsage();
   const navigate = useNavigate();
   const location = useLocation();
   const [currentStep, setCurrentStep] = useState<Step>("project");
@@ -36,499 +106,16 @@ const Generator = () => {
   const [selectedFramework, setSelectedFramework] = useState("");
   const [frameworkStage, setFrameworkStage] = useState("");
   const [selectedTool, setSelectedTool] = useState("");
-  const [aiRecommendations, setAiRecommendations] = useState<{
-    recommendedFramework?: string;
-    recommendedTool?: string;
-    reasoning?: string;
-  }>({});
-  const [selectedAIModel, setSelectedAIModel] = useState("chatgpt");
   const [generatedPrompt, setGeneratedPrompt] = useState("");
   const [aiResponse, setAiResponse] = useState("");
   const [isGeneratingAI, setIsGeneratingAI] = useState(false);
   const [isGeneratingPrompt, setIsGeneratingPrompt] = useState(false);
-
-  useEffect(() => {
-    if (!user) {
-      navigate("/auth");
-      return;
-    }
-
-    // Check if coming from chat with result data
-    const state = location.state as {
-      showResult?: boolean;
-      generatedPrompt?: string;
-      aiResponse?: string;
-      projectContext?: ProjectContext;
-      iterateFrom?: any;
-      selectedFramework?: string;
-      frameworkStage?: string;
-      selectedTool?: string;
-    };
-
-    if (state?.showResult && state?.generatedPrompt && state?.projectContext) {
-      setCurrentStep("result");
-      setGeneratedPrompt(state.generatedPrompt);
-      setProjectContext(state.projectContext);
-      if (state.aiResponse) {
-        setAiResponse(state.aiResponse);
-      }
-    } else if (state?.iterateFrom) {
-      // Handle iteration from existing prompt
-      setProjectContext(state.projectContext);
-      setSelectedFramework(state.selectedFramework || "");
-      setFrameworkStage(state.frameworkStage || "");
-      setSelectedTool(state.selectedTool || "");
-      setGeneratedPrompt(state.iterateFrom.original_prompt || "");
-      if (state.iterateFrom.ai_response) {
-        setAiResponse(state.iterateFrom.ai_response);
-      }
-      setCurrentStep("result");
-    }
-  }, [user, navigate, location.state]);
-
-  const handleContextComplete = (context: ProjectContext) => {
-    setProjectContext(context);
-    setCurrentStep("stage");
-  };
-
-  const handleStageComplete = async (stage: string) => {
-    setProjectStage(stage);
-    
-    // Get AI recommendations when we have the project stage
-    if (currentProject && projectContext) {
-      await getAIRecommendations(
-        currentProject.name, 
-        currentProject.description || "", 
-        stage
-      );
-    }
-    
-    setCurrentStep("framework");
-  };
-
-  const handleFrameworkComplete = (framework: string, stage: string) => {
-    setSelectedFramework(framework);
-    setFrameworkStage(stage);
-    setCurrentStep("tool");
-  };
-
-  const handleToolComplete = async (tool: string) => {
-    setSelectedTool(tool);
-    await generatePrompt(tool);
-    setCurrentStep("ai-selection");
-  };
-
-  const handleAIModelSelect = (modelId: string) => {
-    setSelectedAIModel(modelId);
-  };
-
-  const handleAIModelContinue = () => {
-    // Customize the prompt based on the selected AI model
-    customizePromptForAI();
-    setCurrentStep("result");
-  };
-
-  const getAIModelDisplayName = (modelId: string): string => {
-    const modelNames: Record<string, string> = {
-      "chatgpt": "ChatGPT",
-      "claude": "Claude", 
-      "gemini": "Gemini",
-      "deepseek": "DeepSeek",
-      "figma-make": "Figma Make",
-      "figjam-ai": "Figjam AI",
-      "miro-ai": "Miro AI",
-      "notion-ai": "Notion AI"
-    };
-    return modelNames[modelId] || "your selected AI tool";
-  };
-
-  const customizePromptForAI = () => {
-    if (!generatedPrompt) return;
-
-    // Get the AI model data to customize the prompt
-    const aiModels = [
-      { id: "figma-make", prefix: "As a Figma Make AI assistant, " },
-      { id: "figjam-ai", prefix: "As a Figjam AI assistant for collaborative design, " },
-      { id: "miro-ai", prefix: "As a Miro AI assistant for visual collaboration, " },
-      { id: "notion-ai", prefix: "As a Notion AI assistant, " },
-      { id: "chatgpt", prefix: "As a UX design expert using ChatGPT, " },
-      { id: "claude", prefix: "As a UX design expert using Claude, " },
-      { id: "gemini", prefix: "As a UX design expert using Gemini, " },
-      { id: "deepseek", prefix: "As a UX design expert using DeepSeek, " }
-    ];
-
-    const selectedModel = aiModels.find(model => model.id === selectedAIModel);
-    
-    if (selectedModel && !generatedPrompt.startsWith(selectedModel.prefix)) {
-      // Add the AI-specific prefix to the prompt
-      const customizedPrompt = selectedModel.prefix + generatedPrompt;
-      setGeneratedPrompt(customizedPrompt);
-    }
-  };
-
-  const generateAIResponse = async () => {
-    if (!generatedPrompt) {
-      console.log("No generated prompt available");
-      return;
-    }
-    
-    console.log("Starting AI response generation...");
-    console.log("Selected AI model:", selectedAIModel);
-    console.log("Generated prompt:", generatedPrompt);
-    
-    setIsGeneratingAI(true);
-    try {
-      // Map AI tool names to actual model names
-      const getModelName = (aiTool: string): string => {
-        const modelMapping: Record<string, string> = {
-          "chatgpt": "gpt-4o-mini",
-          "claude": "gpt-4o-mini", // Use OpenAI for Claude responses
-          "gemini": "gpt-4o-mini", // Use OpenAI for Gemini responses
-          "deepseek": "gpt-4o-mini", // Use OpenAI for DeepSeek responses
-          "figma-make": "gpt-4o-mini", // Use OpenAI for Figma Make responses
-          "figjam-ai": "gpt-4o-mini", // Use OpenAI for Figjam AI responses
-          "miro-ai": "gpt-4o-mini", // Use OpenAI for Miro AI responses
-          "notion-ai": "gpt-4o-mini" // Use OpenAI for Notion AI responses
-        };
-        const modelName = modelMapping[aiTool] || "gpt-4o-mini";
-        console.log(`Mapping AI tool "${aiTool}" to model "${modelName}"`);
-        return modelName;
-      };
-
-      const modelName = getModelName(selectedAIModel);
-      console.log("Calling Supabase function with model:", modelName);
-      
-      const { data, error } = await supabase.functions.invoke('generate-ai-response', {
-        body: {
-          prompt: generatedPrompt,
-          projectContext,
-          selectedFramework,
-          frameworkStage,
-          selectedTool,
-          aiModel: modelName,
-        }
-      });
-
-      if (error) {
-        console.error('Supabase function error:', error);
-        throw new Error(error.message || 'Supabase function error');
-      }
-
-      if (data?.error) {
-        console.error('AI API error:', data.error);
-        throw new Error(data.error);
-      }
-      
-      setAiResponse(data.aiResponse);
-      refreshUsage(); // Refresh usage data after successful AI response
-      sonnerToast.success("AI response generated!");
-    } catch (error: any) {
-      console.error('Full error:', error);
-      const errorMessage = error.message || "Error generating AI response";
-      
-      // Check for specific AI service errors and provide helpful messages
-      if (errorMessage.includes("Could not generate AI response")) {
-        sonnerToast.error("⚠️ AI services temporarily unavailable", {
-          description: "Free AI services are busy. Try with a premium model (requires API key) or try again later.",
-          action: {
-            label: "Configure API Key",
-            onClick: () => navigate('/profile')
-          }
-        });
-      } else if (errorMessage.includes("exceeded your current quota")) {
-        sonnerToast.error("Your OpenAI API key has exceeded the quota. Check your plan and billing in OpenAI.");
-      } else if (errorMessage.includes("API key not configured")) {
-        sonnerToast.error("You must configure an API key in your profile to use this function.", {
-          action: {
-            label: "Go to Profile",
-            onClick: () => navigate('/profile')
-          }
-        });
-      } else if (errorMessage.includes("daily limit")) {
-        sonnerToast.error("You have reached the daily limit for this AI model. Try another model or come back tomorrow.");
-      } else {
-        sonnerToast.error(`Error: ${errorMessage}`);
-      }
-    } finally {
-      setIsGeneratingAI(false);
-    }
-  };
-
-  const generatePrompt = async (tool: string) => {
-    if (!projectContext) return;
-
-    // Start loading state
-    setIsGeneratingPrompt(true);
-    setGeneratedPrompt("");
-
-    // Determine framework and stage text
-    let frameworkText = "";
-    let stageText = "";
-    
-    if (selectedFramework !== "none" && frameworkStage) {
-      frameworkText = selectedFramework;
-      stageText = frameworkStage;
-    } else {
-      frameworkText = "free methodology";
-      stageText = projectStage;
-    }
-
-    // Include project description as additional context
-    const projectDescriptionContext = projectContext?.projectDescription 
-      ? `\n\nAdditional Project Context: ${projectContext.projectDescription}`
-      : '';
-
-    // Debug logging
-    console.log('Project Context for prompt generation:', {
-      projectName: currentProject?.name,
-      industry: projectContext.industry,
-      companySize: projectContext.companySize,
-      productType: projectContext.productType,
-      productScope: projectContext.productScope,
-      userProfile: projectContext.userProfile,
-      projectDescription: projectContext.projectDescription,
-      projectDescriptionContext: projectDescriptionContext
-    });
-
-    if (projectContext.projectDescription) {
-      console.log('🎯 Project Description to be analyzed:', projectContext.projectDescription);
-      console.log('📝 This context will be analyzed to create a tailored prompt');
-    }
-
-    // Create a meta-prompt to generate the actual UX prompt
-    const metaPrompt = `Act as an expert UX Designer and AI prompt specialist. Your task is to ANALYZE the provided project context and generate a HIGHLY TAILORED prompt IN ENGLISH to help a UX Designer who is working in the "${stageText}" stage of the ${frameworkText} framework, specifically with ${tool}.
-
-Project: ${currentProject?.name || 'UX Project'}
-Project context:
-- Industry: ${projectContext.industry}
-- Company type: ${projectContext.companySize}
-- Product: ${projectContext.productType}
-- Scope: ${projectContext.productScope}
-- Target audience: ${projectContext.userProfile}${projectDescriptionContext}
-
-ANALYSIS INSTRUCTIONS:
-1. CAREFULLY ANALYZE the additional project context provided above
-2. Identify specific challenges, goals, target users, business objectives, and unique requirements mentioned
-3. Extract key insights about the project's specific needs and constraints
-4. Understand the project's unique characteristics and requirements
-
-CRITICAL INSTRUCTIONS:
-1. Generate a COMPLETE and SPECIFIC prompt IN ENGLISH that the UX Designer can use directly with an AI
-2. The prompt must be specifically adapted to the ${projectContext.industry} industry and ${projectContext.productType} product type
-3. Must include specific questions, applicable methodologies and concrete deliverables for the ${stageText} stage
-4. The prompt must be practical and oriented to tangible results
-5. Include specific aspects of ${tool} relevant to ${frameworkText}
-6. Adapt the language and approach according to company size: ${projectContext.companySize}
-7. IMPORTANT: Generate the entire prompt in English language only
-8. CRITICAL: Analyze the additional project context and create a prompt that directly addresses the specific challenges, goals, and requirements mentioned in that context
-9. If specific context is provided, incorporate those details into the prompt to make it more personalized
-10. The generated prompt should reference the specific project details mentioned in the context
-11. Include the project name "${currentProject?.name || 'UX Project'}" in the generated prompt
-12. Make the prompt highly specific to the project's unique characteristics and requirements
-13. Ensure the prompt directly addresses any specific challenges or goals mentioned in the project context
-
-Generate ONLY the final prompt that the UX Designer will use, without additional explanations or introductions. The prompt should begin directly with clear instructions for the AI that will receive it.`;
-
-    try {
-      console.log('Calling AI for prompt generation with meta-prompt:', metaPrompt);
-      
-      const { data, error } = await supabase.functions.invoke('generate-ai-response', {
-        body: {
-          prompt: metaPrompt,
-          projectContext,
-          selectedFramework,
-          frameworkStage,
-          selectedTool: tool,
-          aiModel: "gpt-4o-mini", // Use OpenAI for prompt generation
-        }
-      });
-
-      console.log('AI response received:', data);
-
-      if (error) {
-        console.error('Error generating prompt:', error);
-        throw new Error(error.message || 'Error generating prompt');
-      }
-
-      if (data?.error) {
-        throw new Error(data.error);
-      }
-      
-      setGeneratedPrompt(data.aiResponse);
-      
-      console.log('AI-generated prompt:', data.aiResponse);
-      
-      toast({
-        title: "AI Prompt Generated!",
-        description: "Your personalized prompt has been created using AI specifically for your project.",
-      });
-    } catch (error: any) {
-      console.error('Error generating prompt:', error);
-      
-      // Fallback to basic prompt structure if AI generation fails
-      const fallbackPrompt = `As a UX Designer working in the "${stageText}" stage of the ${frameworkText} framework, I need help with ${tool}.
-
-Project: ${currentProject?.name || 'UX Project'}
-Project context:
-- Industry: ${projectContext.industry}
-- Company type: ${projectContext.companySize}
-- Product: ${projectContext.productType}
-- Scope: ${projectContext.productScope}
-- Target audience: ${projectContext.userProfile}${projectDescriptionContext}
-
-Based on the specific project context provided above, help me to:
-
-1. Generate 5 specific questions to guide my ${tool} process that directly address the unique challenges and goals mentioned in the project context
-2. Suggest 3 innovative approaches that leverage the unique characteristics of my industry and address the specific requirements mentioned
-3. Identify 4 key metrics I should consider to evaluate success, tailored to the project's specific objectives
-4. Recommend 2 complementary tools that enhance this process and address the project's unique needs
-5. Provide a checklist of 6 critical points to validate before moving to the next stage, considering the project's specific constraints and requirements
-
-Make sure all recommendations are aligned with ${frameworkText} best practices and are applicable to ${projectContext.companySize} in ${projectContext.industry} developing ${projectContext.productType} with ${projectContext.productScope} scope.${projectDescriptionContext ? `\n\nIMPORTANT: Analyze the additional context provided and tailor your recommendations to directly address the specific challenges, goals, and requirements mentioned: ${projectDescriptionContext}` : ''}`;
-
-      setGeneratedPrompt(fallbackPrompt);
-      
-      toast({
-        title: "Prompt Generated (Basic Mode)",
-        description: "A basic prompt was generated. AI is temporarily unavailable.",
-        variant: "destructive"
-      });
-    } finally {
-      setIsGeneratingPrompt(false);
-    }
-  };
+  const [basicInfo, setBasicInfo] = useState<ProjectBasicInfo | null>(null);
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(generatedPrompt);
-    toast({
-      title: "Copied!",
-      description: "Prompt copied to clipboard.",
-    });
-  };
-
-  const getAIRecommendations = async (name: string, description: string, stage: string) => {
-    try {
-      const { data, error } = await supabase.functions.invoke('get-ai-recommendations', {
-        body: {
-          projectName: name,
-          projectDescription: description,
-          projectStage: stage
-        }
-      });
-
-      if (error) throw error;
-      
-      setAiRecommendations(data);
-    } catch (error: any) {
-      console.error('Error getting AI recommendations:', error);
-      // Set fallback recommendations
-      setAiRecommendations({
-        recommendedFramework: "design-thinking",
-        recommendedTool: "User Interviews",
-        reasoning: "Fallback recommendation"
-      });
-    }
-  };
-
-  const handleNewProject = async (name: string, description: string) => {
-    try {
-      const { data, error } = await supabase
-        .from('projects')
-        .insert({
-          user_id: user?.id,
-          name,
-          description,
-          selected_framework: "To be defined"
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-      
-      setCurrentProject(data);
-      setCurrentStep("context");
-      sonnerToast.success("Project created successfully");
-    } catch (error: any) {
-      sonnerToast.error("Error creating project");
-      console.error(error);
-    }
-  };
-
-  const handleExistingProject = async (project: any) => {
-    setCurrentProject(project);
-    setSelectedFramework(project.selected_framework);
-    
-    // Fetch the latest prompt from this project to pre-fill context and framework
-    try {
-      const { data: latestPrompt, error } = await supabase
-        .from('generated_prompts')
-        .select('project_context, selected_framework, framework_stage')
-        .eq('project_id', project.id)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .single();
-
-      if (!error && latestPrompt) {
-        // Pre-fill project context from the latest prompt
-        if (latestPrompt.project_context) {
-          const contextData = latestPrompt.project_context as any;
-          if (contextData && typeof contextData === 'object') {
-            setProjectContext({
-              industry: contextData.industry || "",
-              productType: contextData.productType || "",
-              companySize: contextData.companySize || "",
-              productScope: contextData.productScope || "national",
-              userProfile: contextData.userProfile || "b2c"
-            });
-          }
-        }
-        
-        // Pre-fill framework data from the latest prompt
-        if (latestPrompt.selected_framework) {
-          setSelectedFramework(latestPrompt.selected_framework);
-        }
-        if (latestPrompt.framework_stage) {
-          setFrameworkStage(latestPrompt.framework_stage);
-        }
-      }
-    } catch (error) {
-      console.log('No previous prompts found for this project, starting fresh');
-    }
-    
-    setCurrentStep("context");
-  };
-
-  const savePromptToProject = async () => {
-    if (!currentProject || !generatedPrompt) return;
-
-    try {
-      const { error } = await supabase
-        .from('generated_prompts')
-        .insert({
-          user_id: user?.id,
-          project_id: currentProject.id,
-          project_context: projectContext as any,
-          selected_framework: selectedFramework,
-          framework_stage: frameworkStage,
-          selected_tool: selectedTool,
-          original_prompt: generatedPrompt,
-          ai_response: aiResponse
-        });
-
-      if (error) throw error;
-
-      // Update project framework if it changed
-      if (selectedFramework !== currentProject.selected_framework) {
-        await supabase
-          .from('projects')
-          .update({ selected_framework: selectedFramework })
-          .eq('id', currentProject.id);
-      }
-
-      sonnerToast.success("Prompt saved to project");
-    } catch (error: any) {
-      sonnerToast.error("Error saving prompt");
-      console.error(error);
+    if (generatedPrompt) {
+      navigator.clipboard.writeText(generatedPrompt);
+      toast({ title: "Copied to clipboard!" });
     }
   };
 
@@ -540,9 +127,223 @@ Make sure all recommendations are aligned with ${frameworkText} best practices a
     setSelectedFramework("");
     setFrameworkStage("");
     setSelectedTool("");
-    setSelectedAIModel("chatgpt");
     setGeneratedPrompt("");
     setAiResponse("");
+    setBasicInfo(null);
+  };
+
+  const savePromptToProject = async () => {
+    if (!user || !currentProject || !generatedPrompt) {
+      toast({
+        title: "Cannot save prompt",
+        description: "Please ensure you are logged in, a project is selected, and a prompt has been generated.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!selectedTool) {
+      toast({
+        title: "Cannot save prompt",
+        description: "No tool/method selected. Please select a tool before saving.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('generated_prompts')
+        .insert({
+          user_id: user.id,
+          project_id: currentProject.id,
+          project_context: JSON.stringify({
+            ...(projectContext || {}),
+            ...(basicInfo || {}),
+            stage: projectStage,
+          }),
+          selected_framework: selectedFramework,
+          framework_stage: frameworkStage,
+          selected_tool: selectedTool,
+          original_prompt: generatedPrompt,
+          ai_response: aiResponse,
+        });
+
+      if (error) throw error;
+
+      toast({ 
+        title: "Success!", 
+        description: "Prompt saved to project successfully."
+      });
+
+      navigate(`/projects/${currentProject.id}`);
+    } catch (error) {
+      console.error("Error saving prompt:", error);
+      toast({
+        title: "Error",
+        description: "Failed to save prompt to project. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const generatePrompt = async (tool: string) => {
+    if (!projectContext || !projectStage || !selectedFramework || !frameworkStage || !currentProject || !basicInfo) {
+      toast({
+        title: "Missing Information",
+        description: "Please complete all previous steps before generating a prompt.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsGeneratingPrompt(true);
+    setGeneratedPrompt("");
+    setAiResponse("");
+  
+    const frameworkContext = getFrameworkContext(selectedFramework, frameworkStage, tool);
+
+    const initialPrompt = `As an expert UX designer, generate a detailed and practical prompt for an AI assistant. The prompt should be based on the following context:\n\n**Project:** ${currentProject.name}\n**Description:** ${currentProject.description}\n**Product Type:** ${basicInfo.productType}\n**Industry:** ${basicInfo.industry}\n**Target Audience:** ${basicInfo.targetAudience}\n\n**Current UX Stage:** ${projectStage}\n**Framework:** ${selectedFramework}\n**Framework Stage:** ${frameworkStage}\n**Selected Tool/Method:** ${tool}\n\n**Framework Context:**\n${frameworkContext}\n\n**Document Content:**\n${projectContext.documentContent || 'No file provided.'}\n\nBased on this, generate a prompt that I can use to ask an AI to perform the following task: ${tool}. The prompt should be structured to elicit a comprehensive and actionable response from the AI, including specific examples and practical recommendations.`;
+
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-enhanced-prompt', {
+        body: { prompt: initialPrompt },
+      });
+
+      if (error) throw new Error(error.message);
+      
+      const finalPrompt = data.enhancedPrompt;
+      const formattedPrompt = formatEnhancedPrompt(finalPrompt);
+      setGeneratedPrompt(formattedPrompt);
+      return finalPrompt;
+
+    } catch (error) {
+      console.error("Error generating enhanced prompt:", error);
+      toast({
+        title: "Error",
+        description: "Failed to generate enhanced prompt. Using a basic prompt as a fallback.",
+        variant: "destructive",
+      });
+      // Fallback to initial prompt if AI enhancement fails
+      setGeneratedPrompt(initialPrompt);
+      return initialPrompt;
+    } finally {
+      setIsGeneratingPrompt(false);
+    }
+  };
+
+  const generateAIResponse = async () => {
+    if (!selectedTool) {
+      toast({ title: "Please complete all steps first.", variant: "destructive" });
+      return;
+    }
+
+    setIsGeneratingAI(true);
+    setAiResponse("");
+
+    try {
+      const newPrompt = generatedPrompt || await generatePrompt(selectedTool);
+
+      if (!newPrompt) {
+        toast({ title: "Failed to generate prompt.", description: "Could not generate a prompt. Please check previous steps.", variant: "destructive" });
+        setIsGeneratingAI(false);
+        return;
+      }
+
+      const { data, error } = await supabase.functions.invoke('generate-ai-response', {
+        body: {
+          prompt: newPrompt,
+          projectContext: { ...(projectContext || {}), ...(basicInfo || {}) },
+          selectedFramework,
+          frameworkStage,
+          selectedTool,
+          aiModel: 'gpt-4o-mini'
+        }
+      });
+
+      if (error) throw new Error(error.message);
+      setAiResponse(data.aiResponse);
+    } catch (error) {
+      console.error("Error generating AI response:", error);
+      toast({
+        title: "Error",
+        description: "Failed to generate AI response. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsGeneratingAI(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!user) {
+      navigate("/auth");
+      return;
+    }
+
+    const state = location.state as { 
+      project?: any;
+      basicInfo?: ProjectBasicInfo;
+      projectContext?: ProjectContext;
+      projectStage?: string;
+      selectedFramework?: string;
+      frameworkStage?: string;
+      selectedTool?: string;
+      generatedPrompt?: string;
+      aiResponse?: string;
+    } | null;
+
+    if (state) {
+      if (state.project) {
+        setCurrentProject(state.project);
+        setCurrentStep("basic-info");
+      }
+      if (state.basicInfo) setBasicInfo(state.basicInfo);
+      if (state.projectContext) setProjectContext(state.projectContext);
+      if (state.projectStage) setProjectStage(state.projectStage);
+      if (state.selectedFramework) setSelectedFramework(state.selectedFramework);
+      if (state.frameworkStage) setFrameworkStage(state.frameworkStage);
+      if (state.selectedTool) setSelectedTool(state.selectedTool);
+      if (state.generatedPrompt) {
+        setGeneratedPrompt(state.generatedPrompt);
+        setAiResponse(state.aiResponse || "");
+        setCurrentStep("result");
+      }
+    }
+  }, [user, navigate, location.state]);
+
+  const handleProjectSelect = (project: any) => {
+    setCurrentProject(project);
+    setCurrentStep("basic-info");
+  };
+
+  const handleBasicInfoComplete = (info: ProjectBasicInfo) => {
+    setBasicInfo(info);
+    setCurrentStep("context");
+  };
+
+  const handleContextComplete = (context: ProjectContext) => {
+    setProjectContext(context);
+    setCurrentStep("stage");
+  };
+
+  const handleStageComplete = (stage: string) => {
+    setProjectStage(stage);
+    setCurrentStep("framework");
+  };
+
+  const handleFrameworkComplete = (framework: string, stage: string) => {
+    setSelectedFramework(framework);
+    setFrameworkStage(stage);
+    setCurrentStep("tool");
+  };
+
+  const handleToolComplete = async (tool: string) => {
+    setSelectedTool(tool);
+    const prompt = await generatePrompt(tool);
+    if (prompt) {
+      setCurrentStep("result");
+    }
   };
 
   const renderCurrentStep = () => {
@@ -550,12 +351,21 @@ Make sure all recommendations are aligned with ${frameworkText} best practices a
       case "project":
         return (
           <ProjectSelectionStep 
-            onNewProject={handleNewProject}
-            onExistingProject={handleExistingProject}
+            onNewProject={handleProjectSelect}
+            onExistingProject={handleProjectSelect}
           />
         );
+      case "basic-info":
+        return <ProjectBasicInfoStep onNext={handleBasicInfoComplete} initialInfo={basicInfo} />;
       case "context":
-        return <ProjectContextStep onNext={handleContextComplete} initialContext={projectContext} />;
+        return basicInfo ? (
+          <ProjectContextStep
+            onNext={handleContextComplete}
+            initialContext={projectContext}
+            basicInfo={currentProject}
+            onBack={() => setCurrentStep("basic-info")}
+          />
+        ) : null;
       case "stage":
         return (
           <ProjectStageStep 
@@ -571,7 +381,6 @@ Make sure all recommendations are aligned with ${frameworkText} best practices a
             projectStage={projectStage}
             onNext={handleFrameworkComplete}
             onBack={() => setCurrentStep("stage")}
-            aiRecommendations={aiRecommendations}
             initialFramework={selectedFramework}
             initialFrameworkStage={frameworkStage}
           />
@@ -585,111 +394,59 @@ Make sure all recommendations are aligned with ${frameworkText} best practices a
             frameworkStage={frameworkStage}
             onGenerate={handleToolComplete}
             onBack={() => setCurrentStep("framework")}
-            aiRecommendations={aiRecommendations}
-          />
-        );
-      case "ai-selection":
-        return (
-          <AIModelSelector
-            selectedModel={selectedAIModel}
-            onModelSelect={handleAIModelSelect}
-            onContinue={handleAIModelContinue}
           />
         );
       case "result":
         return (
           <Card className="bg-gradient-card shadow-medium">
             <CardHeader>
-              <CardTitle>Prompt Generated!</CardTitle>
-              <CardDescription>
-                Your personalized prompt is customized for {getAIModelDisplayName(selectedAIModel)}
-              </CardDescription>
+              <div className="flex justify-between items-center">
+                <div>
+                  <CardTitle>Prompt Generated!</CardTitle>
+                  <CardDescription>
+                    Your personalized prompt is ready. You can now generate the AI response.
+                  </CardDescription>
+                </div>
+                <Button onClick={resetGenerator} variant="ghost" size="sm">
+                  <RotateCcw className="mr-2 h-4 w-4" />
+                  Start Over
+                </Button>
+              </div>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="bg-muted p-4 rounded-lg">
                 <Textarea 
                   value={generatedPrompt}
                   onChange={(e) => setGeneratedPrompt(e.target.value)}
-                  className="min-h-[200px] bg-transparent border-0 p-0 resize-none"
+                  className="min-h-[150px] bg-transparent border-0 p-0 resize-none focus:ring-0"
                   placeholder="Your generated prompt will appear here..."
                 />
               </div>
-              
               
               <div className="flex flex-wrap gap-2">
                 <Button onClick={copyToClipboard} variant="outline" size="sm">
                   <Copy className="mr-2 h-4 w-4" />
                   Copy
                 </Button>
-                <Button 
-                  onClick={generateAIResponse} 
-                  disabled={isGeneratingAI}
-                  className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
-                >
-                  <Sparkles className="mr-2 h-4 w-4" />
-                  {isGeneratingAI ? "Generating..." : "Use Prompt"}
-                </Button>
-                <Button onClick={() => generatePrompt(selectedTool)} variant="outline" size="sm">
-                  <RefreshCw className="mr-2 h-4 w-4" />
-                  Regenerate
-                </Button>
                 <Button onClick={savePromptToProject} variant="outline" size="sm">
                   <Save className="mr-2 h-4 w-4" />
-                  Save
+                  Save to Project
                 </Button>
-                <Button variant="outline" size="sm">
-                  <Download className="mr-2 h-4 w-4" />
-                  Export
-                </Button>
-                <Button onClick={resetGenerator} variant="outline" size="sm">
-                  <RotateCcw className="mr-2 h-4 w-4" />
-                  New Prompt
-                </Button>
-                <Button 
-                  onClick={() => navigate('/prompt-library')} 
-                  variant="outline" 
-                  size="sm"
-                  className="gap-2"
-                >
-                  <Library className="h-4 w-4" />
+                <Button onClick={() => navigate('/library')} variant="outline" size="sm">
+                  <Library className="mr-2 h-4 w-4" />
                   View Library
                 </Button>
               </div>
 
-{aiResponse && (
-                <div className="mt-6 p-4 bg-gradient-to-br from-primary/5 to-accent/5 rounded-lg border">
-                  <div className="flex items-center gap-2 mb-3">
-                    <Sparkles className="h-5 w-5 text-primary" />
-                    <h3 className="font-semibold text-lg">AI Response</h3>
-                    <div className="ml-auto flex gap-2">
-                      <Button 
-                        onClick={() => {
-                          navigator.clipboard.writeText(aiResponse);
-                          toast({
-                            title: "Copied!",
-                            description: "AI response copied to clipboard.",
-                          });
-                        }}
-                        size="sm"
-                        variant="outline"
-                      >
-                        <Copy className="mr-2 h-4 w-4" />
-                        Copy Response
-                      </Button>
-                      <Button 
-                        onClick={() => navigate('/chat', { 
-                          state: { 
-                            initialPrompt: generatedPrompt, 
-                            initialResponse: aiResponse,
-                            projectContext 
-                          } 
-                        })}
-                        size="sm"
-                      >
-                        Continue in Chat
-                      </Button>
-                    </div>
-                  </div>
+              <div className="pt-4">
+                <Button onClick={generateAIResponse} disabled={isGeneratingAI} className="w-full">
+                  {isGeneratingAI ? "Generating..." : <><Sparkles className="mr-2 h-4 w-4" />Generate AI Response</>}
+                </Button>
+              </div>
+
+              {aiResponse && (
+                <div className="pt-4 space-y-2">
+                  <h3 className="text-lg font-semibold">AI Response</h3>
                   <div className="bg-background/50 p-4 rounded-md max-h-96 overflow-y-auto">
                     <div className="prose prose-sm max-w-none dark:prose-invert prose-headings:text-foreground prose-p:text-foreground prose-strong:text-foreground prose-em:text-foreground prose-code:text-foreground prose-pre:bg-muted prose-blockquote:border-primary prose-li:text-foreground">
                       <ReactMarkdown>{aiResponse}</ReactMarkdown>
@@ -700,16 +457,16 @@ Make sure all recommendations are aligned with ${frameworkText} best practices a
 
               <div className="pt-4">
                 <div className="flex flex-wrap gap-2">
-                  <Badge variant="secondary">{projectContext?.industry}</Badge>
-                  <Badge variant="outline">{projectContext?.productType}</Badge>
-                  <Badge variant="outline">{projectStage}</Badge>
-                  {selectedFramework !== "none" && (
+                  {basicInfo?.industry && <Badge variant="secondary">{basicInfo.industry}</Badge>}
+                  {basicInfo?.productType && <Badge variant="outline">{basicInfo.productType}</Badge>}
+                  {projectStage && <Badge variant="outline">{projectStage}</Badge>}
+                  {selectedFramework && selectedFramework !== "none" && (
                     <>
                       <Badge variant="secondary">{selectedFramework}</Badge>
                       <Badge variant="outline">{frameworkStage}</Badge>
                     </>
                   )}
-                  <Badge variant="outline">{selectedTool}</Badge>
+                  {selectedTool && <Badge variant="outline">{selectedTool}</Badge>}
                 </div>
               </div>
             </CardContent>
@@ -722,12 +479,11 @@ Make sure all recommendations are aligned with ${frameworkText} best practices a
 
   return (
     <div className="min-h-screen bg-gradient-subtle py-12">
-      {/* Loading Overlay */}
       <LoadingPromptGeneration 
         isLoading={isGeneratingPrompt}
         framework={selectedFramework}
         tool={selectedTool}
-        industry={projectContext?.industry || ""}
+        industry={basicInfo?.industry || ""}
       />
       
       <div className="container px-4 max-w-4xl">
@@ -750,5 +506,4 @@ Make sure all recommendations are aligned with ${frameworkText} best practices a
     </div>
   );
 };
-
 export default Generator;

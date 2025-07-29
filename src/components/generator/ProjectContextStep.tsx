@@ -1,75 +1,123 @@
 import { useState, useEffect } from "react";
 import { StepCard } from "./StepCard";
-import { OptionCard } from "./OptionCard";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowRight } from "lucide-react";
+import { FileUpload } from "@/components/ui/file-upload";
+import { ArrowRight, Sparkles } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface ProjectContextStepProps {
   onNext: (context: ProjectContext) => void;
+  onBack: () => void;
   initialContext?: ProjectContext | null;
+  basicInfo: {
+    name: string;
+    description: string;
+  };
 }
 
 export interface ProjectContext {
-  industry: string;
-  productType: string;
-  companySize: string;
-  productScope: string;
-  userProfile: string;
-  projectDescription?: string; // Add this field
+  projectDescription?: string;
+  contextFiles?: File[];
+  documentContent?: string;
 }
 
-const industries = [
-  { id: "healthtech", name: "HealthTech", description: "Health and wellness related applications and platforms", tooltip: "Includes telemedicine, fitness apps, digital medical records, etc." },
-  { id: "fintech", name: "FinTech", description: "Digital financial services and banking technology", tooltip: "Payment apps, investment, credit, digital wallets, etc." },
-  { id: "edtech", name: "EdTech", description: "Educational platforms and learning tools", tooltip: "LMS, online courses, student tools, etc." },
-  { id: "ecommerce", name: "E-commerce", description: "Electronic commerce and marketplace", tooltip: "Online stores, marketplaces, sales platforms, etc." },
-  { id: "saas", name: "SaaS", description: "Software as a service for businesses", tooltip: "B2B tools, business software, productivity, etc." },
-  { id: "other", name: "Other", description: "Other industries not listed", tooltip: "Gaming, travel, real estate, food & beverage, etc." }
-];
+export const ProjectContextStep = ({ onNext, onBack, initialContext, basicInfo }: ProjectContextStepProps) => {
+  const [projectDescription, setProjectDescription] = useState("");
+  const [contextFiles, setContextFiles] = useState<File[]>([]);
+  const [documentContent, setDocumentContent] = useState<string>("");
+  const [isProcessing, setIsProcessing] = useState(false);
+  const { toast } = useToast();
 
-const productTypes = [
-  { id: "mobile", name: "Mobile App", description: "Native or hybrid application for mobile devices", tooltip: "iOS, Android, React Native, Flutter, etc." },
-  { id: "web", name: "Web Application", description: "Progressive web app or SPA", tooltip: "React, Vue, Angular, browser applications" },
-  { id: "website", name: "Website", description: "Corporate or informational website", tooltip: "Landing pages, corporate sites, blogs, etc." },
-  { id: "platform", name: "Platform", description: "Complete system with multiple functionalities", tooltip: "Complex ecosystems, dashboards, CRM, etc." }
-];
-
-const companySizes = [
-  { id: "startup", name: "Startup", description: "Emerging company with small team", tooltip: "1-20 employees, product in initial development" },
-  { id: "small", name: "Small", description: "Established company with reduced team", tooltip: "21-50 employees, growing product" },
-  { id: "medium", name: "Medium", description: "Growing company with multiple teams", tooltip: "51-200 employees, established product" },
-  { id: "large", name: "Large", description: "Consolidated company with multiple products", tooltip: "201+ employees, multiple product lines" }
-];
-
-export const ProjectContextStep = ({ onNext, initialContext }: ProjectContextStepProps) => {
-  const [selectedIndustry, setSelectedIndustry] = useState("");
-  const [selectedProductType, setSelectedProductType] = useState("");
-  const [selectedCompanySize, setSelectedCompanySize] = useState("");
-  const [additionalContext, setAdditionalContext] = useState("");
-
-  // Pre-fill form with initial context if provided
   useEffect(() => {
     if (initialContext) {
-      setSelectedIndustry(initialContext.industry || "");
-      setSelectedProductType(initialContext.productType || "");
-      setSelectedCompanySize(initialContext.companySize || "");
-      setAdditionalContext(initialContext.projectDescription || "");
+      setProjectDescription(initialContext.projectDescription || "");
     }
   }, [initialContext]);
 
-  const canProceed = selectedIndustry && selectedProductType && selectedCompanySize;
-
   const handleNext = () => {
-    if (canProceed) {
-      onNext({
-        industry: selectedIndustry,
-        productType: selectedProductType,
-        companySize: selectedCompanySize,
-        productScope: "national", // Default value
-        userProfile: "b2c", // Default value
-        projectDescription: additionalContext
+    onNext({
+      projectDescription: projectDescription,
+      contextFiles: contextFiles.length > 0 ? contextFiles : undefined,
+      documentContent: documentContent,
+    });
+  };
+
+  const handleFilesSelected = async (files: File[]) => {
+    if (files.length === 0) return;
+    const file = files[0];
+    setContextFiles([file]);
+    setIsProcessing(true);
+    setDocumentContent("");
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const { data, error } = await supabase.functions.invoke('process-document', {
+        body: formData,
       });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      // The 'data' from invoke is the parsed JSON response body.
+      // If the function returns { documentContent: '...' }, this is correct.
+      // We'll add a check to ensure it's a string before setting.
+      if (typeof data.documentContent === 'string') {
+        setDocumentContent(data.documentContent);
+      } else {
+        // If the structure is different, we'll handle it gracefully.
+        const content = JSON.stringify(data, null, 2);
+        setDocumentContent(content);
+        console.warn('Received unexpected data structure:', data);
+      }
+
+      toast({ title: "File processed successfully!" });
+
+    } catch (error: any) {
+      console.error('Error processing file:', error);
+      toast({ title: "Error processing file", description: error.message, variant: "destructive" });
+      setContextFiles([]);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handleFileRemove = (fileToRemove: File) => {
+    setContextFiles(contextFiles.filter(file => file !== fileToRemove));
+    setDocumentContent("");
+  };
+
+  const [isEnhancing, setIsEnhancing] = useState(false);
+
+  const enhanceWithAI = async () => {
+    setIsEnhancing(true);
+    try {
+      const response = await fetch('/api/enhance-context', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          projectName: basicInfo.name,
+          projectDescription: basicInfo.description,
+          currentContext: projectDescription
+        })
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+      }
+
+      const enhancedContext = await response.json();
+      setProjectDescription(enhancedContext.enhancedDescription);
+    } catch (error) {
+      console.error('Error enhancing context:', error);
+      alert('Failed to enhance context. Please try again.');
+    } finally {
+      setIsEnhancing(false);
     }
   };
 
@@ -81,75 +129,58 @@ export const ProjectContextStep = ({ onNext, initialContext }: ProjectContextSte
       description="Tell us about your project to generate more relevant prompts"
     >
       <div className="space-y-6">
-        <div>
-          <h3 className="font-semibold mb-3">What industry do you work in?</h3>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
-            {industries.map((industry) => (
-              <OptionCard
-                key={industry.id}
-                title={industry.name}
-                description={industry.description}
-                tooltip={industry.tooltip}
-                isSelected={selectedIndustry === industry.id}
-                onClick={() => setSelectedIndustry(industry.id)}
-              />
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <h3 className="font-semibold mb-3">What type of product are you developing?</h3>
-          <div className="grid md:grid-cols-2 gap-3">
-            {productTypes.map((product) => (
-              <OptionCard
-                key={product.id}
-                title={product.name}
-                description={product.description}
-                tooltip={product.tooltip}
-                isSelected={selectedProductType === product.id}
-                onClick={() => setSelectedProductType(product.id)}
-              />
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <h3 className="font-semibold mb-3">What is the size of your company?</h3>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-3">
-            {companySizes.map((size) => (
-              <OptionCard
-                key={size.id}
-                title={size.name}
-                description={size.description}
-                tooltip={size.tooltip}
-                isSelected={selectedCompanySize === size.id}
-                onClick={() => setSelectedCompanySize(size.id)}
-              />
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <h3 className="font-semibold mb-3">Additional Project Context (Optional)</h3>
+        <div className="p-4 border rounded-lg space-y-2">
+          <h3 className="font-semibold">Project Context</h3>
+          <p className="text-sm text-gray-500">What is your project about? Provide as much detail as possible.</p>
           <Textarea
-            value={additionalContext}
-            onChange={(e) => setAdditionalContext(e.target.value)}
-            placeholder="Describe any specific challenges, goals, target users, business objectives, or unique context that would help generate more relevant and personalized prompts for your project..."
-            rows={4}
-            className="resize-none"
+            placeholder="e.g., A mobile app for tracking personal fitness goals..."
+            value={projectDescription}
+            onChange={(e) => setProjectDescription(e.target.value)}
+            rows={6}
           />
-          <p className="text-sm text-muted-foreground mt-2">
-            This information will be used to create more tailored and specific prompts for your project.
-          </p>
+          <div className="flex justify-end">
+            <Button
+              onClick={enhanceWithAI}
+              disabled={isEnhancing || !projectDescription}
+              size="sm"
+              variant="outline"
+              className="bg-gradient-to-r from-purple-400 to-pink-500 text-white"
+            >
+              <Sparkles className="w-4 h-4 mr-2" />
+              {isEnhancing ? 'Enhancing...' : 'Enhance with AI'}
+            </Button>
+          </div>
         </div>
 
-        <div className="flex justify-end pt-4">
-          <Button onClick={handleNext} disabled={!canProceed} size="lg">
-            Continue
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
+        <div className="p-4 border rounded-lg space-y-2">
+          <h3 className="font-semibold">File Upload</h3>
+          <p className="text-sm text-gray-500">Upload any relevant files for context (e.g., project brief, user stories).</p>
+          <FileUpload
+            onFilesSelected={handleFilesSelected}
+            onFileRemove={handleFileRemove}
+            selectedFiles={contextFiles}
+            disabled={isProcessing}
+          />
+          {isProcessing && <p className="text-sm text-gray-500">Processing file, please wait...</p>}
+          {documentContent && (
+            <div className="p-4 border rounded-lg bg-gray-50">
+              <h4 className="font-semibold">Document Content:</h4>
+              <p className="text-sm text-gray-700 mt-2 italic">{documentContent.substring(0, 200)}...</p>
+            </div>
+          )}
         </div>
+      </div>
+
+      <div className="flex justify-between mt-8">
+        <Button variant="outline" onClick={onBack}>
+          Back
+        </Button>
+        <Button onClick={handleNext}>
+          Continue <ArrowRight className="w-4 h-4 ml-2" />
+        </Button>
       </div>
     </StepCard>
   );
 };
+
+export default ProjectContextStep;

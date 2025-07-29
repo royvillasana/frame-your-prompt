@@ -19,7 +19,7 @@ interface Project {
 }
 
 interface ProjectSelectionStepProps {
-  onNewProject: (name: string, description: string) => void;
+  onNewProject: (project: Project) => void;
   onExistingProject: (project: Project) => void;
 }
 
@@ -56,12 +56,33 @@ export const ProjectSelectionStep = ({ onNewProject, onExistingProject }: Projec
     }
   };
 
-  const handleNewProject = () => {
+  const handleNewProject = async () => {
     if (!projectName.trim()) {
       toast.error("Project name is required");
       return;
     }
-    onNewProject(projectName, projectDescription);
+    
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('projects')
+        .insert([{
+          name: projectName,
+          description: projectDescription,
+          user_id: user?.id,
+          selected_framework: "None" // Add a default value for selected_framework
+        }])
+        .select()
+        .single();
+    
+      if (error) throw error;
+      onNewProject(data);
+    } catch (error: any) {
+      toast.error("Error creating project");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (isNewProject === null) {
@@ -147,10 +168,10 @@ export const ProjectSelectionStep = ({ onNewProject, onExistingProject }: Projec
             </Button>
             <Button 
               onClick={handleNewProject}
-              disabled={!projectName.trim()}
+              disabled={!projectName.trim() || loading}
               className="flex-1"
             >
-              Continue
+              {loading ? 'Creating...' : 'Continue'}
             </Button>
           </div>
         </CardContent>
