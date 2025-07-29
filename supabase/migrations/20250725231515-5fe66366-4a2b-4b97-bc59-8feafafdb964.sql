@@ -11,6 +11,7 @@ CREATE TABLE public.profiles (
 CREATE TABLE public.generated_prompts (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  project_id UUID REFERENCES public.projects(id) ON DELETE CASCADE,
   project_context JSONB NOT NULL,
   selected_framework TEXT NOT NULL,
   framework_stage TEXT NOT NULL,

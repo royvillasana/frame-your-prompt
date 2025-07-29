@@ -142,15 +142,26 @@ const Generator = () => {
       return;
     }
 
+    if (!selectedTool) {
+      toast({
+        title: "Cannot save prompt",
+        description: "No tool/method selected. Please select a tool before saving.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       const { error } = await supabase
         .from('generated_prompts')
         .insert({
           user_id: user.id,
           project_id: currentProject.id,
-          project_context: projectContext ? JSON.stringify(projectContext) : null,
-          basic_info: basicInfo ? JSON.stringify(basicInfo) : null,
-          project_stage: projectStage,
+          project_context: JSON.stringify({
+            ...(projectContext || {}),
+            ...(basicInfo || {}),
+            stage: projectStage,
+          }),
           selected_framework: selectedFramework,
           framework_stage: frameworkStage,
           selected_tool: selectedTool,
