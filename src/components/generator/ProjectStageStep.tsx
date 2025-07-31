@@ -3,10 +3,14 @@ import { StepCard } from "./StepCard";
 import { OptionCard } from "./OptionCard";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, ArrowLeft } from "lucide-react";
-import { ProjectContext } from "./ProjectContextStep";
 
 interface ProjectStageStepProps {
-  context: ProjectContext;
+  context: {
+    industry?: string;
+    productType?: string;
+    companySize?: string;
+    projectDescription?: string;
+  };
   onNext: (stage: string) => void;
   onBack: () => void;
 }
@@ -15,48 +19,39 @@ const projectStages = [
   {
     id: "research",
     name: "Research",
-    description: "We are researching the problem and understanding users",
-    tooltip: "User research, market analysis, problem definition",
-    badge: "Beginning"
+    description: "Understanding user needs and market landscape"
   },
   {
     id: "ideation",
     name: "Ideation",
-    description: "Generating ideas and concepts for the solution",
-    tooltip: "Brainstorming, concept development, solution exploration",
-    badge: "Creative"
+    description: "Generating and exploring ideas"
   },
   {
-    id: "design",
-    name: "Design",
-    description: "Creating wireframes, prototypes and designs",
-    tooltip: "Wireframing, prototyping, visual design, interaction design",
-    badge: "Visual"
+    id: "prototyping",
+    name: "Prototyping",
+    description: "Creating early versions of the product"
   },
   {
     id: "testing",
     name: "Testing",
-    description: "Validating designs with real users",
-    tooltip: "Usability testing, A/B testing, user feedback collection",
-    badge: "Validation"
+    description: "Validating with users and gathering feedback"
   },
   {
-    id: "implementation",
-    name: "Implementation",
-    description: "Developing and launching the product",
-    tooltip: "Development handoff, QA, launch preparation",
-    badge: "Launch"
+    id: "development",
+    name: "Development",
+    description: "Building the final product"
   }
 ];
 
 export const ProjectStageStep = ({ context, onNext, onBack }: ProjectStageStepProps) => {
-  const [selectedStage, setSelectedStage] = useState("");
+  const [selectedStage, setSelectedStage] = useState<string>("");
 
-  const handleNext = () => {
-    if (selectedStage) {
-      onNext(selectedStage);
-    }
-  };
+  // Safely get context values with fallbacks
+  const contextInfo = [
+    context?.industry,
+    context?.productType,
+    context?.companySize
+  ].filter(Boolean).join(" • ") || "No additional context provided";
 
   return (
     <StepCard
@@ -68,7 +63,7 @@ export const ProjectStageStep = ({ context, onNext, onBack }: ProjectStageStepPr
       <div className="space-y-6">
         <div className="bg-muted/30 p-4 rounded-lg">
           <p className="text-sm text-muted-foreground">
-            <strong>Context:</strong> {context.industry} • {context.productType} • {context.companySize}
+            <strong>Context:</strong> {contextInfo}
           </p>
         </div>
 
@@ -80,8 +75,6 @@ export const ProjectStageStep = ({ context, onNext, onBack }: ProjectStageStepPr
                 key={stage.id}
                 title={stage.name}
                 description={stage.description}
-                tooltip={stage.tooltip}
-                badge={stage.badge}
                 isSelected={selectedStage === stage.id}
                 onClick={() => setSelectedStage(stage.id)}
               />
@@ -90,16 +83,19 @@ export const ProjectStageStep = ({ context, onNext, onBack }: ProjectStageStepPr
         </div>
 
         <div className="flex justify-between pt-4">
-          <Button onClick={onBack} variant="outline" size="lg">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Previous
+          <Button variant="outline" onClick={onBack}>
+            <ArrowLeft className="mr-2 h-4 w-4" /> Back
           </Button>
-          <Button onClick={handleNext} disabled={!selectedStage} size="lg">
-            Continue
-            <ArrowRight className="ml-2 h-4 w-4" />
+          <Button 
+            onClick={() => onNext(selectedStage)}
+            disabled={!selectedStage}
+          >
+            Next <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         </div>
       </div>
     </StepCard>
   );
 };
+
+export default ProjectStageStep;

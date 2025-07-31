@@ -3,8 +3,15 @@ import { StepCard } from "./StepCard";
 import { OptionCard } from "./OptionCard";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, ArrowLeft, Lightbulb } from "lucide-react";
-import { ProjectContext } from "./ProjectContextStep";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+
+interface ProjectContext {
+  industry?: string;
+  productType?: string;
+  companySize?: string;
+  projectDescription?: string;
+  [key: string]: any;
+}
 
 interface FrameworkStepProps {
   context: ProjectContext;
@@ -16,6 +23,9 @@ interface FrameworkStepProps {
     recommendedTool?: string;
     reasoning?: string;
   };
+  recommendedFramework?: string;
+  recommendedTool?: string;
+  reasoning?: string;
   initialFramework?: string;
   initialFrameworkStage?: string;
 }
@@ -247,32 +257,43 @@ const getFrameworkStageMapping = (projectStage: string, frameworkId: string): st
   return mappings[frameworkId]?.[projectStage] || "";
 };
 
-export const FrameworkStep = ({ context, projectStage, onNext, onBack, aiRecommendations, initialFramework, initialFrameworkStage }: FrameworkStepProps) => {
-  const [selectedFramework, setSelectedFramework] = useState(initialFramework || aiRecommendations?.recommendedFramework || "");
-  const [selectedStage, setSelectedStage] = useState(initialFrameworkStage || "");
-  
+export const FrameworkStep = ({
+  context = {},
+  projectStage,
+  onNext,
+  onBack,
+  aiRecommendations = {},
+  initialFramework,
+  initialFrameworkStage,
+}: FrameworkStepProps) => {
+  const [selectedFramework, setSelectedFramework] = useState<string>(initialFramework || '');
+  const [selectedStage, setSelectedStage] = useState<string>(initialFrameworkStage || '');
+  const [availableStages, setAvailableStages] = useState<any[]>([]);
+
+  const contextInfo = [
+    context?.industry,
+    context?.productType,
+    projectStage ? `Stage: ${projectStage}` : ''
+  ].filter(Boolean).join(" • ") || "No additional context";
+
   const recommendedFramework = getRecommendedFramework(projectStage);
   const currentFramework = frameworks.find(f => f.id === selectedFramework);
 
   const handleFrameworkSelect = (frameworkId: string) => {
     setSelectedFramework(frameworkId);
     
-    // Auto-select the corresponding framework stage based on project stage
     if (frameworkId !== "none") {
       const mappedStage = getFrameworkStageMapping(projectStage, frameworkId);
       setSelectedStage(mappedStage);
     } else {
-      setSelectedStage(""); // Reset stage when framework changes to "none"
+      setSelectedStage(""); 
     }
   };
 
-  // Auto-select stage when framework is preselected by AI or from previous prompt
   useEffect(() => {
     if (initialFrameworkStage) {
-      // Use the framework stage from previous prompt (highest priority)
       setSelectedStage(initialFrameworkStage);
     } else if (aiRecommendations?.recommendedFramework && aiRecommendations.recommendedFramework !== "none") {
-      // Fall back to AI recommendation mapping
       const mappedStage = getFrameworkStageMapping(projectStage, aiRecommendations.recommendedFramework);
       setSelectedStage(mappedStage);
     }
@@ -296,7 +317,7 @@ export const FrameworkStep = ({ context, projectStage, onNext, onBack, aiRecomme
       <div className="space-y-6">
         <div className="bg-muted/30 p-4 rounded-lg">
           <p className="text-sm text-muted-foreground">
-            <strong>Project:</strong> {context.industry} • {context.productType} • Stage: {projectStage}
+            <strong>Project:</strong> {contextInfo}
           </p>
         </div>
 
@@ -360,3 +381,5 @@ export const FrameworkStep = ({ context, projectStage, onNext, onBack, aiRecomme
     </StepCard>
   );
 };
+
+export default FrameworkStep;

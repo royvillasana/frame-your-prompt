@@ -3,18 +3,23 @@ import { StepCard } from "./StepCard";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { FileUpload } from "@/components/ui/file-upload";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight, Sparkles, ArrowLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
 interface ProjectContextStepProps {
   onNext: (context: ProjectContext) => void;
   onBack: () => void;
+  onGenerate: (tool: string) => Promise<void>;
   initialContext?: ProjectContext | null;
   basicInfo: {
     name: string;
     description: string;
   };
+  projectStage: string;
+  framework: string;
+  frameworkStage: string;
+  selectedTool: string;
 }
 
 export interface ProjectContext {
@@ -23,40 +28,46 @@ export interface ProjectContext {
   documentContent?: string;
 }
 
-export const ProjectContextStep = ({ onNext, onBack, initialContext, basicInfo }: ProjectContextStepProps) => {
+export const ProjectContextStep = ({ 
+  onNext, 
+  onBack, 
+  initialContext, 
+  basicInfo, 
+  projectStage, 
+  framework, 
+  frameworkStage, 
+  selectedTool,
+  onGenerate 
+}: ProjectContextStepProps) => {
   const [projectDescription, setProjectDescription] = useState("");
   const [contextFiles, setContextFiles] = useState<File[]>([]);
   const [documentContent, setDocumentContent] = useState<string>("");
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
   const { toast } = useToast();
 
-  // Check if this context is from a project with existing context
-  const hasExistingContext = initialContext?.projectDescription || initialContext?.documentContent;
+  // Track if we have existing context from props
+  const [hasExistingContext, setHasExistingContext] = useState(!!(initialContext?.projectDescription || initialContext?.documentContent));
   const [hasEdited, setHasEdited] = useState(false);
 
   useEffect(() => {
-    if (initialContext) {
+    // Only initialize from initialContext if we haven't edited yet
+    if (initialContext && !hasEdited) {
       setProjectDescription(initialContext.projectDescription || "");
       setDocumentContent(initialContext.documentContent || "");
+      setHasExistingContext(!!(initialContext.projectDescription || initialContext.documentContent));
     }
-  }, [initialContext]);
+  }, [initialContext, hasEdited]);
 
   const handleNext = () => {
-    if (!hasEdited && hasExistingContext) {
-      // If user didn't edit and there's existing context, just proceed
-      onNext({
-        projectDescription: projectDescription,
-        contextFiles: [],
-        documentContent: documentContent,
-      });
-    } else {
-      // Otherwise, include any new files
-      onNext({
-        projectDescription: projectDescription,
-        contextFiles: contextFiles.length > 0 ? contextFiles : undefined,
-        documentContent: documentContent,
-      });
-    }
+    const contextToSend = {
+      projectDescription: projectDescription.trim(),
+      contextFiles: contextFiles.length > 0 ? contextFiles : undefined,
+      documentContent: documentContent,
+    };
+    
+    // Always send the current context, regardless of previous state
+    onNext(contextToSend);
   };
 
   const handleFilesSelected = async (files: File[]) => {
@@ -108,6 +119,62 @@ export const ProjectContextStep = ({ onNext, onBack, initialContext, basicInfo }
 
   const [isEnhancing, setIsEnhancing] = useState(false);
 
+  const [isTouched, setIsTouched] = useState(false);
+  const [isInputFocused, setIsInputFocused] = useState(false);
+
+  // Validate the project description
+  const validateInput = () => {
+    const isValid = projectDescription.trim().length > 0;
+    setIsTouched(true);
+    return isValid;
+  };
+
+  const handleGenerate = async () => {
+    if (!selectedTool) {
+      toast({
+        title: "No tool selected",
+        description: "Please select a tool before generating a prompt.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate the input
+    if (!validateInput()) {
+      toast({
+        title: "Project Context Required",
+        description: "Please enter some context before generating a prompt.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Create the current context with the latest values
+    const currentContext = {
+      projectDescription: projectDescription.trim(),
+      contextFiles,
+      documentContent,
+    };
+
+    // Call onNext to update the parent's state with the latest context
+    onNext(currentContext);
+
+    setIsGenerating(true);
+    try {
+      // Now generate the prompt with the updated context
+      await onGenerate(selectedTool);
+    } catch (error) {
+      console.error("Error generating prompt:", error);
+      toast({
+        title: "Error",
+        description: "Failed to generate prompt. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
   const enhanceWithAI = async () => {
     setIsEnhancing(true);
     try {
@@ -136,72 +203,130 @@ export const ProjectContextStep = ({ onNext, onBack, initialContext, basicInfo }
     }
   };
 
+  // Show context summary
+  const contextInfo = [
+    basicInfo?.name,
+    projectStage,
+    framework !== "none" ? framework : null,
+    frameworkStage && framework !== "none" ? `(${frameworkStage})` : null,
+    selectedTool
+  ].filter(Boolean).join(" • ") || "No context provided";
+
   return (
     <StepCard
-      step={1}
-      totalSteps={4}
-      title="Project Context"
-      description={hasExistingContext && !hasEdited 
-        ? "Review and update the project context if needed" 
-        : "Tell us about your project to generate more relevant prompts"}
+      step={5}
+      totalSteps={6}
+      title="Generate Prompt"
+      description="Review your context and generate the perfect prompt"
     >
-      {hasExistingContext && !hasEdited && (
-        <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-          <p className="text-sm text-blue-700 dark:text-blue-300">
-            This project already has context information. You can review and update it below if needed.
-          </p>
-        </div>
-      )}
       <div className="space-y-6">
-        <div className="p-4 border rounded-lg space-y-2">
-          <h3 className="font-semibold">Project Context</h3>
-          <p className="text-sm text-gray-500">What is your project about? Provide as much detail as possible.</p>
-          <Textarea
-            placeholder="e.g., A mobile app for tracking personal fitness goals..."
-            value={projectDescription}
-            onChange={(e) => setProjectDescription(e.target.value)}
-            rows={6}
-          />
-          <div className="flex justify-end">
-            <Button
-              onClick={enhanceWithAI}
-              disabled={isEnhancing || !projectDescription}
-              size="sm"
-              variant="outline"
-              className="bg-gradient-to-r from-purple-400 to-pink-500 text-white"
-            >
-              <Sparkles className="w-4 h-4 mr-2" />
-              {isEnhancing ? 'Enhancing...' : 'Enhance with AI'}
-            </Button>
+        <div className="p-4 border rounded-lg space-y-4">
+          <h3 className="font-semibold">Your Context</h3>
+          <div className="text-sm bg-muted/30 p-3 rounded">
+            {contextInfo}
+          </div>
+          
+          {hasExistingContext && !hasEdited && (
+            <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded">
+              <p className="text-sm text-blue-800 dark:text-blue-200">
+                This project has existing context. You can update it below if needed.
+              </p>
+            </div>
+          )}
+
+          <div className="space-y-2">
+            <div className="flex justify-between items-center">
+              <h4 className="font-medium">Project Context</h4>
+              {isTouched && !projectDescription.trim() && (
+                <span className="text-sm text-red-500">Context is required</span>
+              )}
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Add any additional details to help generate a better prompt
+            </p>
+            <Textarea
+              placeholder="e.g., A mobile app for tracking personal fitness goals..."
+              value={projectDescription}
+              onChange={(e) => {
+                setProjectDescription(e.target.value);
+                if (e.target.value !== initialContext?.projectDescription) {
+                  setHasEdited(true);
+                }
+                if (isTouched) {
+                  validateInput();
+                }
+              }}
+              onBlur={() => {
+                setIsInputFocused(false);
+                validateInput();
+              }}
+              onFocus={() => setIsInputFocused(true)}
+              className={`min-h-[120px] ${isTouched && !projectDescription.trim() ? 'border-red-500' : ''}`}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <h4 className="font-medium">Upload Documents (Optional)</h4>
+            <p className="text-sm text-muted-foreground">
+              Add any relevant documents, images, or references
+            </p>
+            <FileUpload
+              onFilesSelected={handleFilesSelected}
+              accept="image/*,.pdf,.doc,.docx,.txt"
+              maxFiles={5}
+              maxSizeMB={5} // 5MB
+            />
+            {isProcessing && (
+              <div className="mt-1 text-sm text-blue-600 dark:text-blue-400">
+                Processing document...
+              </div>
+            )}
+            {documentContent && (
+              <div className="mt-3 p-3 bg-muted/30 rounded text-sm">
+                <h4 className="font-medium mb-1">Document Content:</h4>
+                <p className="whitespace-pre-wrap text-muted-foreground">
+                  {documentContent.length > 500 
+                    ? `${documentContent.substring(0, 500)}...` 
+                    : documentContent}
+                </p>
+                {documentContent.length > 500 && (
+                  <p className="text-xs text-muted-foreground mt-1">
+                    (Document truncated - {documentContent.length} characters total)
+                  </p>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
-        <div className="p-4 border rounded-lg space-y-2">
-          <h3 className="font-semibold">File Upload</h3>
-          <p className="text-sm text-gray-500">Upload any relevant files for context (e.g., project brief, user stories).</p>
-          <FileUpload
-            onFilesSelected={handleFilesSelected}
-            onFileRemove={handleFileRemove}
-            selectedFiles={contextFiles}
-            disabled={isProcessing}
-          />
-          {isProcessing && <p className="text-sm text-gray-500">Processing file, please wait...</p>}
-          {documentContent && (
-            <div className="p-4 border rounded-lg bg-gray-50">
-              <h4 className="font-semibold">Document Content:</h4>
-              <p className="text-sm text-gray-700 mt-2 italic">{documentContent.substring(0, 200)}...</p>
-            </div>
-          )}
+        <div className="flex justify-between pt-2">
+          <Button variant="outline" onClick={onBack}>
+            <ArrowLeft className="mr-2 h-4 w-4" /> Back
+          </Button>
+          <div className="space-x-2">
+            <Button 
+              variant="outline" 
+              onClick={handleNext}
+            >
+              Skip to Result
+            </Button>
+            <Button 
+              onClick={handleGenerate}
+              disabled={isGenerating}
+            >
+              {isGenerating ? (
+                <>
+                  <Sparkles className="mr-2 h-4 w-4 animate-pulse" />
+                  Generating...
+                </>
+              ) : (
+                <>
+                  Generate Prompt <Sparkles className="ml-2 h-4 w-4" />
+                </>
+              )}
+            </Button>
+          </div>
         </div>
-      </div>
-
-      <div className="flex justify-between mt-8">
-        <Button variant="outline" onClick={onBack}>
-          Back
-        </Button>
-        <Button onClick={handleNext}>
-          Continue <ArrowRight className="w-4 h-4 ml-2" />
-        </Button>
       </div>
     </StepCard>
   );

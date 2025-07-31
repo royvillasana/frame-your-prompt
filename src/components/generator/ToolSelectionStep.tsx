@@ -2,21 +2,37 @@ import { useState, useEffect } from "react";
 import { StepCard } from "./StepCard";
 import { OptionCard } from "./OptionCard";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Sparkles } from "lucide-react";
-import { ProjectContext } from "./ProjectContextStep";
+import { ArrowLeft, ArrowRight } from "lucide-react";
+
+interface ProjectContext {
+  industry?: string;
+  productType?: string;
+  companySize?: string;
+  projectDescription?: string;
+  [key: string]: any;
+}
 
 interface ToolSelectionStepProps {
-  context: ProjectContext;
+  context: {
+    industry?: string;
+    productType?: string;
+    companySize?: string;
+    projectDescription?: string;
+    [key: string]: any;
+  };
   projectStage: string;
   framework: string;
   frameworkStage: string;
-  onGenerate: (tool: string) => void;
+  onNext: (tool: string) => void;
   onBack: () => void;
   aiRecommendations?: {
     recommendedFramework?: string;
     recommendedTool?: string;
     reasoning?: string;
   };
+  recommendedFramework?: string;
+  recommendedTool?: string;
+  reasoning?: string;
 }
 
 const getToolsByFrameworkAndStage = (framework: string, stage: string) => {
@@ -113,30 +129,33 @@ const getSuggestedTools = (projectStage: string) => {
   return suggestions[projectStage] || [];
 };
 
-export const ToolSelectionStep = ({ context, projectStage, framework, frameworkStage, onGenerate, onBack, aiRecommendations }: ToolSelectionStepProps) => {
-  const [selectedTool, setSelectedTool] = useState("");
+export const ToolSelectionStep = ({
+  context = {},
+  projectStage,
+  framework,
+  frameworkStage,
+  onNext,
+  onBack,
+  aiRecommendations = {}
+}: ToolSelectionStepProps) => {
+  const [selectedTool, setSelectedTool] = useState<string>("");
 
-  // Auto-select AI recommended tool
-  useEffect(() => {
-    if (aiRecommendations?.recommendedTool && selectedTool === "") {
-      const tools = framework !== "none" 
-        ? getToolsByFrameworkAndStage(framework, frameworkStage)
-        : getSuggestedTools(projectStage);
-      
-      const recommendedTool = tools.find(tool => tool.name === aiRecommendations.recommendedTool);
-      if (recommendedTool) {
-        setSelectedTool(recommendedTool.id);
-      }
-    }
-  }, [aiRecommendations, framework, frameworkStage, projectStage, selectedTool]);
+  // Safely get context values with fallbacks
+  const contextInfo = [
+    context?.industry,
+    context?.productType,
+    projectStage,
+    framework !== "none" && framework,
+    frameworkStage && framework !== "none" ? `(${frameworkStage})` : ''
+  ].filter(Boolean).join(" • ") || "No additional context";
 
   const tools = framework !== "none" 
     ? getToolsByFrameworkAndStage(framework, frameworkStage)
     : getSuggestedTools(projectStage);
 
-  const handleGenerate = () => {
+  const handleNext = () => {
     if (selectedTool) {
-      onGenerate(selectedTool);
+      onNext(selectedTool);
     }
   };
 
@@ -150,8 +169,7 @@ export const ToolSelectionStep = ({ context, projectStage, framework, frameworkS
       <div className="space-y-6">
         <div className="bg-muted/30 p-4 rounded-lg">
           <p className="text-sm text-muted-foreground">
-            <strong>Context:</strong> {context.industry} • {context.productType} • {projectStage} 
-            {framework !== "none" && ` • ${framework} (${frameworkStage})`}
+            <strong>Context:</strong> {contextInfo}
           </p>
         </div>
 
@@ -168,9 +186,7 @@ export const ToolSelectionStep = ({ context, projectStage, framework, frameworkS
                 key={tool.id}
                 title={tool.name}
                 description={tool.description}
-                tooltip={tool.tooltip}
-                badge={tool.name === aiRecommendations?.recommendedTool ? "AI Recommended" : undefined}
-                isSelected={selectedTool === tool.id || (tool.name === aiRecommendations?.recommendedTool && selectedTool === "")}
+                isSelected={selectedTool === tool.id}
                 onClick={() => setSelectedTool(tool.id)}
               />
             ))}
@@ -178,16 +194,19 @@ export const ToolSelectionStep = ({ context, projectStage, framework, frameworkS
         </div>
 
         <div className="flex justify-between pt-4">
-          <Button onClick={onBack} variant="outline" size="lg">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Previous
+          <Button variant="outline" onClick={onBack}>
+            <ArrowLeft className="mr-2 h-4 w-4" /> Back
           </Button>
-          <Button onClick={handleGenerate} disabled={!selectedTool} size="lg">
-            <Sparkles className="mr-2 h-4 w-4" />
-            Generate Prompts
+          <Button 
+            onClick={handleNext}
+            disabled={!selectedTool}
+          >
+            Continue <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         </div>
       </div>
     </StepCard>
   );
 };
+
+export default ToolSelectionStep;
