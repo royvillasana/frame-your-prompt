@@ -308,32 +308,40 @@ const Generator = () => {
   const handleProjectSelect = async (project: any) => {
     setCurrentProject(project);
     
-    // If the project has basic info, set it
-    if (project.product_type || project.industry || project.target_audience) {
-      setBasicInfo({
-        productType: project.product_type || "",
-        industry: project.industry || "",
-        targetAudience: project.target_audience || ""
-      });
-    }
+    // Always set basic info, even if some fields are empty
+    setBasicInfo({
+      productType: project.product_type || "",
+      industry: project.industry || "",
+      targetAudience: project.target_audience || ""
+    });
     
-    // If the project has context, set it
-    if (project.project_description || project.document_content) {
+    const hasBasicInfo = project.product_type || project.industry || project.target_audience;
+    
+    // Set project context if available
+    const hasProjectContext = project.project_description || project.document_content;
+    if (hasProjectContext) {
       setProjectContext({
         projectDescription: project.project_description || "",
         documentContent: project.document_content || ""
       });
     }
     
-    // Always go to basic-info first for new flow
-    setCurrentStep("basic-info");
-    
-    // Set framework and stage if they exist, but don't navigate there yet
+    // Set framework and stage if they exist
     if (project.selected_framework && project.selected_framework !== "None") {
       setSelectedFramework(project.selected_framework);
       if (project.framework_stage) {
         setFrameworkStage(project.framework_stage);
       }
+    }
+    
+    // Check if we should skip to the stage selection
+    // Either because the project has all required info or explicitly set via skipToStage flag
+    const shouldSkipToStage = (hasBasicInfo && hasProjectContext) || project.skipToStage === true;
+    
+    if (shouldSkipToStage) {
+      setCurrentStep("stage");
+    } else {
+      setCurrentStep("basic-info");
     }
   };
 

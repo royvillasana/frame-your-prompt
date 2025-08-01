@@ -22,9 +22,10 @@ interface Project {
 interface ProjectSelectionStepProps {
   onNewProject: (project: Project) => void;
   onExistingProject: (project: Project) => void;
+  skipToStage?: boolean; // New prop to control navigation
 }
 
-export const ProjectSelectionStep = ({ onNewProject, onExistingProject }: ProjectSelectionStepProps) => {
+export const ProjectSelectionStep = ({ onNewProject, onExistingProject, skipToStage = false }: ProjectSelectionStepProps) => {
   const { user } = useAuth();
   const [isNewProject, setIsNewProject] = useState<boolean | null>(null);
   const [projectName, setProjectName] = useState("");
@@ -77,7 +78,10 @@ export const ProjectSelectionStep = ({ onNewProject, onExistingProject }: Projec
         .single();
     
       if (error) throw error;
-      onNewProject(data);
+      
+      // Pass the skipToStage flag to the parent component
+      const projectWithFlag = { ...data, skipToStage: false }; // New projects always start at basic info
+      onNewProject(projectWithFlag);
     } catch (error: any) {
       toast.error("Error creating project");
       console.error(error);
@@ -209,7 +213,20 @@ export const ProjectSelectionStep = ({ onNewProject, onExistingProject }: Projec
                 <Card 
                   key={project.id} 
                   className="cursor-pointer hover:shadow-md transition-shadow border-2 hover:border-primary/50"
-                  onClick={() => onExistingProject(project)}
+                  onClick={() => {
+                    // Match the structure used in the New Prompt button from ProjectDetail
+                    onExistingProject({
+                      id: project.id,
+                      name: project.name,
+                      description: project.description,
+                      selected_framework: project.selected_framework,
+                      product_type: project.product_type,
+                      industry: project.industry,
+                      target_audience: project.target_audience,
+                      // Explicitly set skipToStage to true to match the New Prompt button behavior
+                      skipToStage: true
+                    });
+                  }}
                 >
                   <CardContent className="p-4">
                     <div className="flex items-center gap-2 mb-2">

@@ -1,27 +1,53 @@
 // supabase/functions/generate-enhanced-prompt/index.ts
 
-;
-
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { corsHeaders } from '../_shared/cors.ts';
 
+const createResponse = (body: any, status = 200) => {
+  return new Response(JSON.stringify(body), {
+    headers: { 
+      ...corsHeaders,
+      'Content-Type': 'application/json' 
+    },
+    status
+  });
+};
+
 serve(async (req) => {
-  // This is needed if you're planning to invoke your function from a browser.
+  // Handle CORS preflight
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders })
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  // Ensure the request is a POST
+  if (req.method !== 'POST') {
+    return createResponse({ error: 'Method not allowed' }, 405);
   }
 
   try {
-    const { prompt } = await req.json();
+    let requestData;
+    try {
+      requestData = await req.json();
+    } catch (e) {
+      return createResponse({ error: 'Invalid JSON' }, 400);
+    }
+
+    const { prompt } = requestData;
     if (!prompt) {
-      throw new Error('Prompt is required.');
+      return createResponse({ error: 'Prompt is required' }, 400);
+    }
+
+    const openaiApiKey = Deno.env.get('OPENAI_API_KEY');
+    if (!openaiApiKey) {
+      console.error('OpenAI API key not found in environment variables');
+      return createResponse({ error: 'Server configuration error' }, 500);
     }
 
     const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
+        'Authorization': `Bearer ${openaiApiKey}`,
       },
       body: JSON.stringify({
         model: 'gpt-4o-mini',
@@ -46,16 +72,20 @@ serve(async (req) => {
     }
 
     const responseData = await openaiResponse.json();
-    const content = JSON.parse(responseData.choices[0].message.content);
+    let content;
+    try {
+      content = JSON.parse(responseData.choices[0].message.content);
+    } catch (e) {
+      console.error('Error parsing OpenAI response:', e);
+      return createResponse({ error: 'Error processing AI response' }, 500);
+    }
 
-    return Response.json(content, {
-      headers: corsHeaders,
-    });
-
+    return createResponse(content);
   } catch (error) {
-    return Response.json({ error: error.message }, {
-      headers: corsHeaders,
-      status: 500,
-    });
+    console.error('Error:', error);
+    return createResponse(
+      { error: error.message || 'Internal server error' },
+      error.status || 500
+    );
   }
 });

@@ -217,7 +217,7 @@ export const ProjectContextStep = ({
       step={5}
       totalSteps={6}
       title="Generate Prompt"
-      description="Review your context and generate the perfect prompt"
+      description="Provide context and generate the perfect prompt"
     >
       <div className="space-y-6">
         <div className="p-4 border rounded-lg space-y-4">
@@ -236,7 +236,7 @@ export const ProjectContextStep = ({
 
           <div className="space-y-2">
             <div className="flex justify-between items-center">
-              <h4 className="font-medium">Project Context</h4>
+              <h4 className="font-medium">Prompt Context</h4>
               {isTouched && !projectDescription.trim() && (
                 <span className="text-sm text-red-500">Context is required</span>
               )}
@@ -268,7 +268,7 @@ export const ProjectContextStep = ({
           <div className="space-y-2">
             <h4 className="font-medium">Upload Documents (Optional)</h4>
             <p className="text-sm text-muted-foreground">
-              Add any relevant documents, images, or references
+              Add any relevant documents, images, or references to help generate a better prompt
             </p>
             <FileUpload
               onFilesSelected={handleFilesSelected}
@@ -304,12 +304,6 @@ export const ProjectContextStep = ({
             <ArrowLeft className="mr-2 h-4 w-4" /> Back
           </Button>
           <div className="space-x-2">
-            <Button 
-              variant="outline" 
-              onClick={handleNext}
-            >
-              Skip to Result
-            </Button>
             <Button 
               onClick={handleGenerate}
               disabled={isGenerating}
