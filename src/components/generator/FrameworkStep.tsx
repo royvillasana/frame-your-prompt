@@ -1,10 +1,24 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { StepCard } from "./StepCard";
 import { OptionCard } from "./OptionCard";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, ArrowLeft, Lightbulb } from "lucide-react";
-import { ProjectContext } from "./ProjectContextStep";
+import { ArrowRight, ArrowLeft, Lightbulb, Info, ChevronDown } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
+interface ProjectContext {
+  industry?: string;
+  productType?: string;
+  companySize?: string;
+  projectDescription?: string;
+  [key: string]: any;
+}
 
 interface FrameworkStepProps {
   context: ProjectContext;
@@ -16,9 +30,95 @@ interface FrameworkStepProps {
     recommendedTool?: string;
     reasoning?: string;
   };
+  recommendedFramework?: string;
+  recommendedTool?: string;
+  reasoning?: string;
   initialFramework?: string;
   initialFrameworkStage?: string;
 }
+
+// Stage descriptions for each framework
+const stageDescriptions: Record<string, Record<string, string>> = {
+  "design-thinking": {
+    "Empathize": "Understand user needs through observation and engagement",
+    "Define": "Clearly articulate the problem you're trying to solve",
+    "Ideate": "Generate a wide range of creative solutions",
+    "Prototype": "Create scaled-down versions of potential solutions",
+    "Test": "Evaluate prototypes with real users",
+    "Implement": "Develop and launch the final solution"
+  },
+  "double-diamond": {
+    "Discover": "Explore the problem space through research",
+    "Define": "Reframe and define the challenge",
+    "Develop": "Develop potential solutions",
+    "Deliver": "Test and refine solutions before full implementation"
+  },
+  "lean-ux": {
+    "Think": "Formulate hypotheses and desired outcomes",
+    "Make": "Create minimum viable products (MVPs)",
+    "Check": "Gather feedback and validate assumptions"
+  },
+  "google-design-sprint": {
+    "Understand (Mon)": "Dive into the problem space and user needs",
+    "Ideate (Tue)": "Generate potential solutions",
+    "Decide (Wed)": "Select the best solution to prototype",
+    "Prototype (Thu)": "Create a realistic prototype",
+    "Test (Fri)": "Validate with real users"
+  },
+  "human-centered-design": {
+    "Research": "Understand user behaviors and needs",
+    "Ideation": "Generate potential solutions",
+    "Prototyping": "Create tangible representations",
+    "Implementation": "Develop and launch the solution"
+  },
+  "jobs-to-be-done": {
+    "Define the job": "Identify the core job to be done",
+    "Map the process": "Understand the user's workflow",
+    "Identify opportunities": "Find pain points and opportunities",
+    "Design solutions": "Create solutions that help users complete their jobs"
+  },
+  "agile-ux": {
+    "UX Sprint Planning": "Plan UX work for the sprint",
+    "Design Sprint": "Rapidly prototype and test ideas",
+    "Validation": "Test with users and gather feedback",
+    "Iteration": "Refine based on feedback"
+  },
+  "ux-lifecycle": {
+    "Analysis": "Research and analyze user needs",
+    "Design": "Create user flows and interfaces",
+    "Development": "Build the solution",
+    "Evaluation": "Test with users",
+    "Implementation": "Launch and monitor"
+  },
+  "ux-honeycomb": {
+    "Useful": "Does it fulfill a need?",
+    "Usable": "Is it easy to use?",
+    "Desirable": "Is it engaging and appealing?",
+    "Accessible": "Can everyone use it?",
+    "Findable": "Can users find what they need?",
+    "Credible": "Is it trustworthy?",
+    "Valuable": "Does it provide value to the business?"
+  },
+  "user-centered-design": {
+    "Context of use": "Understand the environment and users",
+    "Requirements": "Define user and business needs",
+    "Design": "Create solutions",
+    "Evaluation": "Test with real users"
+  },
+  "heart-framework": {
+    "Happiness": "User satisfaction and perceived ease of use",
+    "Engagement": "Level of user involvement",
+    "Adoption": "New users of a product or feature",
+    "Retention": "Rate of user return over time",
+    "Task Success": "Efficiency and completion rates"
+  },
+  "hooked-model": {
+    "Trigger": "What prompts the user to action?",
+    "Action": "The behavior done in anticipation of a reward",
+    "Variable Reward": "The reward that satisfies the user's need",
+    "Investment": "User puts something into the product"
+  }
+};
 
 const frameworks = [
   {
@@ -247,32 +347,63 @@ const getFrameworkStageMapping = (projectStage: string, frameworkId: string): st
   return mappings[frameworkId]?.[projectStage] || "";
 };
 
-export const FrameworkStep = ({ context, projectStage, onNext, onBack, aiRecommendations, initialFramework, initialFrameworkStage }: FrameworkStepProps) => {
-  const [selectedFramework, setSelectedFramework] = useState(initialFramework || aiRecommendations?.recommendedFramework || "");
-  const [selectedStage, setSelectedStage] = useState(initialFrameworkStage || "");
+export const FrameworkStep = ({
+  context = {},
+  projectStage,
+  onNext,
+  onBack,
+  aiRecommendations = {},
+  initialFramework,
+  initialFrameworkStage,
+}: FrameworkStepProps) => {
+  const [selectedFramework, setSelectedFramework] = useState<string>(initialFramework || '');
+  const [selectedStage, setSelectedStage] = useState<string>(initialFrameworkStage || '');
+  const [availableStages, setAvailableStages] = useState<any[]>([]);
+  const [expandedFrameworks, setExpandedFrameworks] = useState<Record<string, boolean>>({});
+  const contentRefs = useRef<Record<string, HTMLDivElement | null>>({});
   
+  // Initialize expanded state for frameworks
+  useEffect(() => {
+    if (initialFramework) {
+      setExpandedFrameworks(prev => ({
+        ...prev,
+        [initialFramework]: true
+      }));
+    }
+  }, [initialFramework]);
+
+  const contextInfo = [
+    context?.industry,
+    context?.productType,
+    projectStage ? `Stage: ${projectStage}` : ''
+  ].filter(Boolean).join(" • ") || "No additional context";
+
   const recommendedFramework = getRecommendedFramework(projectStage);
   const currentFramework = frameworks.find(f => f.id === selectedFramework);
 
   const handleFrameworkSelect = (frameworkId: string) => {
-    setSelectedFramework(frameworkId);
+    const isExpanding = selectedFramework !== frameworkId;
     
-    // Auto-select the corresponding framework stage based on project stage
-    if (frameworkId !== "none") {
+    // Toggle expanded state
+    setExpandedFrameworks(prev => ({
+      ...prev,
+      [frameworkId]: isExpanding
+    }));
+    
+    setSelectedFramework(isExpanding ? frameworkId : '');
+    
+    if (frameworkId !== "none" && isExpanding) {
       const mappedStage = getFrameworkStageMapping(projectStage, frameworkId);
       setSelectedStage(mappedStage);
     } else {
-      setSelectedStage(""); // Reset stage when framework changes to "none"
+      setSelectedStage(""); 
     }
   };
 
-  // Auto-select stage when framework is preselected by AI or from previous prompt
   useEffect(() => {
     if (initialFrameworkStage) {
-      // Use the framework stage from previous prompt (highest priority)
       setSelectedStage(initialFrameworkStage);
     } else if (aiRecommendations?.recommendedFramework && aiRecommendations.recommendedFramework !== "none") {
-      // Fall back to AI recommendation mapping
       const mappedStage = getFrameworkStageMapping(projectStage, aiRecommendations.recommendedFramework);
       setSelectedStage(mappedStage);
     }
@@ -296,7 +427,7 @@ export const FrameworkStep = ({ context, projectStage, onNext, onBack, aiRecomme
       <div className="space-y-6">
         <div className="bg-muted/30 p-4 rounded-lg">
           <p className="text-sm text-muted-foreground">
-            <strong>Project:</strong> {context.industry} • {context.productType} • Stage: {projectStage}
+            <strong>Project:</strong> {contextInfo}
           </p>
         </div>
 
@@ -309,42 +440,134 @@ export const FrameworkStep = ({ context, projectStage, onNext, onBack, aiRecomme
 
         <div>
           <h3 className="font-semibold mb-3">What UX framework do you use?</h3>
-          <div className="grid gap-3">
+          <div className="space-y-4">
             {frameworks.map((framework) => (
-              <OptionCard
+              <motion.div 
                 key={framework.id}
-                title={framework.name}
-                description={framework.description}
-                tooltip={framework.tooltip}
-                badge={framework.id === initialFramework ? "Previously Used" :
-                       framework.id === aiRecommendations?.recommendedFramework ? "AI Recommended" : 
-                       framework.id === recommendedFramework ? "Recommended" : undefined}
-                isSelected={selectedFramework === framework.id}
-                onClick={() => handleFrameworkSelect(framework.id)}
-              />
+                className="overflow-hidden"
+                initial={false}
+                animate={{
+                  backgroundColor: selectedFramework === framework.id ? 'rgba(24, 24, 27, 0.02)' : 'rgba(255, 255, 255, 0)'
+                }}
+                transition={{ duration: 0.2 }}
+              >
+                <motion.div
+                  className={`rounded-lg border cursor-pointer p-4 ${selectedFramework === framework.id ? 'border-primary' : 'border-border hover:border-primary/50'}`}
+                  onClick={() => handleFrameworkSelect(framework.id)}
+                  initial={false}
+                  animate={{
+                    borderColor: selectedFramework === framework.id ? 'hsl(222.2, 47.4%, 50%)' : 'hsl(240, 4.9%, 83.9%)',
+                    backgroundColor: selectedFramework === framework.id ? 'rgba(24, 24, 27, 0.02)' : 'rgba(255, 255, 255, 0)'
+                  }}
+                  whileHover={{
+                    borderColor: 'hsl(222.2, 47.4%, 50%, 0.5)'
+                  }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h4 className={`flex items-center gap-2 ${selectedFramework === framework.id ? 'font-bold text-base' : 'font-medium text-sm'}`}>
+                        {framework.name}
+                        <motion.span
+                          animate={{
+                            rotate: expandedFrameworks[framework.id] ? 180 : 0
+                          }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          <ChevronDown className="h-4 w-4" />
+                        </motion.span>
+                      </h4>
+                      <p className="text-sm text-muted-foreground">{framework.description}</p>
+                      {framework.tooltip && (
+                        <p className="text-xs text-muted-foreground mt-1">{framework.tooltip}</p>
+                      )}
+                    </div>
+                    <div className="flex gap-2">
+                      {framework.id === initialFramework && (
+                        <span className="bg-primary/10 text-primary text-xs px-2 py-1 rounded-full">
+                          Previously Used
+                        </span>
+                      )}
+                      {framework.id === aiRecommendations?.recommendedFramework && (
+                        <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
+                          AI Recommended
+                        </span>
+                      )}
+                      {framework.id === recommendedFramework && framework.id !== aiRecommendations?.recommendedFramework && (
+                        <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
+                          Recommended
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </motion.div>
+                
+                <AnimatePresence>
+                  {expandedFrameworks[framework.id] && framework.stages.length > 0 && (
+                    <motion.div
+                      className="px-4 pb-4"
+                      initial="collapsed"
+                      animate="open"
+                      exit="collapsed"
+                      variants={{
+                        open: { opacity: 1, height: 'auto' },
+                        collapsed: { opacity: 0, height: 0 }
+                      }}
+                      transition={{ duration: 0.2, ease: 'easeInOut' }}
+                    >
+                      <div className="pt-4 border-t">
+                        <h4 className="text-sm font-medium mb-3">Select {framework.name} stage:</h4>
+                        <div className="flex flex-wrap gap-3">
+                          {framework.stages.map((stage) => (
+                            <TooltipProvider key={stage}>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <div
+                                    className={`w-36 h-24 p-3 rounded-lg border flex flex-col items-center justify-center cursor-pointer transition-colors ${
+                                      selectedStage === stage
+                                        ? 'border-primary bg-primary/10 text-foreground'
+                                        : 'border-border hover:border-primary/50 hover:bg-muted/30'
+                                    }`}
+                                    onClick={() => setSelectedStage(stage)}
+                                  >
+                                    <div className="w-full">
+                                      <div className="text-sm font-medium text-center line-clamp-2">
+                                        {stage}
+                                      </div>
+                                      {stage === getFrameworkStageMapping(projectStage, framework.id) && (
+                                        <div className="mt-1 w-full text-center">
+                                          <span className="text-xs text-muted-foreground">
+                                            Recommended
+                                          </span>
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+                                </TooltipTrigger>
+                                <TooltipContent side="top" className="max-w-xs">
+                                  <div className="p-2">
+                                    <div className="font-medium mb-1 flex items-center gap-1">
+                                      <Info className="h-3.5 w-3.5" />
+                                      {stage}
+                                    </div>
+                                    <p className="text-sm">
+                                      {stageDescriptions[framework.id]?.[stage] || 
+                                      'No description available for this stage.'}
+                                    </p>
+                                  </div>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          ))}
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
             ))}
           </div>
         </div>
-
-        {currentFramework && currentFramework.stages.length > 0 && (
-          <div>
-            <h3 className="font-semibold mb-3">What stage of {currentFramework.name} are you in?</h3>
-            <p className="text-sm text-muted-foreground mb-3">
-              Based on your project stage ({projectStage}), we have preselected the most appropriate stage.
-            </p>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
-              {currentFramework.stages.map((stage, index) => (
-                <OptionCard
-                  key={stage}
-                  title={stage}
-                  description={`Stage ${index + 1} of ${currentFramework.name} framework`}
-                  isSelected={selectedStage === stage}
-                  onClick={() => setSelectedStage(stage)}
-                />
-              ))}
-            </div>
-          </div>
-        )}
 
         <div className="flex justify-between pt-4">
           <Button onClick={onBack} variant="outline" size="lg">
@@ -360,3 +583,5 @@ export const FrameworkStep = ({ context, projectStage, onNext, onBack, aiRecomme
     </StepCard>
   );
 };
+
+export default FrameworkStep;

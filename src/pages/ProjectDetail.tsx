@@ -136,8 +136,16 @@ const ProjectDetail = () => {
               <Button 
                 onClick={() => navigate('/generator', { 
                   state: { 
-                    projectId: project.id,
-                    projectContext: JSON.parse(project.description || '{}')
+                    project: {
+                      id: project.id,
+                      name: project.name,
+                      description: project.description,
+                      selected_framework: project.selected_framework,
+                      product_type: project.product_type,
+                      industry: project.industry,
+                      target_audience: project.target_audience
+                    },
+                    skipToStage: true
                   } 
                 })}
                 className="gap-2"

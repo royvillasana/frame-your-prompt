@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Brain, Menu, X, Sparkles, User, LogOut } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import logoHeader from "@/assets/logo_header.png";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,16 +30,19 @@ const Header = () => {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between px-4">
-        {/* Logo */}
-        <Link to="/" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
-          <div className="relative">
-            <Brain className="h-8 w-8 text-primary" />
-            <Sparkles className="h-4 w-4 text-accent absolute -top-1 -right-1" />
-          </div>
-          <span className="text-xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-            FramePromptly
-          </span>
-        </Link>
+       {/* Logo */}
+<Link to="/" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
+  <div className="relative flex items-center">
+    <img 
+      src={logoHeader} 
+      alt="FramePromptly Logo" 
+      className="h-8 w-auto"
+    />
+  </div>
+  <span className="text-xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+    FramePromptly
+  </span>
+</Link>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-1">

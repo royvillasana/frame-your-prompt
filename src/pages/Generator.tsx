@@ -17,7 +17,7 @@ import { LoadingPromptGeneration } from "@/components/generator/LoadingPromptGen
 import ReactMarkdown from "react-markdown";
 import { ProjectBasicInfoStep, ProjectBasicInfo } from "@/components/generator/ProjectBasicInfoStep";
 
-type Step = "project" | "basic-info" | "context" | "stage" | "framework" | "tool" | "result";
+type Step = "project" | "basic-info" | "stage" | "framework" | "tool" | "context" | "result";
 
 import { supabase } from "@/integrations/supabase/client";
 
@@ -105,6 +105,7 @@ const Generator = () => {
   const [projectStage, setProjectStage] = useState("");
   const [selectedFramework, setSelectedFramework] = useState("");
   const [frameworkStage, setFrameworkStage] = useState("");
+  const [lastUsedFramework, setLastUsedFramework] = useState<{framework: string, stage: string} | null>(null);
   const [selectedTool, setSelectedTool] = useState("");
   const [generatedPrompt, setGeneratedPrompt] = useState("");
   const [aiResponse, setAiResponse] = useState("");
@@ -188,10 +189,39 @@ const Generator = () => {
   };
 
   const generatePrompt = async (tool: string) => {
-    if (!projectContext || !projectStage || !selectedFramework || !frameworkStage || !currentProject || !basicInfo) {
+    return generatePromptWithContext(tool, {
+      projectContext,
+      projectStage,
+      selectedFramework,
+      frameworkStage,
+      currentProject,
+      basicInfo
+    });
+  };
+
+  const generatePromptWithContext = async (tool: string, context: {
+    projectContext: ProjectContext | null;
+    projectStage: string | null;
+    selectedFramework: string | null;
+    frameworkStage: string | null;
+    currentProject: any | null;
+    basicInfo: any | null;
+  }) => {
+    const { projectContext, projectStage, selectedFramework, frameworkStage, currentProject, basicInfo } = context;
+    
+    const missingFields = [];
+    if (!projectContext) missingFields.push("project context");
+    if (!projectStage) missingFields.push("project stage");
+    if (!selectedFramework) missingFields.push("framework");
+    if (!frameworkStage) missingFields.push("framework stage");
+    if (!currentProject) missingFields.push("project");
+    if (!basicInfo) missingFields.push("basic info");
+    
+    if (missingFields.length > 0) {
+      console.log("Missing fields:", missingFields);
       toast({
         title: "Missing Information",
-        description: "Please complete all previous steps before generating a prompt.",
+        description: `Please complete these steps: ${missingFields.join(", ")}`,
         variant: "destructive",
       });
       return;
@@ -275,78 +305,42 @@ const Generator = () => {
     }
   };
 
-  useEffect(() => {
-    if (!user) {
-      navigate("/auth");
-      return;
-    }
-
-    const state = location.state as { 
-      project?: any;
-      basicInfo?: ProjectBasicInfo;
-      projectContext?: ProjectContext;
-      projectStage?: string;
-      selectedFramework?: string;
-      frameworkStage?: string;
-      selectedTool?: string;
-      generatedPrompt?: string;
-      aiResponse?: string;
-    } | null;
-
-    if (state) {
-      if (state.project) {
-        setCurrentProject(state.project);
-        setCurrentStep("basic-info");
-      }
-      if (state.basicInfo) setBasicInfo(state.basicInfo);
-      if (state.projectContext) setProjectContext(state.projectContext);
-      if (state.projectStage) setProjectStage(state.projectStage);
-      if (state.selectedFramework) setSelectedFramework(state.selectedFramework);
-      if (state.frameworkStage) setFrameworkStage(state.frameworkStage);
-      if (state.selectedTool) setSelectedTool(state.selectedTool);
-      if (state.generatedPrompt) {
-        setGeneratedPrompt(state.generatedPrompt);
-        setAiResponse(state.aiResponse || "");
-        setCurrentStep("result");
-      }
-    }
-  }, [user, navigate, location.state]);
-
   const handleProjectSelect = async (project: any) => {
     setCurrentProject(project);
     
-    // If the project has basic info, set it
-    if (project.product_type || project.industry || project.target_audience) {
-      setBasicInfo({
-        productType: project.product_type || "",
-        industry: project.industry || "",
-        targetAudience: project.target_audience || ""
-      });
-    }
+    // Always set basic info, even if some fields are empty
+    setBasicInfo({
+      productType: project.product_type || "",
+      industry: project.industry || "",
+      targetAudience: project.target_audience || ""
+    });
     
-    // If the project has context, set it
-    if (project.project_description || project.document_content) {
+    const hasBasicInfo = project.product_type || project.industry || project.target_audience;
+    
+    // Set project context if available
+    const hasProjectContext = project.project_description || project.document_content;
+    if (hasProjectContext) {
       setProjectContext({
         projectDescription: project.project_description || "",
         documentContent: project.document_content || ""
       });
     }
     
-    // If the project has a framework selected, pre-select it
+    // Set framework and stage if they exist
     if (project.selected_framework && project.selected_framework !== "None") {
       setSelectedFramework(project.selected_framework);
-      // If the project has a framework stage, pre-select it as well
       if (project.framework_stage) {
         setFrameworkStage(project.framework_stage);
       }
-      // If we have all context, go to framework step, otherwise to context
-      if (project.project_description && project.document_content) {
-        setCurrentStep("framework");
-      } else {
-        setCurrentStep("context");
-      }
+    }
+    
+    // Check if we should skip to the stage selection
+    // Either because the project has all required info or explicitly set via skipToStage flag
+    const shouldSkipToStage = (hasBasicInfo && hasProjectContext) || project.skipToStage === true;
+    
+    if (shouldSkipToStage) {
+      setCurrentStep("stage");
     } else {
-      // If no framework is set, go to basic info
       setCurrentStep("basic-info");
     }
   };
@@ -354,45 +348,33 @@ const Generator = () => {
   const handleBasicInfoComplete = async (info: ProjectBasicInfo) => {
     setBasicInfo(info);
     
-    // Update the project with the basic info
+    // Update the project with the basic info (only if we have a project)
     if (currentProject) {
-      const { error } = await supabase
-        .from('projects')
-        .update({
-          product_type: info.productType,
-          industry: info.industry,
-          target_audience: info.targetAudience,
+      try {
+        // Only include the updated_at field which we know exists
+        const updateData: Record<string, any> = {
           updated_at: new Date().toISOString()
-        })
-        .eq('id', currentProject.id);
-      
-      if (error) {
+        };
+
+        // We'll skip trying to update product_type, industry, and target_audience
+        // since they might not exist in the database yet
+        // These fields will be stored in local state until we can update the database schema
+
+        const { error } = await supabase
+          .from('projects')
+          .update(updateData)
+          .eq('id', currentProject.id);
+        
+        if (error) {
+          console.warn("Could not update project:", error);
+        }
+        
+      } catch (error) {
         console.error("Error updating project with basic info:", error);
       }
     }
     
-    setCurrentStep("context");
-  };
-
-  const handleContextComplete = async (context: ProjectContext) => {
-    setProjectContext(context);
-    
-    // Update the project with the context
-    if (currentProject) {
-      const { error } = await supabase
-        .from('projects')
-        .update({
-          project_description: context.projectDescription,
-          document_content: context.documentContent,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', currentProject.id);
-      
-      if (error) {
-        console.error("Error updating project with context:", error);
-      }
-    }
-    
+    // Navigate to the stage step after basic info
     setCurrentStep("stage");
   };
 
@@ -409,9 +391,77 @@ const Generator = () => {
 
   const handleToolComplete = async (tool: string) => {
     setSelectedTool(tool);
-    const prompt = await generatePrompt(tool);
-    if (prompt) {
-      setCurrentStep("result");
+    setCurrentStep("context");
+  };
+
+  const handleContextComplete = async (context: ProjectContext) => {
+    // First update the context in state
+    setProjectContext(context);
+    
+    // Update the project with the context (only if we have a project)
+    if (currentProject) {
+      try {
+        // Only include the updated_at field which we know exists
+        const updateData: Record<string, any> = {
+          updated_at: new Date().toISOString()
+        };
+
+        // We'll skip trying to update project_description and document_content
+        // since they might not exist in the database yet
+        // These fields will be stored in local state until we can update the database schema
+
+        const { error } = await supabase
+          .from('projects')
+          .update(updateData)
+          .eq('id', currentProject.id);
+        
+        if (error) {
+          console.warn("Could not update project:", error);
+        }
+        
+      } catch (error) {
+        console.error("Error updating project with context:", error);
+      }
+    }
+    
+    // Ensure we have all required fields before proceeding
+    if (!projectStage || !selectedFramework || !frameworkStage || !currentProject || !basicInfo) {
+      console.error("Missing required fields for prompt generation:", {
+        projectStage,
+        selectedFramework,
+        frameworkStage,
+        currentProject: !!currentProject,
+        basicInfo: !!basicInfo
+      });
+      toast({
+        title: "Error",
+        description: "Missing required information. Please complete all previous steps.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    try {
+      // Generate the prompt with the latest context
+      const prompt = await generatePromptWithContext(selectedTool, {
+        projectContext: context, // Use the context passed to this function, not the state
+        projectStage,
+        selectedFramework,
+        frameworkStage,
+        currentProject,
+        basicInfo
+      });
+      
+      if (prompt) {
+        setCurrentStep("result");
+      }
+    } catch (error) {
+      console.error("Error generating prompt:", error);
+      toast({
+        title: "Error",
+        description: "Failed to generate prompt. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -422,47 +472,85 @@ const Generator = () => {
           <ProjectSelectionStep 
             onNewProject={handleProjectSelect}
             onExistingProject={handleProjectSelect}
+            onCustomPrompt={() => {
+              // Navigate to the custom prompt editor
+              navigate('/prompts/new');
+            }}
           />
         );
       case "basic-info":
-        return <ProjectBasicInfoStep onNext={handleBasicInfoComplete} initialInfo={basicInfo} />;
-      case "context":
-        return basicInfo ? (
-          <ProjectContextStep
-            onNext={handleContextComplete}
-            initialContext={projectContext}
-            basicInfo={currentProject}
-            onBack={() => setCurrentStep("basic-info")}
+        return (
+          <ProjectBasicInfoStep 
+            onNext={handleBasicInfoComplete} 
+            initialInfo={basicInfo} 
+            onBack={() => setCurrentStep("project")}
           />
-        ) : null;
+        );
       case "stage":
         return (
           <ProjectStageStep 
-            context={projectContext!} 
+            context={{
+              industry: basicInfo?.industry || "",
+              productType: basicInfo?.productType || "",
+              companySize: "", // Add this if you have company size in your basic info
+              projectDescription: projectContext?.projectDescription || ""
+            }}
             onNext={handleStageComplete}
-            onBack={() => setCurrentStep("context")}
+            onBack={() => setCurrentStep("basic-info")}
           />
         );
       case "framework":
         return (
           <FrameworkStep 
-            context={projectContext!}
-            projectStage={projectStage}
+            context={{
+              industry: basicInfo?.industry || "",
+              productType: basicInfo?.productType || "",
+              companySize: "", // Add this if you have company size in your basic info
+              projectDescription: projectContext?.projectDescription || ""
+            }}
+            projectStage={projectStage || ""}
             onNext={handleFrameworkComplete}
             onBack={() => setCurrentStep("stage")}
             initialFramework={selectedFramework}
             initialFrameworkStage={frameworkStage}
+            aiRecommendations={{
+              recommendedFramework: selectedFramework,
+              // Add other AI recommendations if available
+            }}
           />
         );
       case "tool":
         return (
           <ToolSelectionStep 
-            context={projectContext!}
+            context={{
+              industry: basicInfo?.industry || "",
+              productType: basicInfo?.productType || "",
+              companySize: "",
+              projectDescription: projectContext?.projectDescription || ""
+            }}
+            projectStage={projectStage || ""}
+            framework={selectedFramework || "none"}
+            frameworkStage={frameworkStage || ""}
+            onNext={handleToolComplete}
+            onBack={() => setCurrentStep("framework")}
+            aiRecommendations={{
+              recommendedFramework: selectedFramework,
+              // Add other AI recommendations if available
+            }}
+          />
+        );
+      case "context":
+        return (
+          <ProjectContextStep
+            onNext={handleContextComplete}
+            initialContext={projectContext}
+            basicInfo={currentProject}
             projectStage={projectStage}
             framework={selectedFramework}
             frameworkStage={frameworkStage}
-            onGenerate={handleToolComplete}
-            onBack={() => setCurrentStep("framework")}
+            selectedTool={selectedTool}
+            onBack={() => setCurrentStep("tool")}
+            onGenerate={handleContextComplete}
           />
         );
       case "result":
@@ -501,9 +589,14 @@ const Generator = () => {
                   <Save className="mr-2 h-4 w-4" />
                   Save to Project
                 </Button>
-                <Button onClick={() => navigate('/library')} variant="outline" size="sm">
+                <Button 
+                  onClick={() => currentProject?.id && navigate(`/projects/${currentProject.id}`)} 
+                  variant="outline" 
+                  size="sm"
+                  disabled={!currentProject?.id}
+                >
                   <Library className="mr-2 h-4 w-4" />
-                  View Library
+                  View Project
                 </Button>
               </div>
 
@@ -545,6 +638,107 @@ const Generator = () => {
         return null;
     }
   };
+
+  useEffect(() => {
+    const state = location.state as { 
+      project?: any;
+      basicInfo?: ProjectBasicInfo;
+      projectContext?: ProjectContext | string;
+      projectStage?: string;
+      selectedFramework?: string;
+      frameworkStage?: string;
+      selectedTool?: string;
+      generatedPrompt?: string;
+      aiResponse?: string;
+      skipToStage?: boolean;
+    } | null;
+
+    const initializeState = async () => {
+      if (!state) return;
+
+      // Set basic info first from project or state
+      if (state.basicInfo) {
+        setBasicInfo(state.basicInfo);
+      } else if (state.project) {
+        // Set basic info from project if available
+        setBasicInfo({
+          productType: state.project.product_type || '',
+          industry: state.project.industry || '',
+          targetAudience: state.project.target_audience || ''
+        });
+      }
+
+      // Set project context
+      if (state.projectContext) {
+        setProjectContext(
+          typeof state.projectContext === 'string' 
+            ? { projectDescription: state.projectContext } 
+            : state.projectContext
+        );
+      } else if (state.project?.description) {
+        setProjectContext({
+          projectDescription: state.project.description
+        });
+      }
+
+      // Set project stage
+      if (state.projectStage) {
+        setProjectStage(state.projectStage);
+      }
+
+      // Set framework and stage
+      if (state.selectedFramework) {
+        setSelectedFramework(state.selectedFramework);
+      } else if (state.project?.selected_framework) {
+        setSelectedFramework(state.project.selected_framework);
+      }
+
+      if (state.frameworkStage) {
+        setFrameworkStage(state.frameworkStage);
+      }
+
+      // Set current project
+      if (state.project) {
+        setCurrentProject(state.project);
+
+        // Try to fetch the last used framework if we don't have one yet
+        if (!state.selectedFramework && !state.project.selected_framework) {
+          try {
+            const { data: prompts, error } = await supabase
+              .from('generated_prompts')
+              .select('framework, framework_stage')
+              .eq('project_id', state.project.id)
+              .order('created_at', { ascending: false })
+              .limit(1);
+
+            if (!error && prompts?.[0]?.framework) {
+              setSelectedFramework(prompts[0].framework);
+              setFrameworkStage(prompts[0].framework_stage || '');
+            }
+          } catch (error) {
+            console.error('Error fetching last used framework:', error);
+          }
+        }
+
+        // Set navigation step
+        setCurrentStep(state.skipToStage ? "stage" : "basic-info");
+      }
+
+      // Set other state from location state if available
+      if (state.selectedTool) setSelectedTool(state.selectedTool);
+      if (state.generatedPrompt) setGeneratedPrompt(state.generatedPrompt);
+      if (state.aiResponse) setAiResponse(state.aiResponse);
+    };
+
+    initializeState();
+  }, [location.state]);
+
+  useEffect(() => {
+    if (!user) {
+      navigate("/auth");
+      return;
+    }
+  }, [user, navigate, location.state]);
 
   return (
     <div className="min-h-screen bg-gradient-subtle py-12">

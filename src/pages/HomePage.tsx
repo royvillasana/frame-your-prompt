@@ -32,6 +32,32 @@ function AnimatedBokehLavaLampCanvas({ className = "" }) {
     let ctx = canvas.getContext('2d');
     let animationFrameId;
 
+    // Helper function to draw a blurred circle using radial gradients
+    const drawBlurredCircle = (ctx, x, y, radius, blur, color1, color2) => {
+      // Save the current context state
+      ctx.save();
+      
+      // Create a radial gradient for the blur effect
+      const gradient = ctx.createRadialGradient(
+          x, y, 0,
+          x, y, radius + blur
+      );
+      
+      // Add color stops for the gradient
+      gradient.addColorStop(0, color1);
+      gradient.addColorStop(0.8, color2);
+      gradient.addColorStop(1, 'rgba(0,0,0,0)');
+      
+      // Draw the gradient
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.arc(x, y, radius + blur, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Restore the context state
+      ctx.restore();
+    };
+
     const rand = (min, max) => Math.random() * (max - min) + min;
     const resize = () => {
       canvas.width = window.innerWidth;
@@ -73,14 +99,30 @@ function AnimatedBokehLavaLampCanvas({ className = "" }) {
       let colorIndex = Math.floor(rand(0, 299) / 100);
       let colorOne = colors[colorIndex][0];
       let colorTwo = colors[colorIndex][1];
+      // Use the custom blur function
+      drawBlurredCircle(
+        ctx,
+        x,
+        y,
+        thisRadius,
+        thisBlur * 0.8, // Slightly reduce blur intensity for better performance
+        colorOne,
+        colorTwo
+      );
+      
+      // Draw the main circle with less blur for better color
       ctx.beginPath();
-      ctx.filter = `blur(${thisBlur}px)`;
-      let grd = ctx.createLinearGradient(x - thisRadius / 2, y - thisRadius / 2, x + thisRadius, y + thisRadius);
+      const grd = ctx.createLinearGradient(
+        x - thisRadius / 2,
+        y - thisRadius / 2,
+        x + thisRadius,
+        y + thisRadius
+      );
       grd.addColorStop(0, colorOne);
       grd.addColorStop(1, colorTwo);
       ctx.fillStyle = grd;
+      ctx.arc(x, y, thisRadius * 0.8, 0, Math.PI * 2);
       ctx.fill();
-      ctx.arc( x, y, thisRadius, 0, Math.PI * 2 );
       ctx.closePath();
       let directionX = Math.round(rand(-99, 99) / 100);
       let directionY = Math.round(rand(-99, 99) / 100);
