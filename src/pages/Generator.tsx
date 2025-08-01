@@ -105,6 +105,7 @@ const Generator = () => {
   const [projectStage, setProjectStage] = useState("");
   const [selectedFramework, setSelectedFramework] = useState("");
   const [frameworkStage, setFrameworkStage] = useState("");
+  const [lastUsedFramework, setLastUsedFramework] = useState<{framework: string, stage: string} | null>(null);
   const [selectedTool, setSelectedTool] = useState("");
   const [generatedPrompt, setGeneratedPrompt] = useState("");
   const [aiResponse, setAiResponse] = useState("");
@@ -576,9 +577,14 @@ const Generator = () => {
                   <Save className="mr-2 h-4 w-4" />
                   Save to Project
                 </Button>
-                <Button onClick={() => navigate('/library')} variant="outline" size="sm">
+                <Button 
+                  onClick={() => currentProject?.id && navigate(`/projects/${currentProject.id}`)} 
+                  variant="outline" 
+                  size="sm"
+                  disabled={!currentProject?.id}
+                >
                   <Library className="mr-2 h-4 w-4" />
-                  View Library
+                  View Project
                 </Button>
               </div>
 
@@ -622,39 +628,103 @@ const Generator = () => {
   };
 
   useEffect(() => {
-    if (!user) {
-      navigate("/auth");
-      return;
-    }
-
     const state = location.state as { 
       project?: any;
       basicInfo?: ProjectBasicInfo;
-      projectContext?: ProjectContext;
+      projectContext?: ProjectContext | string;
       projectStage?: string;
       selectedFramework?: string;
       frameworkStage?: string;
       selectedTool?: string;
       generatedPrompt?: string;
       aiResponse?: string;
+      skipToStage?: boolean;
     } | null;
 
-    if (state) {
+    const initializeState = async () => {
+      if (!state) return;
+
+      // Set basic info first from project or state
+      if (state.basicInfo) {
+        setBasicInfo(state.basicInfo);
+      } else if (state.project) {
+        // Set basic info from project if available
+        setBasicInfo({
+          productType: state.project.product_type || '',
+          industry: state.project.industry || '',
+          targetAudience: state.project.target_audience || ''
+        });
+      }
+
+      // Set project context
+      if (state.projectContext) {
+        setProjectContext(
+          typeof state.projectContext === 'string' 
+            ? { projectDescription: state.projectContext } 
+            : state.projectContext
+        );
+      } else if (state.project?.description) {
+        setProjectContext({
+          projectDescription: state.project.description
+        });
+      }
+
+      // Set project stage
+      if (state.projectStage) {
+        setProjectStage(state.projectStage);
+      }
+
+      // Set framework and stage
+      if (state.selectedFramework) {
+        setSelectedFramework(state.selectedFramework);
+      } else if (state.project?.selected_framework) {
+        setSelectedFramework(state.project.selected_framework);
+      }
+
+      if (state.frameworkStage) {
+        setFrameworkStage(state.frameworkStage);
+      }
+
+      // Set current project
       if (state.project) {
         setCurrentProject(state.project);
-        setCurrentStep("basic-info");
+
+        // Try to fetch the last used framework if we don't have one yet
+        if (!state.selectedFramework && !state.project.selected_framework) {
+          try {
+            const { data: prompts, error } = await supabase
+              .from('generated_prompts')
+              .select('framework, framework_stage')
+              .eq('project_id', state.project.id)
+              .order('created_at', { ascending: false })
+              .limit(1);
+
+            if (!error && prompts?.[0]?.framework) {
+              setSelectedFramework(prompts[0].framework);
+              setFrameworkStage(prompts[0].framework_stage || '');
+            }
+          } catch (error) {
+            console.error('Error fetching last used framework:', error);
+          }
+        }
+
+        // Set navigation step
+        setCurrentStep(state.skipToStage ? "stage" : "basic-info");
       }
-      if (state.basicInfo) setBasicInfo(state.basicInfo);
-      if (state.projectContext) setProjectContext(state.projectContext);
-      if (state.projectStage) setProjectStage(state.projectStage);
-      if (state.selectedFramework) setSelectedFramework(state.selectedFramework);
-      if (state.frameworkStage) setFrameworkStage(state.frameworkStage);
+
+      // Set other state from location state if available
       if (state.selectedTool) setSelectedTool(state.selectedTool);
-      if (state.generatedPrompt) {
-        setGeneratedPrompt(state.generatedPrompt);
-        setAiResponse(state.aiResponse || "");
-        setCurrentStep("result");
-      }
+      if (state.generatedPrompt) setGeneratedPrompt(state.generatedPrompt);
+      if (state.aiResponse) setAiResponse(state.aiResponse);
+    };
+
+    initializeState();
+  }, [location.state]);
+
+  useEffect(() => {
+    if (!user) {
+      navigate("/auth");
+      return;
     }
   }, [user, navigate, location.state]);
 
