@@ -95,9 +95,9 @@ export const ProjectSelectionStep = ({ onNewProject, onExistingProject, onCustom
     return (
       <Card className="bg-gradient-card shadow-medium">
         <CardHeader>
-          <CardTitle>For which project will you generate prompts?</CardTitle>
+          <CardTitle>How do you want to generate the prompt?</CardTitle>
           <CardDescription>
-            Choose whether you want to create a new project or continue with an existing one
+            Choose whether you want to create a new project, continue with an existing one, or generate a custom prompt
           </CardDescription>
         </CardHeader>
         <CardContent>
