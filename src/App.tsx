@@ -15,6 +15,7 @@ import Chat from "./pages/Chat";
 import PromptLibrary from "./pages/PromptLibrary";
 import ProjectDetail from "./pages/ProjectDetail";
 import PromptDetail from "./pages/PromptDetail";
+import CreatePrompt from "./pages/CreatePrompt";
 import NotFound from "./pages/NotFound";
 import { AuthProvider } from "./hooks/useAuth";
 
@@ -40,6 +41,8 @@ const App = () => (
               <Route path="/prompt-library" element={<PromptLibrary />} />
               <Route path="/projects/:projectId" element={<ProjectDetail />} />
               <Route path="/prompt/:promptId" element={<PromptDetail />} />
+              <Route path="/prompts/new" element={<CreatePrompt />} />
+              <Route path="/prompts/:id/edit" element={<CreatePrompt />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

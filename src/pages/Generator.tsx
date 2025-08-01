@@ -472,6 +472,10 @@ const Generator = () => {
           <ProjectSelectionStep 
             onNewProject={handleProjectSelect}
             onExistingProject={handleProjectSelect}
+            onCustomPrompt={() => {
+              // Navigate to the custom prompt editor
+              navigate('/prompts/new');
+            }}
           />
         );
       case "basic-info":

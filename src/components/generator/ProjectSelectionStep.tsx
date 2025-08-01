@@ -22,10 +22,11 @@ interface Project {
 interface ProjectSelectionStepProps {
   onNewProject: (project: Project) => void;
   onExistingProject: (project: Project) => void;
+  onCustomPrompt: () => void; // New prop for custom prompt flow
   skipToStage?: boolean; // New prop to control navigation
 }
 
-export const ProjectSelectionStep = ({ onNewProject, onExistingProject, skipToStage = false }: ProjectSelectionStepProps) => {
+export const ProjectSelectionStep = ({ onNewProject, onExistingProject, onCustomPrompt, skipToStage = false }: ProjectSelectionStepProps) => {
   const { user } = useAuth();
   const [isNewProject, setIsNewProject] = useState<boolean | null>(null);
   const [projectName, setProjectName] = useState("");
@@ -99,29 +100,54 @@ export const ProjectSelectionStep = ({ onNewProject, onExistingProject, skipToSt
             Choose whether you want to create a new project or continue with an existing one
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2">
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* New Project Card */}
             <Card 
-              className="cursor-pointer hover:shadow-md transition-shadow border-2 hover:border-primary/50"
+              className="cursor-pointer hover:shadow-md transition-all duration-200 bg-gradient-to-br from-blue-50 to-blue-50/50 border-2 border-blue-100 hover:border-blue-300 hover:scale-[1.02]"
               onClick={() => setIsNewProject(true)}
             >
-              <CardContent className="p-6 text-center">
-                <Plus className="h-12 w-12 text-primary mx-auto mb-4" />
-                <h3 className="font-semibold text-lg mb-2">New Project</h3>
-                <p className="text-muted-foreground text-sm">
-                  Create a project from scratch and configure all details
+              <CardContent className="p-6 flex flex-col items-center justify-center h-full">
+                <div className="bg-blue-100 p-3 rounded-full mb-4">
+                  <Plus className="h-8 w-8 text-blue-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-center mb-2">New Project</h3>
+                <p className="text-sm text-muted-foreground text-center">
+                  Start fresh with a new project and generate prompts from scratch
                 </p>
               </CardContent>
             </Card>
 
+            {/* Custom Prompt Card - New Addition */}
             <Card 
-              className="cursor-pointer hover:shadow-md transition-shadow border-2 hover:border-primary/50"
+              className="cursor-pointer hover:shadow-md transition-all duration-200 bg-gradient-to-br from-green-50 to-green-50/50 border-2 border-green-100 hover:border-green-300 hover:scale-[1.02]"
+              onClick={onCustomPrompt}
+            >
+              <CardContent className="p-6 flex flex-col items-center justify-center h-full">
+                <div className="bg-green-100 p-3 rounded-full mb-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8 text-green-600">
+                    <path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.375 2.625a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.375-9.375z"></path>
+                  </svg>
+                </div>
+                <h3 className="text-lg font-semibold text-center mb-2">Custom Prompt</h3>
+                <p className="text-sm text-muted-foreground text-center">
+                  Create a custom prompt with advanced variables and personalization
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* Existing Project Card */}
+            <Card 
+              className="cursor-pointer hover:shadow-md transition-all duration-200 bg-gradient-to-br from-purple-50 to-purple-50/50 border-2 border-purple-100 hover:border-purple-300 hover:scale-[1.02]"
               onClick={() => setIsNewProject(false)}
             >
-              <CardContent className="p-6 text-center">
-                <FolderOpen className="h-12 w-12 text-primary mx-auto mb-4" />
-                <h3 className="font-semibold text-lg mb-2">Existing Project</h3>
-                <p className="text-muted-foreground text-sm">
+              <CardContent className="p-6 flex flex-col items-center justify-center h-full">
+                <div className="bg-purple-100 p-3 rounded-full mb-4">
+                  <FolderOpen className="h-8 w-8 text-purple-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-center mb-2">Existing Project</h3>
+                <p className="text-sm text-muted-foreground text-center">
                   Continue working on a project you already have created
                 </p>
               </CardContent>
