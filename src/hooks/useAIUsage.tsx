@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "./useAuth";
+import { get } from "@/utils/api";
 import { supabase } from "@/integrations/supabase/client";
 // Define AI models for usage tracking
 const AI_MODELS = [
@@ -55,11 +56,10 @@ export const useAIUsage = () => {
     }
 
     try {
-      const { data, error } = await supabase
-        .from('ai_usage')
-        .select('ai_model, prompts_used, daily_limit, last_reset_date')
-        .eq('user_id', user.id)
-        .eq('last_reset_date', new Date().toISOString().split('T')[0]);
+      const today = new Date().toISOString().split('T')[0];
+      const { data, error } = await get<any[]>(
+        `/rest/v1/ai_usage?select=ai_model,prompts_used,daily_limit,last_reset_date&user_id=eq.${user.id}&last_reset_date=eq.${today}`
+      );
 
       if (error) throw error;
 

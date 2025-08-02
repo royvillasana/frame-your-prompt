@@ -20,6 +20,7 @@ import { ProjectBasicInfoStep, ProjectBasicInfo } from "@/components/generator/P
 type Step = "project" | "basic-info" | "stage" | "framework" | "tool" | "context" | "result";
 
 import { supabase } from "@/integrations/supabase/client";
+import { post, put } from "@/utils/api";
 
 // Add this helper function to get framework-specific context
 const formatEnhancedPrompt = (prompt: any): string => {
@@ -112,6 +113,7 @@ const Generator = () => {
   const [isGeneratingAI, setIsGeneratingAI] = useState(false);
   const [isGeneratingPrompt, setIsGeneratingPrompt] = useState(false);
   const [basicInfo, setBasicInfo] = useState<ProjectBasicInfo | null>(null);
+  const [selectedAITool, setSelectedAITool] = useState<string>('chatgpt'); // Default to ChatGPT
 
   const copyToClipboard = () => {
     if (generatedPrompt) {
@@ -131,6 +133,7 @@ const Generator = () => {
     setGeneratedPrompt("");
     setAiResponse("");
     setBasicInfo(null);
+    setSelectedAITool('chatgpt'); // Reset to default on reset
   };
 
   const savePromptToProject = async () => {
@@ -155,20 +158,20 @@ const Generator = () => {
     try {
       const { error } = await supabase
         .from('generated_prompts')
-        .insert({
+        .insert([{
           user_id: user.id,
           project_id: currentProject.id,
-          project_context: JSON.stringify({
+          project_context: {
             ...(projectContext || {}),
             ...(basicInfo || {}),
             stage: projectStage,
-          }),
+          },
           selected_framework: selectedFramework,
           framework_stage: frameworkStage,
           selected_tool: selectedTool,
           original_prompt: generatedPrompt,
           ai_response: aiResponse,
-        });
+        }]);
 
       if (error) throw error;
 
@@ -199,6 +202,92 @@ const Generator = () => {
     });
   };
 
+  // AI Tool specific instructions mapping
+  const getAIToolInstructions = (aiToolId?: string) => {
+    if (!aiToolId) return '';
+    
+    const instructions: Record<string, {description: string; bestPractices: string[]}> = {
+      'chatgpt': {
+        description: 'ChatGPT is a versatile AI language model that excels at generating text-based responses, analyzing information, and providing detailed explanations.',
+        bestPractices: [
+          'Use clear, step-by-step instructions',
+          'Provide context before asking questions',
+          'Use markdown for formatting (headings, lists, code blocks)',
+          'Be specific about the desired output format',
+          'Include examples when possible'
+        ]
+      },
+      'miro': {
+        description: 'Miro is a visual collaboration platform that works well for brainstorming, diagramming, and organizing information spatially.',
+        bestPractices: [
+          'Define clear sections for different board areas',
+          'Specify visual elements (sticky notes, shapes, connectors)',
+          'Include color-coding suggestions',
+          'Consider board layout and organization',
+          'Mention any templates or frameworks to use'
+        ]
+      },
+      'figma': {
+        description: 'Figma is a collaborative interface design tool with powerful features for creating UI/UX designs and prototypes.',
+        bestPractices: [
+          'Specify frames, components, and constraints',
+          'Mention any design systems or UI kits to use',
+          'Include responsive design requirements',
+          'Specify interactive elements and states',
+          'Note any Figma plugins that should be utilized'
+        ]
+      },
+      'uxpilot': {
+        description: 'UX Pilot is a user research platform that helps with testing and gathering user feedback.',
+        bestPractices: [
+          'Define clear research objectives',
+          'Specify participant criteria',
+          'Outline test scenarios and tasks',
+          'Include data collection methods',
+          'Note any specific metrics to track'
+        ]
+      },
+      'mural': {
+        description: 'Mural is a digital workspace for visual collaboration, ideal for workshops and team activities.',
+        bestPractices: [
+          'Structure activities with clear timing',
+          'Specify templates or frameworks to use',
+          'Include instructions for voting and timer features',
+          'Define participant roles and permissions',
+          'Consider different collaboration modes (diverging/converging)'
+        ]
+      },
+      'notion': {
+        description: 'Notion is an all-in-one workspace for notes, tasks, wikis, and databases.',
+        bestPractices: [
+          'Define database properties and relations',
+          'Specify views (table, board, calendar, etc.)',
+          'Include template structures',
+          'Note any automations or formulas',
+          'Consider permission levels for different users'
+        ]
+      }
+    };
+    
+    const toolInfo = instructions[aiToolId] || {
+      description: 'A versatile tool for various tasks',
+      bestPractices: [
+        'Be clear about the desired outcome',
+        'Provide sufficient context',
+        'Specify any constraints or requirements',
+        'Include examples if helpful',
+        'Consider the tool\'s strengths and limitations'
+      ]
+    };
+    
+    return `## AI Tool Information
+**Tool:** ${aiToolId.charAt(0).toUpperCase() + aiToolId.slice(1)}
+**Description:** ${toolInfo.description}
+
+### Best Practices for This Tool:
+${toolInfo.bestPractices.map((item, i) => `- ${item}`).join('\n')}`;
+  };
+
   const generatePromptWithContext = async (tool: string, context: {
     projectContext: ProjectContext | null;
     projectStage: string | null;
@@ -206,8 +295,9 @@ const Generator = () => {
     frameworkStage: string | null;
     currentProject: any | null;
     basicInfo: any | null;
+    selectedAITool?: string;
   }) => {
-    const { projectContext, projectStage, selectedFramework, frameworkStage, currentProject, basicInfo } = context;
+    const { projectContext, projectStage, selectedFramework, frameworkStage, currentProject, basicInfo, selectedAITool } = context;
     
     const missingFields = [];
     if (!projectContext) missingFields.push("project context");
@@ -232,17 +322,53 @@ const Generator = () => {
     setAiResponse("");
   
     const frameworkContext = getFrameworkContext(selectedFramework, frameworkStage, tool);
+    const aiToolInstructions = getAIToolInstructions(selectedAITool);
+    
+    // Add AI tool context if available
+    const aiToolContext = selectedAITool ? `\n\n## 🛠️ AI Tool Configuration\n${aiToolInstructions}` : '';
 
-    const initialPrompt = `As an expert UX designer, generate a detailed and practical prompt for an AI assistant. The prompt should be based on the following context:\n\n**Project:** ${currentProject.name}\n**Description:** ${currentProject.description}\n**Product Type:** ${basicInfo.productType}\n**Industry:** ${basicInfo.industry}\n**Target Audience:** ${basicInfo.targetAudience}\n\n**Current UX Stage:** ${projectStage}\n**Framework:** ${selectedFramework}\n**Framework Stage:** ${frameworkStage}\n**Selected Tool/Method:** ${tool}\n\n**Framework Context:**\n${frameworkContext}\n\n**Document Content:**\n${projectContext.documentContent || 'No file provided.'}\n\nBased on this, generate a prompt that I can use to ask an AI to perform the following task: ${tool}. The prompt should be structured to elicit a comprehensive and actionable response from the AI, including specific examples and practical recommendations.`;
+    const initialPrompt = `# AI Prompt Generation Request
+
+## 📋 Project Overview
+**Project:** ${currentProject.name}\n**Description:** ${currentProject.description || 'No description provided.'}\n**Product Type:** ${basicInfo.productType || 'Not specified'}\n**Industry:** ${basicInfo.industry || 'Not specified'}\n**Target Audience:** ${basicInfo.targetAudience || 'Not specified'}
+
+## 🎯 UX Context
+**Current UX Stage:** ${projectStage}\n**Framework:** ${selectedFramework} (${frameworkStage} stage)\n**Selected Tool/Method:** ${tool}
+
+## 📚 Framework Context
+${frameworkContext}
+
+## 📄 Document Content
+${projectContext.documentContent || 'No additional context provided.'}${aiToolContext}
+
+## ✨ Prompt Generation Instructions
+Generate a detailed and effective prompt for the specified AI tool to help with the following task: **${tool}**.
+
+The generated prompt should:
+1. Be optimized for the selected AI tool's capabilities and limitations
+2. Include clear, step-by-step instructions
+3. Provide necessary context and background information
+4. Specify any requirements or constraints
+5. Define the desired output format and structure
+6. Include relevant examples or templates if helpful
+7. Follow best practices for the specific AI tool
+
+Make the prompt concise yet comprehensive enough to get high-quality results. The prompt should be immediately usable with the selected AI tool.`;
 
     try {
       const { data, error } = await supabase.functions.invoke('generate-enhanced-prompt', {
-        body: { prompt: initialPrompt },
+        body: {
+          prompt: initialPrompt,
+          aiTool: selectedAITool || 'chatgpt',
+          tool: tool,
+          framework: selectedFramework,
+          frameworkStage: frameworkStage
+        }
       });
 
-      if (error) throw new Error(error.message);
+      if (error) throw error;
       
-      const finalPrompt = data.enhancedPrompt;
+      const finalPrompt = data.enhancedPrompt || initialPrompt;
       const formattedPrompt = formatEnhancedPrompt(finalPrompt);
       setGeneratedPrompt(formattedPrompt);
       return finalPrompt;
@@ -272,23 +398,43 @@ const Generator = () => {
     setAiResponse("");
 
     try {
-      const newPrompt = generatedPrompt || await generatePrompt(selectedTool);
+      // Ensure we have a selected AI tool (default to chatgpt if not set)
+      const aiToolToUse = selectedAITool || 'chatgpt';
+      
+      // Pass the selected AI tool to generate the prompt
+      const newPrompt = generatedPrompt || await generatePromptWithContext(selectedTool, {
+        projectContext,
+        projectStage,
+        selectedFramework,
+        frameworkStage,
+        currentProject,
+        basicInfo,
+        selectedAITool: aiToolToUse
+      });
 
       if (!newPrompt) {
-        toast({ title: "Failed to generate prompt.", description: "Could not generate a prompt. Please check previous steps.", variant: "destructive" });
+        toast({ 
+          title: "Failed to generate prompt.", 
+          description: "Could not generate a prompt. Please check previous steps.", 
+          variant: "destructive" 
+        });
         setIsGeneratingAI(false);
         return;
       }
 
-      const { data, error } = await supabase.functions.invoke('generate-ai-response', {
-        body: {
-          prompt: newPrompt,
-          projectContext: { ...(projectContext || {}), ...(basicInfo || {}) },
-          selectedFramework,
-          frameworkStage,
-          selectedTool,
-          aiModel: 'gpt-4o-mini'
-        }
+      // Include the AI tool in the API call
+      const { data, error } = await post('generate-ai-response', {
+        prompt: newPrompt,
+        projectContext: { 
+          ...(projectContext || {}), 
+          ...(basicInfo || {}),
+          selectedAITool: aiToolToUse
+        },
+        selectedFramework,
+        frameworkStage,
+        selectedTool,
+        aiModel: aiToolToUse === 'chatgpt' ? 'gpt-4o-mini' : 'default-model',
+        aiTool: aiToolToUse
       });
 
       if (error) throw new Error(error.message);
@@ -360,10 +506,14 @@ const Generator = () => {
         // since they might not exist in the database yet
         // These fields will be stored in local state until we can update the database schema
 
-        const { error } = await supabase
-          .from('projects')
-          .update(updateData)
-          .eq('id', currentProject.id);
+        const { error } = await put('projects', updateData, {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        params: {
+          id: `eq.${currentProject.id}`
+        }
+      });
         
         if (error) {
           console.warn("Could not update project:", error);
@@ -394,9 +544,18 @@ const Generator = () => {
     setCurrentStep("context");
   };
 
-  const handleContextComplete = async (context: ProjectContext) => {
+  const handleContextComplete = async (context: ProjectContext & { selectedAITool?: string }) => {
     // First update the context in state
-    setProjectContext(context);
+    const { selectedAITool, ...restContext } = context;
+    setProjectContext(restContext);
+    
+    // Store the selected AI tool separately if it exists
+    if (selectedAITool) {
+      setSelectedAITool(selectedAITool);
+    } else {
+      // Default to ChatGPT if no AI tool is selected
+      setSelectedAITool('chatgpt');
+    }
     
     // Update the project with the context (only if we have a project)
     if (currentProject) {
@@ -410,10 +569,14 @@ const Generator = () => {
         // since they might not exist in the database yet
         // These fields will be stored in local state until we can update the database schema
 
-        const { error } = await supabase
-          .from('projects')
-          .update(updateData)
-          .eq('id', currentProject.id);
+        const { error } = await put('projects', updateData, {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        params: {
+          id: `eq.${currentProject.id}`
+        }
+      });
         
         if (error) {
           console.warn("Could not update project:", error);

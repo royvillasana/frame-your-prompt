@@ -27,6 +27,11 @@ const Header = () => {
     { name: "Learn", path: "/learn" },
   ];
 
+  // Navigation items that should only be visible to logged-in users
+  const authNavItems = [
+    { name: "Projects", path: "/projects" },
+  ];
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between px-4">
@@ -54,6 +59,21 @@ const Header = () => {
                 isActive(item.path)
                   ? "bg-primary/10 text-primary"
                   : "text-muted-foreground hover:text-foreground hover:bg-muted"
+              }`}
+            >
+              {item.name}
+            </Link>
+          ))}
+          
+          {/* Render auth-only nav items */}
+          {user && authNavItems.map((item) => (
+            <Link
+              key={item.path}
+              to={item.path}
+              className={`inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
+                isActive(item.path)
+                  ? 'bg-primary/10 text-primary hover:bg-primary/20 h-10 px-4 py-2'
+                  : 'hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2'
               }`}
             >
               {item.name}
