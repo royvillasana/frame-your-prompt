@@ -463,39 +463,100 @@ Make the prompt concise yet comprehensive enough to get high-quality results. Th
   const handleProjectSelect = async (project: any) => {
     setCurrentProject(project);
     
-    // Always set basic info, even if some fields are empty
-    setBasicInfo({
-      productType: project.product_type || "",
-      industry: project.industry || "",
-      targetAudience: project.target_audience || ""
-    });
-    
-    const hasBasicInfo = project.product_type || project.industry || project.target_audience;
-    
-    // Set project context if available
-    const hasProjectContext = project.project_description || project.document_content;
-    if (hasProjectContext) {
-      setProjectContext({
-        projectDescription: project.project_description || "",
-        documentContent: project.document_content || ""
-      });
-    }
-    
-    // Set framework and stage if they exist
-    if (project.selected_framework && project.selected_framework !== "None") {
-      setSelectedFramework(project.selected_framework);
-      if (project.framework_stage) {
-        setFrameworkStage(project.framework_stage);
+    try {
+      // Try to get the most recent prompt for this project
+      const { data: prompts, error } = await supabase
+        .from('generated_prompts')
+        .select('*')
+        .eq('project_id', project.id)
+        .order('created_at', { ascending: false })
+        .limit(1);
+
+      let hasPreviousPrompt = false;
+      
+      if (!error && prompts && prompts.length > 0) {
+        const latestPrompt = prompts[0];
+        hasPreviousPrompt = true;
+        
+        // Set basic info from the latest prompt
+        const promptBasicInfo = {
+          productType: latestPrompt.industry || project.product_type || "",
+          industry: latestPrompt.industry || project.industry || "",
+          targetAudience: latestPrompt.target_audience || project.target_audience || ""
+        };
+        
+        setBasicInfo(promptBasicInfo);
+        
+        // Set project context from the latest prompt
+        if (latestPrompt.project_context) {
+          setProjectContext({
+            projectDescription: latestPrompt.project_context.projectDescription || "",
+            documentContent: latestPrompt.project_context.documentContent || ""
+          });
+        } else if (project.project_description || project.document_content) {
+          setProjectContext({
+            projectDescription: project.project_description || "",
+            documentContent: project.document_content || ""
+          });
+        }
+        
+        // Set framework and stage from the latest prompt
+        if (latestPrompt.selected_framework && latestPrompt.selected_framework !== "None") {
+          setSelectedFramework(latestPrompt.selected_framework);
+          if (latestPrompt.framework_stage) {
+            setFrameworkStage(latestPrompt.framework_stage);
+          }
+        } else if (project.selected_framework && project.selected_framework !== "None") {
+          setSelectedFramework(project.selected_framework);
+          if (project.framework_stage) {
+            setFrameworkStage(project.framework_stage);
+          }
+        }
+        
+        // Skip to the stage selection since we have all the info we need
+        setCurrentStep("stage");
+        return;
       }
-    }
-    
-    // Check if we should skip to the stage selection
-    // Either because the project has all required info or explicitly set via skipToStage flag
-    const shouldSkipToStage = (hasBasicInfo && hasProjectContext) || project.skipToStage === true;
-    
-    if (shouldSkipToStage) {
-      setCurrentStep("stage");
-    } else {
+      
+      // If no previous prompts found, use the project's basic info
+      const projectBasicInfo = {
+        productType: project.product_type || "",
+        industry: project.industry || "",
+        targetAudience: project.target_audience || ""
+      };
+      
+      setBasicInfo(projectBasicInfo);
+      
+      // Check if we have enough info to skip to stage
+      const hasBasicInfo = projectBasicInfo.productType || projectBasicInfo.industry || projectBasicInfo.targetAudience;
+      const hasProjectContext = project.project_description || project.document_content;
+      
+      if (hasBasicInfo && hasProjectContext) {
+        setProjectContext({
+          projectDescription: project.project_description || "",
+          documentContent: project.document_content || ""
+        });
+        
+        if (project.selected_framework && project.selected_framework !== "None") {
+          setSelectedFramework(project.selected_framework);
+          if (project.framework_stage) {
+            setFrameworkStage(project.framework_stage);
+          }
+        }
+        
+        setCurrentStep("stage");
+      } else {
+        setCurrentStep("basic-info");
+      }
+      
+    } catch (error) {
+      console.error("Error fetching project prompts:", error);
+      // Fall back to basic behavior if there's an error
+      setBasicInfo({
+        productType: project.product_type || "",
+        industry: project.industry || "",
+        targetAudience: project.target_audience || ""
+      });
       setCurrentStep("basic-info");
     }
   };
