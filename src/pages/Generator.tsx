@@ -101,6 +101,15 @@ const Generator = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [currentStep, setCurrentStep] = useState<Step>("project");
+
+  // Check for skipToProjectCreate in location state
+  useEffect(() => {
+    if (location.state?.skipToProjectCreate) {
+      setCurrentStep("project");
+      // Clear the state to prevent re-triggering on re-renders
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location, navigate]);
   const [currentProject, setCurrentProject] = useState<any>(null);
   const [projectContext, setProjectContext] = useState<ProjectContext | null>(null);
   const [projectStage, setProjectStage] = useState("");

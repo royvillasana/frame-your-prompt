@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Brain, Menu, X, Sparkles, User, LogOut } from "lucide-react";
+import { Brain, Menu, X, Sparkles, User, LogOut, FolderOpen, MessageSquare } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import logoHeader from "@/assets/logo_header.png";
 import {
@@ -21,16 +21,12 @@ const Header = () => {
 
   const navItems = [
     { name: "Generator", path: "/generator" },
-    { name: "Prompts", path: "/prompt-library" },
-    { name: "Library", path: "/library" },
+    { name: "Public Library", path: "/library" },
     { name: "Pricing", path: "/pricing" },
     { name: "Learn", path: "/learn" },
   ];
 
-  // Navigation items that should only be visible to logged-in users
-  const authNavItems = [
-    { name: "Projects", path: "/projects" },
-  ];
+  // No auth-specific items in main nav - moved to profile dropdown
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -64,21 +60,6 @@ const Header = () => {
               {item.name}
             </Link>
           ))}
-          
-          {/* Render auth-only nav items */}
-          {user && authNavItems.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={`inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
-                isActive(item.path)
-                  ? 'bg-primary/10 text-primary hover:bg-primary/20 h-10 px-4 py-2'
-                  : 'hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2'
-              }`}
-            >
-              {item.name}
-            </Link>
-          ))}
         </nav>
 
         {/* Desktop CTA */}
@@ -98,13 +79,25 @@ const Header = () => {
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                  <Link to="/profile">
+                  <Link to="/profile" className="w-full">
                     <User className="mr-2 h-4 w-4" />
                     <span>Profile</span>
                   </Link>
                 </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/projects" className="w-full">
+                    <FolderOpen className="mr-2 h-4 w-4" />
+                    <span>My Projects</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/prompt-library" className="w-full">
+                    <MessageSquare className="mr-2 h-4 w-4" />
+                    <span>My Prompts</span>
+                  </Link>
+                </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={signOut}>
+                <DropdownMenuItem onClick={signOut} className="w-full">
                   <LogOut className="mr-2 h-4 w-4" />
                   <span>Sign Out</span>
                 </DropdownMenuItem>

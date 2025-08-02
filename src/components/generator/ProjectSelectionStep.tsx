@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -28,7 +29,17 @@ interface ProjectSelectionStepProps {
 
 export const ProjectSelectionStep = ({ onNewProject, onExistingProject, onCustomPrompt, skipToStage = false }: ProjectSelectionStepProps) => {
   const { user } = useAuth();
+  const location = useLocation();
   const [isNewProject, setIsNewProject] = useState<boolean | null>(null);
+
+  // Check if we should skip to project creation
+  useEffect(() => {
+    if (location.state?.skipToProjectCreate) {
+      setIsNewProject(true);
+      // Clear the state to prevent re-triggering
+      window.history.replaceState({}, document.title);
+    }
+  }, [location]);
   const [projectName, setProjectName] = useState("");
   const [projectDescription, setProjectDescription] = useState("");
   const [projects, setProjects] = useState<Project[]>([]);

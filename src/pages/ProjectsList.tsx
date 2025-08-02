@@ -13,6 +13,7 @@ interface Project {
   description?: string;
   created_at: string;
   frameworks?: string[];
+  prompt_count?: number;
   project_context?: {
     selectedFramework?: string;
   };
@@ -51,13 +52,14 @@ const ProjectsList = () => {
 
       if (promptsError) throw promptsError;
       
-      // Map frameworks to projects
+      // Map frameworks and prompt counts to projects
       const projectsWithFrameworks = projectsData.map(project => {
         const projectPrompts = promptsData.filter(p => p.project_id === project.id);
         const frameworks = [...new Set(projectPrompts.map(p => p.selected_framework).filter(Boolean))];
         return {
           ...project,
-          frameworks: frameworks.length > 0 ? frameworks : undefined
+          frameworks: frameworks.length > 0 ? frameworks : undefined,
+          prompt_count: projectPrompts.length
         };
       });
       
@@ -71,7 +73,11 @@ const ProjectsList = () => {
   };
 
   const handleCreateNew = () => {
-    navigate('/generator');
+    navigate('/generator', { 
+      state: { 
+        skipToProjectCreate: true 
+      } 
+    });
   };
 
   if (!user) {
@@ -116,6 +122,9 @@ const ProjectsList = () => {
                   Frameworks
                 </th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Prompts
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Last Updated
                 </th>
                 <th scope="col" className="relative px-6 py-3">
@@ -157,6 +166,11 @@ const ProjectsList = () => {
                         <span className="text-xs text-muted-foreground">-</span>
                       )}
                     </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className="inline-flex items-center justify-center rounded-full bg-primary/10 px-2.5 py-0.5 text-sm font-medium text-primary">
+                      {project.prompt_count || 0}
+                    </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
                     {new Date(project.created_at).toLocaleDateString()}
