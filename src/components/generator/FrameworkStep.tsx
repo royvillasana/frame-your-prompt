@@ -1,8 +1,9 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { StepCard } from "./StepCard";
 import { OptionCard } from "./OptionCard";
 import { Button } from "@/components/ui/button";
+import { getUXToolsForStage } from "@/lib/aiTools";
 import { ArrowRight, ArrowLeft, Lightbulb, Info, ChevronDown } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
@@ -531,6 +532,7 @@ export const FrameworkStep = ({
   const [selectedStage, setSelectedStage] = useState<string>(initialFrameworkStage || '');
   const [availableStages, setAvailableStages] = useState<any[]>([]);
   const [expandedFrameworks, setExpandedFrameworks] = useState<Record<string, boolean>>({});
+  const [uxTools, setUxTools] = useState<Record<string, string[]>>({});
   const contentRefs = useRef<Record<string, HTMLDivElement | null>>({});
   
   // Initialize expanded state for frameworks
@@ -552,6 +554,21 @@ export const FrameworkStep = ({
   const recommendedFramework = getRecommendedFramework(projectStage);
   const currentFramework = frameworks.find(f => f.id === selectedFramework);
 
+  // Load UX tools for a specific framework and stage
+  const loadUXTools = useCallback(async (framework: string, stage: string) => {
+    if (!framework || !stage) return;
+    
+    try {
+      const tools = await getUXToolsForStage(stage, framework);
+      setUxTools(prev => ({
+        ...prev,
+        [`${framework}-${stage}`]: tools
+      }));
+    } catch (error) {
+      console.error('Error loading UX tools:', error);
+    }
+  }, []);
+
   const handleFrameworkSelect = (frameworkId: string) => {
     const isExpanding = selectedFramework !== frameworkId;
     
@@ -566,6 +583,11 @@ export const FrameworkStep = ({
     if (frameworkId !== "none" && isExpanding) {
       const mappedStage = getFrameworkStageMapping(projectStage, frameworkId);
       setSelectedStage(mappedStage);
+      
+      // Load UX tools when a framework is selected
+      if (mappedStage) {
+        loadUXTools(frameworkId, mappedStage);
+      }
     } else {
       setSelectedStage(""); 
     }
@@ -628,6 +650,13 @@ export const FrameworkStep = ({
       setSelectedStage(mappedStage);
     }
   }, [aiRecommendations, projectStage, initialFrameworkStage]);
+
+  // Load UX tools when stage changes
+  useEffect(() => {
+    if (selectedFramework && selectedStage) {
+      loadUXTools(selectedFramework, selectedStage);
+    }
+  }, [selectedStage, selectedFramework, loadUXTools]);
 
   const handleNext = () => {
     if (selectedFramework && (selectedFramework === "none" || selectedStage)) {
@@ -759,6 +788,30 @@ export const FrameworkStep = ({
                                           <span className="text-xs text-muted-foreground">
                                             Recommended
                                           </span>
+                                        </div>
+                                      )}
+                                      {/* Display UX tools for this stage */}
+                                      {expandedFrameworks[framework.id] && uxTools[`${framework.id}-${stage}`]?.length > 0 && (
+                                        <div className="mt-2">
+                                          <div className="text-xs text-muted-foreground text-center">
+                                            Tools:
+                                          </div>
+                                          <div className="flex flex-wrap justify-center gap-1 mt-1">
+                                            {uxTools[`${framework.id}-${stage}`].slice(0, 3).map((tool, index) => (
+                                              <span 
+                                                key={index}
+                                                className="inline-block px-1.5 py-0.5 text-xs rounded bg-muted text-muted-foreground"
+                                                title={tool}
+                                              >
+                                                {tool.length > 10 ? `${tool.substring(0, 8)}...` : tool}
+                                              </span>
+                                            ))}
+                                            {uxTools[`${framework.id}-${stage}`].length > 3 && (
+                                              <span className="text-xs text-muted-foreground">
+                                                +{uxTools[`${framework.id}-${stage}`].length - 3} more
+                                              </span>
+                                            )}
+                                          </div>
                                         </div>
                                       )}
                                     </div>
