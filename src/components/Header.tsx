@@ -91,9 +91,9 @@ const Header = () => {
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link to="/prompt-library" className="w-full">
+                  <Link to="/prompts" className="w-full">
                     <MessageSquare className="mr-2 h-4 w-4" />
-                    <span>My Prompts</span>
+                    <span>My Custom Prompts</span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />

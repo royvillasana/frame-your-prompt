@@ -67,27 +67,47 @@ export default function CreatePrompt() {
 
   const handleSave = async (promptData: any) => {
     try {
+      const saveData = {
+        ...(id && { id }),
+        title: promptData.title,
+        content: promptData.content,
+        platform: promptData.platform || null,
+        project_id: 'custom_prompt', // Now using the default project_id
+        notes: promptData.notes || null,
+        tags: promptData.tags || [],
+        variables: JSON.stringify(promptData.variables || []),
+        is_public: promptData.is_public || false,
+        user_id: user?.id,
+        updated_at: new Date().toISOString(),
+        created_at: id ? undefined : new Date().toISOString() // Only set on create
+      };
+
+      console.log('Saving prompt data:', saveData);
+
       const { data, error } = await supabase
         .from('custom_prompts')
-        .upsert({
-          ...(id && { id }),
-          ...promptData,
-          user_id: user?.id,
-          variables: JSON.stringify(promptData.variables || []),
-          updated_at: new Date().toISOString()
-        })
+        .upsert(saveData)
         .select()
         .single();
 
-      if (error) throw error;
+      console.log('Save response:', { data, error });
+
+      if (error) {
+        console.error('Error saving prompt:', error);
+        throw error;
+      }
 
       // If this was a new prompt, navigate to the edit URL
       if (!id && data) {
         navigate(`/prompts/${data.id}/edit`, { replace: true });
+      } else if (data) {
+        // Show success message for updates
+        console.log('Prompt saved successfully:', data);
       }
 
       return data;
     } catch (error) {
+      console.error('Error in handleSave:', error);
       console.error('Error saving prompt:', error);
       throw error;
     }

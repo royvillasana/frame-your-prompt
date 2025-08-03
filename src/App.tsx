@@ -17,6 +17,7 @@ import ProjectDetail from "./pages/ProjectDetail";
 import ProjectsList from "./pages/ProjectsList";
 import PromptDetail from "./pages/PromptDetail";
 import CreatePrompt from "./pages/CreatePrompt";
+import PromptsList from "./pages/PromptsList";
 import NotFound from "./pages/NotFound";
 import { useUser } from "./hooks/useUser";
 
@@ -134,6 +135,14 @@ const App = () => {
               element={
                 <ProtectedRoute>
                   <PromptDetail />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/prompts"
+              element={
+                <ProtectedRoute>
+                  <PromptsList />
                 </ProtectedRoute>
               }
             />
