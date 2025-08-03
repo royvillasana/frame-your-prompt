@@ -136,25 +136,30 @@ export const UsageLimitCard = () => {
   return (
     <Card className={`${typeInfo.bgColor} border-2`}>
       <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className={typeInfo.color}>{typeInfo.icon}</span>
-            <CardTitle className="text-base">Plan {typeInfo.label}</CardTitle>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+            <div className="flex items-center gap-2">
+              <span className={typeInfo.color}>{typeInfo.icon}</span>
+              <CardTitle className="text-base m-0">Plan {typeInfo.label}</CardTitle>
+            </div>
+            <CardDescription className="text-sm m-0">
+              {typeInfo.description}
+            </CardDescription>
           </div>
+          
           {usageData.user_type === 'registered_free' && (
-            <Button 
-              size="sm" 
-              onClick={() => navigate('/profile')}
-              className="gap-1"
-            >
-              <Zap className="h-3 w-3" />
-              Upgrade
-            </Button>
+            <div className="w-full sm:w-auto">
+              <Button 
+                size="sm" 
+                onClick={() => navigate('/profile')}
+                className="gap-1 w-full sm:w-auto"
+              >
+                <Zap className="h-3 w-3" />
+                Upgrade
+              </Button>
+            </div>
           )}
         </div>
-        <CardDescription className="text-sm">
-          {typeInfo.description}
-        </CardDescription>
       </CardHeader>
       
       <CardContent className="pt-0">

@@ -41,14 +41,13 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
     persistSession: true,
     detectSessionInUrl: true,
     storage,
-    flowType: 'pkce',
-    debug: process.env.NODE_ENV === 'development',
+    debug: false // Disable debug logs
   },
   global: {
     headers: {
-      'X-Client-Info': 'frame-your-prompt/1.0.0',
-    },
-  },
+      'X-Client-Info': 'frame-your-prompt/1.0.0'
+    }
+  }
 });
 
 // Add a response interceptor to handle 401 errors
