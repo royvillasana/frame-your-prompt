@@ -349,133 +349,96 @@ export const frameworkStages: Record<FrameworkId, string[]> = {
   'hooked-model': ['Trigger', 'Action', 'Variable Reward', 'Investment']
 };
 
-// Default stage mappings for each project stage
-const defaultStageMappings: Record<ProjectStage, string> = {
-  'research': 'Research',
-  'ideation': 'Ideate',
-  'design': 'Design',
-  'testing': 'Test',
-  'implementation': 'Implement'
-};
-
-// Enhanced mapping logic with better defaults and fallbacks
+/**
+ * Maps a project stage to a UX framework stage based on the selected framework
+ * @param projectStage The current project stage (research, ideation, etc.)
+ * @param frameworkId The ID of the selected UX framework
+ * @returns The corresponding UX framework stage
+ */
 const getFrameworkStageMapping = (projectStage: ProjectStage, frameworkId: FrameworkId): string => {
-  // First, try exact match in the mapping
-  const mappings: Record<FrameworkId, Partial<Record<ProjectStage, string>>> = {
+  // Define the mapping from project stages to UX framework stages for each framework
+  const frameworkMappings: Record<FrameworkId, Record<string, string[]>> = {
     'design-thinking': {
-      'research': 'Empathize',
-      'ideation': 'Ideate',
-      'design': 'Prototype',
-      'testing': 'Test',
-      'implementation': 'Implement'
+      'research': ['Empathize', 'Define'],
+      'ideation': ['Ideate'],
+      'prototyping': ['Prototype'],
+      'testing': ['Test'],
+      'development': ['Implement']
     },
     'double-diamond': {
-      'research': 'Discover',
-      'ideation': 'Define',
-      'design': 'Develop',
-      'testing': 'Test',
-      'implementation': 'Deliver'
+      'research': ['Discover', 'Define'],
+      'ideation': ['Define'],
+      'prototyping': ['Develop'],
+      'development': ['Deliver']
     },
     'lean-ux': {
-      'research': 'Think',
-      'ideation': 'Think',
-      'design': 'Make',
-      'testing': 'Check',
-      'implementation': 'Check'
+      'research': ['Think'],
+      'ideation': ['Think'],
+      'prototyping': ['Make'],
+      'testing': ['Check']
     },
     'google-design-sprint': {
-      'research': 'Understand (Mon)',
-      'ideation': 'Ideate (Tue)',
-      'design': 'Prototype (Thu)',
-      'testing': 'Test (Fri)',
-      'implementation': 'Decide (Wed)'
+      'research': ['Understand'],
+      'ideation': ['Ideate', 'Decide'],
+      'prototyping': ['Prototype'],
+      'testing': ['Test']
     },
     'human-centered-design': {
-      'research': 'Research',
-      'ideation': 'Ideation',
-      'design': 'Prototyping',
-      'testing': 'Testing',
-      'implementation': 'Implementation'
+      'research': ['Research'],
+      'ideation': ['Ideation'],
+      'prototyping': ['Prototyping'],
+      'development': ['Implementation']
     },
-    'jobs-to-be-done': {
-      'research': 'Define the job',
-      'ideation': 'Identify opportunities',
-      'design': 'Design solutions',
-      'testing': 'Test solutions',
-      'implementation': 'Implement solutions'
+    'jtbd': {
+      'research': ['Job Discovery', 'Job Mapping'],
+      'ideation': ['Solution Ideation'],
+      'testing': ['Validation']
     },
     'agile-ux': {
-      'research': 'Research & Discovery',
-      'ideation': 'Design Sprint',
-      'design': 'Design & Prototype',
-      'testing': 'Test & Validate',
-      'implementation': 'Implement & Iterate'
+      'research': ['Backlog'],
+      'ideation': ['Backlog'],
+      'prototyping': ['Design'],
+      'testing': ['Test'],
+      'development': ['Release']
     },
     'ux-lifecycle': {
-      'research': 'Requirements Analysis',
-      'ideation': 'Concept Development',
-      'design': 'Design',
-      'testing': 'Testing',
-      'implementation': 'Implementation'
+      'research': ['Analysis'],
+      'ideation': ['Analysis'],
+      'prototyping': ['Design'],
+      'development': ['Implementation', 'Deployment'],
+      'testing': ['Evaluation']
     },
-    'ux-honeycomb': {
-      'research': 'Useful',
-      'ideation': 'Desirable',
-      'design': 'Usable',
-      'testing': 'Accessible',
-      'implementation': 'Valuable'
-    },
-    'user-centered-design': {
-      'research': 'User Research',
-      'ideation': 'Requirements Gathering',
-      'design': 'Design',
-      'testing': 'Usability Testing',
-      'implementation': 'Implementation'
-    },
-    'heart-framework': {
-      'research': 'Happiness (User Satisfaction)',
-      'ideation': 'Engagement (User Interaction)',
-      'design': 'Adoption (New Users)',
-      'testing': 'Task Success (Usability)',
-      'implementation': 'Retention (Ongoing Use)'
+    'ucd-iso-9241': {
+      'research': ['Understand Context', 'Specify Requirements'],
+      'ideation': ['Specify Requirements'],
+      'prototyping': ['Create Design'],
+      'testing': ['Evaluate']
     },
     'hooked-model': {
-      'research': 'External Trigger',
-      'ideation': 'Action',
-      'design': 'Variable Reward',
-      'testing': 'Investment',
-      'implementation': 'Internal Trigger'
+      'research': ['Trigger'],
+      'ideation': ['Trigger'],
+      'prototyping': ['Action'],
+      'testing': ['Variable Reward'],
+      'development': ['Investment']
+    },
+    'heart-framework': {
+      'testing': ['HEART Framework']
+    },
+    'ux-honeycomb': {
+      'research': ['UX Honeycomb'],
+      'testing': ['UX Honeycomb']
     }
   };
 
-  // Get the mapped stage
-  const mappedStage = mappings[frameworkId]?.[projectStage];
-  
-  // If we have a direct mapping, return it
-  if (mappedStage) {
-    return mappedStage;
-  }
+  // Get the mapping for the current framework
+  const frameworkMapping = frameworkMappings[frameworkId];
+  if (!frameworkMapping) return '';
 
-  // Fallback: Try to find a stage that includes the default stage name
-  const defaultStage = defaultStageMappings[projectStage];
-  const possibleStages = frameworkStages[frameworkId] || [];
+  // Get the matching stages for the current project stage
+  const matchingStages = frameworkMapping[projectStage];
   
-  // If we have a default stage, try to match it
-  if (defaultStage && typeof defaultStage === 'string') {
-    const defaultStageLower = defaultStage.toLowerCase();
-    // Look for a stage that includes the default stage name (case insensitive)
-    const matchedStage = possibleStages.find(stage => 
-      stage && typeof stage === 'string' && stage.toLowerCase().includes(defaultStageLower)
-    );
-    
-    // If found, return it
-    if (matchedStage) {
-      return matchedStage;
-    }
-  }
-
-  // If no match found, return the first stage or an empty string as a last resort
-  return possibleStages.length > 0 ? possibleStages[0] : '';
+  // Return the first matching stage, or empty string if none found
+  return matchingStages && matchingStages.length > 0 ? matchingStages[0] : '';
 };
 
 // Validation function to ensure all frameworks have complete stage mappings
@@ -578,18 +541,20 @@ export const FrameworkStep = ({
       [frameworkId]: isExpanding
     }));
     
-    setSelectedFramework(isExpanding ? frameworkId : '');
+    const newFramework = isExpanding ? frameworkId : '';
+    setSelectedFramework(newFramework);
     
-    if (frameworkId !== "none" && isExpanding) {
-      const mappedStage = getFrameworkStageMapping(projectStage, frameworkId);
-      setSelectedStage(mappedStage);
+    if (newFramework && newFramework !== "none") {
+      // Always map the current project stage to the new framework's stage
+      const mappedStage = getMappedStage(newFramework);
+      setSelectedStage(mappedStage || '');
       
       // Load UX tools when a framework is selected
       if (mappedStage) {
-        loadUXTools(frameworkId, mappedStage);
+        loadUXTools(newFramework, mappedStage);
       }
     } else {
-      setSelectedStage(""); 
+      setSelectedStage("");
     }
   };
   
@@ -642,14 +607,36 @@ export const FrameworkStep = ({
     return false;
   };
 
+  // Get the mapped stage for the current project stage and framework
+  const getMappedStage = useCallback((frameworkId: string): string => {
+    if (!projectStage || !frameworkId || frameworkId === 'none') return '';
+    return getFrameworkStageMapping(projectStage as ProjectStage, frameworkId as FrameworkId) || '';
+  }, [projectStage]);
+
+  // Initialize stage based on initial props
   useEffect(() => {
-    if (initialFrameworkStage) {
-      setSelectedStage(initialFrameworkStage);
-    } else if (aiRecommendations?.recommendedFramework && aiRecommendations.recommendedFramework !== "none") {
-      const mappedStage = getFrameworkStageMapping(projectStage, aiRecommendations.recommendedFramework);
-      setSelectedStage(mappedStage);
+    if (selectedFramework) {
+      if (initialFrameworkStage) {
+        setSelectedStage(initialFrameworkStage);
+      } else {
+        // Always map the project stage to the framework stage when initializing
+        const mappedStage = getMappedStage(selectedFramework);
+        if (mappedStage) {
+          setSelectedStage(mappedStage);
+        }
+      }
     }
-  }, [aiRecommendations, projectStage, initialFrameworkStage]);
+  }, [selectedFramework, initialFrameworkStage, getMappedStage]);
+
+  // Update selected stage when project stage or framework changes
+  useEffect(() => {
+    if (selectedFramework && selectedFramework !== 'none' && projectStage) {
+      const mappedStage = getMappedStage(selectedFramework);
+      if (mappedStage && mappedStage !== selectedStage) {
+        setSelectedStage(mappedStage);
+      }
+    }
+  }, [projectStage, selectedFramework, selectedStage, getMappedStage]);
 
   // Load UX tools when stage changes
   useEffect(() => {
@@ -790,30 +777,7 @@ export const FrameworkStep = ({
                                           </span>
                                         </div>
                                       )}
-                                      {/* Display UX tools for this stage */}
-                                      {expandedFrameworks[framework.id] && uxTools[`${framework.id}-${stage}`]?.length > 0 && (
-                                        <div className="mt-2">
-                                          <div className="text-xs text-muted-foreground text-center">
-                                            Tools:
-                                          </div>
-                                          <div className="flex flex-wrap justify-center gap-1 mt-1">
-                                            {uxTools[`${framework.id}-${stage}`].slice(0, 3).map((tool, index) => (
-                                              <span 
-                                                key={index}
-                                                className="inline-block px-1.5 py-0.5 text-xs rounded bg-muted text-muted-foreground"
-                                                title={tool}
-                                              >
-                                                {tool.length > 10 ? `${tool.substring(0, 8)}...` : tool}
-                                              </span>
-                                            ))}
-                                            {uxTools[`${framework.id}-${stage}`].length > 3 && (
-                                              <span className="text-xs text-muted-foreground">
-                                                +{uxTools[`${framework.id}-${stage}`].length - 3} more
-                                              </span>
-                                            )}
-                                          </div>
-                                        </div>
-                                      )}
+                                      {/* UX tools list has been removed from the stage button as per user request */}
                                     </div>
                                   </div>
                                 </TooltipTrigger>

@@ -578,14 +578,13 @@ Make the prompt concise yet comprehensive enough to get high-quality results. Th
         // since they might not exist in the database yet
         // These fields will be stored in local state until we can update the database schema
 
-        const { error } = await put('/rest/v1/projects', updateData, {
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        params: {
-          id: `eq.${currentProject.id}`
-        }
-      });
+        // Use the project ID in the URL for the primary key filter
+        const { error } = await put(`/projects?id=eq.${currentProject.id}`, updateData, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+          }
+        });
         
         if (error) {
           console.warn("Could not update project:", error);
@@ -641,14 +640,13 @@ Make the prompt concise yet comprehensive enough to get high-quality results. Th
         // since they might not exist in the database yet
         // These fields will be stored in local state until we can update the database schema
 
-        const { error } = await put('/rest/v1/projects', updateData, {
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        params: {
-          id: `eq.${currentProject.id}`
-        }
-      });
+        // Use the project ID in the URL for the primary key filter
+        const { error } = await put(`/projects?id=eq.${currentProject.id}`, updateData, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+          }
+        });
         
         if (error) {
           console.warn("Could not update project:", error);
