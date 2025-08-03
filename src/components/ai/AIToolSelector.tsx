@@ -243,39 +243,54 @@ export const AIToolSelector: React.FC<AIToolSelectorProps> = ({
   const { tools, description } = toolData;
 
   return (
-    <Card className={className}>
-      <CardHeader>
-        <CardTitle>AI Assistant</CardTitle>
-        <CardDescription>{description}</CardDescription>
+    <Card className={`rounded-lg border bg-card text-card-foreground shadow-sm mb-6 ${className}`}>
+      <CardHeader className="flex flex-col space-y-1.5 p-6">
+        <CardTitle className="text-2xl font-semibold leading-none tracking-tight">AI Assistant</CardTitle>
+        <CardDescription className="text-sm text-muted-foreground">
+          {description}
+        </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-6 pt-0">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {tools.map((tool) => (
-            <TooltipProvider key={tool.name}>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant={selectedTool === tool.id ? 'default' : 'outline'}
-                    className={`flex flex-col items-start h-auto p-4 text-left group transition-all ${
-                      selectedTool === tool.id ? 'border-primary' : 'hover:border-primary/50'
-                    }`}
-                    onClick={() => onSelectTool(tool.id)}
-                  >
-                    <div className="flex items-center w-full justify-between mb-2">
-                      <span className="font-medium">{tool.name}</span>
-                      <Info className="h-4 w-4 text-muted-foreground group-hover:text-primary" />
-                    </div>
-                    <p className="text-sm text-muted-foreground line-clamp-2">
-                      {tool.description}
-                    </p>
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent className="max-w-xs">
-                  <p className="text-sm">{tool.description}</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          ))}
+          {tools.map((tool) => {
+            const isSelected = selectedTool === tool.id;
+            return (
+              <Button
+                key={tool.id}
+                variant="outline"
+                className={`
+                  justify-start gap-2 whitespace-normal rounded-lg text-sm font-medium
+                  h-auto p-4 text-left group transition-all
+                  ${isSelected 
+                    ? 'bg-primary text-primary-foreground shadow-medium hover:shadow-strong border-primary' 
+                    : 'border-input bg-background hover:bg-accent hover:text-accent-foreground hover:border-primary/50'
+                  }
+                `}
+                onClick={() => onSelectTool(tool.id)}
+              >
+                <div className="flex flex-col items-start w-full">
+                  <div className="flex items-center w-full justify-between mb-2">
+                    <span className="font-medium">{tool.name}</span>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Info className="h-4 w-4 text-muted-foreground group-hover:text-foreground" />
+                        </TooltipTrigger>
+                        <TooltipContent side="top" className="max-w-xs">
+                          <p className="text-sm">{tool.description}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+                  <p className={`text-sm ${
+                    isSelected ? 'text-primary-foreground/90' : 'text-muted-foreground'
+                  } line-clamp-2`}>
+                    {tool.description}
+                  </p>
+                </div>
+              </Button>
+            );
+          })}
         </div>
       </CardContent>
     </Card>
