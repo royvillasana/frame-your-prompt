@@ -215,137 +215,308 @@ const frameworks = [
 ];
 
 const getRecommendedFramework = (projectStage: string) => {
-  switch (projectStage) {
-    case "research":
-      return "design-thinking"; // Excelente para empatizar e investigar
-    case "ideation":
-      return "design-thinking"; // Ideal para la fase de ideación
-    case "design":
-      return "lean-ux"; // Perfecto para iteraciones rápidas
-    case "testing":
-      return "google-design-sprint"; // Excelente para testing rápido
-    case "implementation":
-      return "agile-ux"; // Ideal para integrar UX con desarrollo
-    case "strategy":
-      return "jobs-to-be-done"; // Perfecto para entender necesidades
-    case "metrics":
-      return "heart-framework"; // Específico para métricas UX
-    default:
-      return "design-thinking";
+  // Map project stages to the most suitable frameworks
+  const stageToFramework: Record<string, string> = {
+    // Early stage - user research and problem definition
+    'research': 'design-thinking',     // Best for deep user understanding
+    'discovery': 'design-thinking',    // Great for initial exploration
+    'empathy': 'design-thinking',      // Focus on user needs
+    
+    // Ideation and concept development
+    'ideation': 'double-diamond',      // Structured approach to ideation
+    'define': 'double-diamond',        // Clear problem definition
+    'concept': 'google-design-sprint', // Fast concept development
+    
+    // Design and prototyping
+    'design': 'lean-ux',              // Rapid iterations
+    'prototype': 'google-design-sprint', // Quick prototyping
+    'wireframe': 'lean-ux',            // Lean approach to design
+    
+    // Testing and validation
+    'testing': 'google-design-sprint', // Fast validation cycles
+    'validate': 'google-design-sprint',
+    'usability': 'google-design-sprint',
+    
+    // Implementation and development
+    'implementation': 'agile-ux',      // Integrates with development
+    'development': 'agile-ux',
+    'build': 'agile-ux',
+    
+    // Strategy and planning
+    'strategy': 'jobs-to-be-done',     // Focus on user needs
+    'planning': 'jobs-to-be-done',
+    'roadmap': 'jobs-to-be-done',
+    
+    // Metrics and analytics
+    'metrics': 'heart-framework',      // Structured measurement
+    'analytics': 'heart-framework',
+    'measure': 'heart-framework',
+    
+    // Default fallback
+    'default': 'design-thinking'       // Good all-around framework
+  };
+  
+  // Convert to lowercase and remove any extra whitespace
+  const normalizedStage = projectStage?.toLowerCase().trim() || '';
+  
+  // Find the best matching framework for the stage
+  for (const [stage, framework] of Object.entries(stageToFramework)) {
+    if (normalizedStage.includes(stage)) {
+      return framework;
+    }
   }
+  
+  // Fallback to default if no match found
+  return stageToFramework.default;
 };
 
 const getRecommendationText = (projectStage: string) => {
-  switch (projectStage) {
-    case "research":
-      return "For the research stage, we recommend Design Thinking for its focus on empathy and user understanding.";
-    case "ideation":
-      return "For idea generation, Design Thinking offers specific tools for creative ideation.";
-    case "design":
-      return "For design, Lean UX allows rapid iterations and continuous concept validation.";
-    case "testing":
-      return "For testing, Google Design Sprint facilitates rapid prototype validation cycles.";
-    case "implementation":
-      return "For implementation, Agile UX perfectly integrates UX with agile development.";
-    case "strategy":
-      return "For strategy, Jobs To Be Done helps understand users' real motivations.";
-    case "metrics":
-      return "For metrics, HEART Framework provides a structured model for measuring user experience.";
-    default:
-      return "Design Thinking is ideal for starting with a user-centered approach.";
+  // Convert to lowercase and trim whitespace for consistent matching
+  const normalizedStage = projectStage?.toLowerCase().trim() || '';
+  
+  // Map stages to their corresponding recommendation texts
+  const recommendationTexts: Record<string, string> = {
+    // Research and Discovery
+    'research': 'For research, we recommend Design Thinking as it emphasizes empathy and deep user understanding through methods like user interviews and observations.',
+    'discovery': 'In the discovery phase, Design Thinking helps uncover user needs and pain points through its human-centered approach.',
+    'empathy': 'For building empathy, Design Thinking provides tools like empathy maps and user personas to better understand your users.',
+    
+    // Ideation and Definition
+    'ideation': 'For ideation, the Double Diamond framework offers a structured approach to divergent and convergent thinking, helping generate and refine ideas effectively.',
+    'define': 'To define your problem space, the Double Diamond framework provides clear methods for synthesis and problem framing.',
+    'concept': 'For concept development, Google Design Sprint offers a time-boxed approach to quickly develop and test ideas.',
+    
+    // Design and Prototyping
+    'design': 'For design work, Lean UX promotes rapid iterations and continuous validation, perfect for agile environments.',
+    'prototype': 'For prototyping, Google Design Sprint provides a structured 5-day process to go from problem to tested prototype.',
+    'wireframe': 'For wireframing, Lean UX helps focus on the user experience before diving into high-fidelity designs.',
+    
+    // Testing and Validation
+    'testing': 'For testing, Google Design Sprint offers rapid validation cycles to quickly test assumptions with real users.',
+    'validate': 'For validation, Google Design Sprint provides methods to test prototypes and gather user feedback efficiently.',
+    'usability': 'For usability testing, Google Design Sprint includes specific techniques to evaluate and improve your designs.',
+    
+    // Implementation
+    'implementation': 'For implementation, Agile UX integrates seamlessly with development workflows, ensuring design and development stay aligned.',
+    'development': 'During development, Agile UX helps maintain design quality while keeping up with agile development cycles.',
+    'build': 'When building your product, Agile UX ensures user experience remains a priority throughout the development process.',
+    
+    // Strategy
+    'strategy': 'For strategy development, Jobs To Be Done helps focus on the underlying needs and motivations of your users.',
+    'planning': 'For planning, Jobs To Be Done provides a framework to understand what users are trying to accomplish.',
+    'roadmap': 'For roadmap planning, Jobs To Be Done helps prioritize features based on real user needs and desired outcomes.',
+    
+    // Metrics and Analytics
+    'metrics': 'For measuring user experience, the HEART Framework provides a structured approach to track key metrics across different dimensions.',
+    'analytics': 'For analytics, the HEART Framework helps measure user experience in a meaningful and actionable way.',
+    'measure': 'For measurement, the HEART Framework offers a comprehensive way to track user experience metrics.',
+    
+    // Default
+    'default': 'Design Thinking provides a solid foundation for any UX project with its user-centered approach and flexible framework.'
+  };
+  
+  // Find the most specific matching text
+  for (const [stage, text] of Object.entries(recommendationTexts)) {
+    if (normalizedStage.includes(stage)) {
+      return text;
+    }
   }
+  
+  // Return default if no specific match found
+  return recommendationTexts.default;
 };
 
-const getFrameworkStageMapping = (projectStage: string, frameworkId: string): string => {
-  const mappings: { [key: string]: { [key: string]: string } } = {
-    "design-thinking": {
-      "research": "Empathize",
-      "ideation": "Ideate", 
-      "design": "Prototype",
-      "testing": "Test",
-      "implementation": "Implement"
+// Type definitions for better type safety
+type ProjectStage = 'research' | 'ideation' | 'design' | 'testing' | 'implementation';
+type FrameworkId = 'design-thinking' | 'double-diamond' | 'lean-ux' | 'google-design-sprint' | 
+  'human-centered-design' | 'jobs-to-be-done' | 'agile-ux' | 'ux-lifecycle' | 
+  'ux-honeycomb' | 'user-centered-design' | 'heart-framework' | 'hooked-model';
+
+// Define all possible framework stages for better validation
+export const frameworkStages: Record<FrameworkId, string[]> = {
+  'design-thinking': ['Empathize', 'Define', 'Ideate', 'Prototype', 'Test', 'Implement'],
+  'double-diamond': ['Discover', 'Define', 'Develop', 'Deliver'],
+  'lean-ux': ['Think', 'Make', 'Check'],
+  'google-design-sprint': ['Understand (Mon)', 'Ideate (Tue)', 'Decide (Wed)', 'Prototype (Thu)', 'Test (Fri)'],
+  'human-centered-design': ['Research', 'Ideation', 'Prototyping', 'Implementation'],
+  'jobs-to-be-done': ['Define the job', 'Map the process', 'Identify opportunities', 'Design solutions'],
+  'agile-ux': ['UX Sprint Planning', 'Design Sprint', 'Validation', 'Iteration'],
+  'ux-lifecycle': ['Analysis', 'Design', 'Development', 'Evaluation', 'Implementation'],
+  'ux-honeycomb': ['Useful', 'Usable', 'Desirable', 'Accessible', 'Findable', 'Credible', 'Valuable'],
+  'user-centered-design': ['Context of use', 'Requirements', 'Design', 'Evaluation'],
+  'heart-framework': ['Happiness', 'Engagement', 'Adoption', 'Retention', 'Task Success'],
+  'hooked-model': ['Trigger', 'Action', 'Variable Reward', 'Investment']
+};
+
+// Default stage mappings for each project stage
+const defaultStageMappings: Record<ProjectStage, string> = {
+  'research': 'Research',
+  'ideation': 'Ideate',
+  'design': 'Design',
+  'testing': 'Test',
+  'implementation': 'Implement'
+};
+
+// Enhanced mapping logic with better defaults and fallbacks
+const getFrameworkStageMapping = (projectStage: ProjectStage, frameworkId: FrameworkId): string => {
+  // First, try exact match in the mapping
+  const mappings: Record<FrameworkId, Partial<Record<ProjectStage, string>>> = {
+    'design-thinking': {
+      'research': 'Empathize',
+      'ideation': 'Ideate',
+      'design': 'Prototype',
+      'testing': 'Test',
+      'implementation': 'Implement'
     },
-    "double-diamond": {
-      "research": "Discover",
-      "ideation": "Define",
-      "design": "Develop",
-      "testing": "Develop", 
-      "implementation": "Deliver"
+    'double-diamond': {
+      'research': 'Discover',
+      'ideation': 'Define',
+      'design': 'Develop',
+      'testing': 'Test',
+      'implementation': 'Deliver'
     },
-    "lean-ux": {
-      "research": "Think",
-      "ideation": "Think",
-      "design": "Make",
-      "testing": "Check",
-      "implementation": "Check"
+    'lean-ux': {
+      'research': 'Think',
+      'ideation': 'Think',
+      'design': 'Make',
+      'testing': 'Check',
+      'implementation': 'Check'
     },
-    "google-design-sprint": {
-      "research": "Understand (Mon)",
-      "ideation": "Ideate (Tue)",
-      "design": "Prototype (Thu)",
-      "testing": "Test (Fri)",
-      "implementation": "Decide (Wed)"
+    'google-design-sprint': {
+      'research': 'Understand (Mon)',
+      'ideation': 'Ideate (Tue)',
+      'design': 'Prototype (Thu)',
+      'testing': 'Test (Fri)',
+      'implementation': 'Decide (Wed)'
     },
-    "human-centered-design": {
-      "research": "Research",
-      "ideation": "Ideation",
-      "design": "Prototyping",
-      "testing": "Research",
-      "implementation": "Implementation"
+    'human-centered-design': {
+      'research': 'Research',
+      'ideation': 'Ideation',
+      'design': 'Prototyping',
+      'testing': 'Testing',
+      'implementation': 'Implementation'
     },
-    "jobs-to-be-done": {
-      "research": "Define the job",
-      "ideation": "Identify opportunities",
-      "design": "Design solutions",
-      "testing": "Map the process",
-      "implementation": "Design solutions"
+    'jobs-to-be-done': {
+      'research': 'Define the job',
+      'ideation': 'Identify opportunities',
+      'design': 'Design solutions',
+      'testing': 'Test solutions',
+      'implementation': 'Implement solutions'
     },
-    "agile-ux": {
-      "research": "UX Sprint Planning",
-      "ideation": "Design Sprint",
-      "design": "Design Sprint",
-      "testing": "Validation",
-      "implementation": "Iteration"
+    'agile-ux': {
+      'research': 'Research & Discovery',
+      'ideation': 'Design Sprint',
+      'design': 'Design & Prototype',
+      'testing': 'Test & Validate',
+      'implementation': 'Implement & Iterate'
     },
-    "ux-lifecycle": {
-      "research": "Analysis",
-      "ideation": "Analysis",
-      "design": "Design",
-      "testing": "Evaluation",
-      "implementation": "Implementation"
+    'ux-lifecycle': {
+      'research': 'Requirements Analysis',
+      'ideation': 'Concept Development',
+      'design': 'Design',
+      'testing': 'Testing',
+      'implementation': 'Implementation'
     },
-    "ux-honeycomb": {
-      "research": "Useful",
-      "ideation": "Desirable",
-      "design": "Usable",
-      "testing": "Accessible",
-      "implementation": "Valuable"
+    'ux-honeycomb': {
+      'research': 'Useful',
+      'ideation': 'Desirable',
+      'design': 'Usable',
+      'testing': 'Accessible',
+      'implementation': 'Valuable'
     },
-    "user-centered-design": {
-      "research": "Context of use",
-      "ideation": "Requirements",
-      "design": "Design",
-      "testing": "Evaluation",
-      "implementation": "Design"
+    'user-centered-design': {
+      'research': 'User Research',
+      'ideation': 'Requirements Gathering',
+      'design': 'Design',
+      'testing': 'Usability Testing',
+      'implementation': 'Implementation'
     },
-    "heart-framework": {
-      "research": "Happiness",
-      "ideation": "Engagement",
-      "design": "Adoption",
-      "testing": "Task Success",
-      "implementation": "Retention"
+    'heart-framework': {
+      'research': 'Happiness (User Satisfaction)',
+      'ideation': 'Engagement (User Interaction)',
+      'design': 'Adoption (New Users)',
+      'testing': 'Task Success (Usability)',
+      'implementation': 'Retention (Ongoing Use)'
     },
-    "hooked-model": {
-      "research": "Trigger",
-      "ideation": "Action",
-      "design": "Variable Reward",
-      "testing": "Investment",
-      "implementation": "Trigger"
+    'hooked-model': {
+      'research': 'External Trigger',
+      'ideation': 'Action',
+      'design': 'Variable Reward',
+      'testing': 'Investment',
+      'implementation': 'Internal Trigger'
     }
   };
 
-  return mappings[frameworkId]?.[projectStage] || "";
+  // Get the mapped stage
+  const mappedStage = mappings[frameworkId]?.[projectStage];
+  
+  // If we have a direct mapping, return it
+  if (mappedStage) {
+    return mappedStage;
+  }
+
+  // Fallback: Try to find a stage that includes the default stage name
+  const defaultStage = defaultStageMappings[projectStage];
+  const possibleStages = frameworkStages[frameworkId] || [];
+  
+  // If we have a default stage, try to match it
+  if (defaultStage && typeof defaultStage === 'string') {
+    const defaultStageLower = defaultStage.toLowerCase();
+    // Look for a stage that includes the default stage name (case insensitive)
+    const matchedStage = possibleStages.find(stage => 
+      stage && typeof stage === 'string' && stage.toLowerCase().includes(defaultStageLower)
+    );
+    
+    // If found, return it
+    if (matchedStage) {
+      return matchedStage;
+    }
+  }
+
+  // If no match found, return the first stage or an empty string as a last resort
+  return possibleStages.length > 0 ? possibleStages[0] : '';
 };
+
+// Validation function to ensure all frameworks have complete stage mappings
+export const validateFrameworkStageMappings = () => {
+  const projectStages: ProjectStage[] = ['research', 'ideation', 'design', 'testing', 'implementation'];
+  const frameworkIds = Object.keys(frameworkStages) as FrameworkId[];
+  
+  const results = {
+    missingMappings: [] as Array<{framework: string, stage: string}>,
+    invalidMappings: [] as Array<{framework: string, stage: string, mappedStage: string}>,
+    summary: {
+      totalFrameworks: frameworkIds.length,
+      totalStages: projectStages.length * frameworkIds.length,
+      validatedMappings: 0
+    }
+  };
+
+  // Check each framework and stage
+  frameworkIds.forEach(frameworkId => {
+    projectStages.forEach(projectStage => {
+      const mappedStage = getFrameworkStageMapping(projectStage, frameworkId);
+      
+      if (!mappedStage) {
+        results.missingMappings.push({ framework: frameworkId, stage: projectStage });
+      } else if (!frameworkStages[frameworkId].includes(mappedStage)) {
+        results.invalidMappings.push({
+          framework: frameworkId,
+          stage: projectStage,
+          mappedStage
+        });
+      } else {
+        results.summary.validatedMappings++;
+      }
+    });
+  });
+
+  return results;
+};
+
+// Uncomment to run validation
+// const validation = validateFrameworkStageMappings();
+// console.log('Framework Stage Mapping Validation:', validation);
 
 export const FrameworkStep = ({
   context = {},
@@ -398,6 +569,55 @@ export const FrameworkStep = ({
     } else {
       setSelectedStage(""); 
     }
+  };
+  
+  // Helper function to normalize stage names for comparison
+  const normalizeStageName = (name: string): string => {
+    if (!name) return '';
+    // Remove special characters, extra spaces, and convert to lowercase
+    return name
+      .toLowerCase()
+      .replace(/[^a-z0-9\s]/g, '')  // Remove special characters
+      .replace(/\s+/g, ' ')          // Replace multiple spaces with single space
+      .trim();
+  };
+
+  // Helper function to check if a stage should be highlighted as recommended
+  const isRecommendedStage = (frameworkId: string, stage: string): boolean => {
+    if (!projectStage || !frameworkId || !stage) return false;
+    
+    // Get the mapped stage for the current project stage and framework
+    const mappedStage = getFrameworkStageMapping(projectStage, frameworkId);
+    if (!mappedStage) return false;
+    
+    // Normalize both stage names for comparison
+    const normalizedMapped = normalizeStageName(mappedStage);
+    const normalizedCurrent = normalizeStageName(stage);
+    
+    // Check for direct match first
+    if (normalizedMapped === normalizedCurrent) return true;
+    
+    // Check for partial matches (either contains or is contained by)
+    if (normalizedMapped.includes(normalizedCurrent) || 
+        normalizedCurrent.includes(normalizedMapped)) {
+      return true;
+    }
+    
+    // Special case handling for specific frameworks
+    const framework = frameworks.find(f => f.id === frameworkId);
+    if (framework) {
+      // For frameworks with numbered stages, check if this is the first stage
+      const stageIndex = framework.stages.findIndex(s => 
+        normalizeStageName(s) === normalizedCurrent
+      );
+      
+      // If this is the first stage and we couldn't find a match, it's likely the recommended one
+      if (stageIndex === 0 && framework.stages.length > 0) {
+        return true;
+      }
+    }
+    
+    return false;
   };
 
   useEffect(() => {
@@ -534,7 +754,7 @@ export const FrameworkStep = ({
                                       <div className="text-sm font-medium text-center line-clamp-2">
                                         {stage}
                                       </div>
-                                      {stage === getFrameworkStageMapping(projectStage, framework.id) && (
+                                      {isRecommendedStage(framework.id, stage) && (
                                         <div className="mt-1 w-full text-center">
                                           <span className="text-xs text-muted-foreground">
                                             Recommended

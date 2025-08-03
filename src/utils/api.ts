@@ -1,5 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY } from '@/integrations/supabase/client';
 
 type ApiResponse<T> = {
   data: T | null;
@@ -71,22 +72,28 @@ export const fetchWithAuth = async <T>(
     // Add authorization header
     const headers = new Headers(options.headers);
     headers.set('Authorization', `Bearer ${session.access_token}`);
-    headers.set('apikey', import.meta.env.VITE_SUPABASE_ANON_KEY || '');
-    
-    // Ensure content type is set for non-GET requests with a body
-    if (options.method !== 'GET' && options.body && !headers.has('Content-Type')) {
-      headers.set('Content-Type', 'application/json');
-    }
+    headers.set('apikey', SUPABASE_PUBLISHABLE_KEY);
+    headers.set('Content-Type', 'application/json');
     
     // Make sure we're using the correct URL format
-    const apiUrl = url.startsWith('http') ? url : `${import.meta.env.VITE_SUPABASE_URL || ''}${url}`;
+    const baseUrl = SUPABASE_URL;
+    const apiUrl = url.startsWith('http') ? url : `${baseUrl}/rest/v1${url.startsWith('/') ? '' : '/'}${url}`;
     
-    // Make the request
-    const response = await fetch(apiUrl, {
+    // Prepare fetch options
+    const fetchOptions: RequestInit = {
       ...options,
       headers,
-      credentials: 'include',
-    });
+      // Remove credentials to avoid CORS issues
+      credentials: 'same-origin',
+    };
+
+    // Ensure body is properly stringified for non-GET requests
+    if (options.body && typeof options.body === 'object') {
+      fetchOptions.body = JSON.stringify(options.body);
+    }
+    
+    // Make the request
+    const response = await fetch(apiUrl, fetchOptions);
     
     // Handle 401 Unauthorized responses
     if (response.status === 401 && !isRetry) {
@@ -107,9 +114,8 @@ export const fetchWithAuth = async <T>(
       
       // Retry the request with the new token
       const retryResponse = await fetch(apiUrl, {
-        ...options,
+        ...fetchOptions,
         headers,
-        credentials: 'include',
       });
       
       return handleResponse<T>(retryResponse);

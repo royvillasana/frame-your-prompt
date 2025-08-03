@@ -2,8 +2,8 @@ import { createClient } from '@supabase/supabase-js';
 import { toast } from 'sonner';
 import type { Database } from './types';
 
-const SUPABASE_URL = "https://vvmhpditdxcwfcekugcw.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ2bWhwZGl0ZHhjd2ZjZWt1Z2N3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM0ODI1NjYsImV4cCI6MjA2OTA1ODU2Nn0.BwjrKaXS2XDEV4XkgW-8aNsEcUhg7Mp0cz7X46EKmm8";
+export const SUPABASE_URL = "https://vvmhpditdxcwfcekugcw.supabase.co";
+export const SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ2bWhwZGl0ZHhjd2ZjZWt1Z2N3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM0ODI1NjYsImV4cCI6MjA2OTA1ODU2Nn0.BwjrKaXS2XDEV4XkgW-8aNsEcUhg7Mp0cz7X46EKmm8";
 
 // Create a custom storage handler that safely handles SSR
 const storage = {
@@ -41,12 +41,25 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
     persistSession: true,
     detectSessionInUrl: true,
     storage,
-    debug: false // Disable debug logs
+    debug: false, // Disable debug logs
+    flowType: 'pkce', // Use PKCE flow for better security
+    // Don't automatically refresh the session, we'll handle it manually
+    autoRefreshToken: false,
+    persistSession: false
   },
   global: {
     headers: {
-      'X-Client-Info': 'frame-your-prompt/1.0.0'
+      'X-Client-Info': 'frame-your-prompt/1.0.0',
+      'apikey': SUPABASE_PUBLISHABLE_KEY
     }
+  },
+  // Disable cookies in the browser
+  cookies: {
+    name: 'sb',
+    lifetime: 60 * 60 * 24 * 7, // 7 days
+    domain: '',
+    path: '/',
+    sameSite: 'lax'
   }
 });
 

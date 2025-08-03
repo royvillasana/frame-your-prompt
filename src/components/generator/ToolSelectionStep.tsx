@@ -35,71 +35,223 @@ interface ToolSelectionStepProps {
   reasoning?: string;
 }
 
+// Common tool sets that can be reused across frameworks
+const commonTools = {
+  research: [
+    { id: "interviews", name: "User Interviews", description: "Deep conversations with users to understand needs", tooltip: "Qualitative technique to get direct insights from users" },
+    { id: "surveys", name: "Surveys", description: "Structured questions to gather quantitative data", tooltip: "Method to collect data from many users efficiently" },
+    { id: "observation", name: "User Observation", description: "Watching users interact in their natural environment", tooltip: "Provides authentic behavioral insights beyond self-reported data" },
+    { id: "personas", name: "Personas", description: "User archetypes based on research", tooltip: "Fictional representations of real users based on data" },
+    { id: "empathy-map", name: "Empathy Map", description: "Visualization of user thoughts and feelings", tooltip: "Visual tool to synthesize observations about users" },
+    { id: "journey-map", name: "User Journey Map", description: "Visualization of the complete user experience", tooltip: "Mapping of all touchpoints in the user experience" }
+  ],
+  define: [
+    { id: "problem-statement", name: "Problem Statement", description: "Clear and concise definition of the problem to solve", tooltip: "Specific formulation of the user-centered challenge" },
+    { id: "hmw", name: "How Might We...?", description: "Questions that reframe problems as opportunities", tooltip: "Technique to convert problems into design opportunities" },
+    { id: "pov", name: "Point of View", description: "Specific perspective on the user and their needs", tooltip: "Statement combining user, need and insight" },
+    { id: "user-stories", name: "User Stories", description: "Short descriptions of features from user's perspective", tooltip: "Helps align development with user needs" },
+    { id: "job-stories", name: "Job Stories", description: "Framing needs as jobs to be done", tooltip: "Helps understand user motivations and context" }
+  ],
+  ideate: [
+    { id: "brainstorming", name: "Brainstorming", description: "Free generation of ideas without restrictions", tooltip: "Group technique to generate many creative ideas" },
+    { id: "crazy-8s", name: "Crazy 8s", description: "8 ideas in 8 minutes to force creativity", tooltip: "Quick sketching exercise to generate diverse ideas" },
+    { id: "scamper", name: "SCAMPER", description: "Systematic technique to modify existing ideas", tooltip: "Substitute, Combine, Adapt, Modify, Put to other uses, Eliminate, Rearrange" },
+    { id: "mind-mapping", name: "Mind Mapping", description: "Visual representation of ideas and relationships", tooltip: "Helps explore and organize thoughts" },
+    { id: "storyboarding", name: "Storyboarding", description: "Visual storytelling of user experiences", tooltip: "Helps visualize user flows and scenarios" }
+  ],
+  prototype: [
+    { id: "sketches", name: "Sketches", description: "Quick drawings to explore ideas", tooltip: "Fast visual representations of concepts" },
+    { id: "wireframes", name: "Wireframes", description: "Basic interface structure without visual design", tooltip: "Layouts showing element arrangement without styling" },
+    { id: "mockups", name: "Mockups", description: "High-fidelity visual representations", tooltip: "Detailed designs showing final appearance" },
+    { id: "interactive-prototype", name: "Interactive Prototype", description: "Clickable simulation of the final product", tooltip: "Allows for realistic user testing" },
+    { id: "paper-prototype", name: "Paper Prototype", description: "Low-fidelity physical prototype", tooltip: "Quick and easy way to test concepts" }
+  ],
+  test: [
+    { id: "usability-testing", name: "Usability Testing", description: "Evaluation of ease of use with real users", tooltip: "Direct observation of users interacting with the product" },
+    { id: "ab-testing", name: "A/B Testing", description: "Comparison of two versions to see which works better", tooltip: "Statistical method to compare effectiveness of variants" },
+    { id: "heuristic-evaluation", name: "Heuristic Evaluation", description: "Expert review against usability principles", tooltip: "Identifies usability issues before user testing" },
+    { id: "accessibility-audit", name: "Accessibility Audit", description: "Evaluation against accessibility standards", tooltip: "Ensures product is usable by people with disabilities" },
+    { id: "analytics-review", name: "Analytics Review", description: "Analysis of user behavior data", tooltip: "Reveals how users actually interact with the product" }
+  ],
+  implement: [
+    { id: "design-system", name: "Design System", description: "Collection of reusable components and guidelines", tooltip: "Ensures consistency across the product" },
+    { id: "style-guide", name: "Style Guide", description: "Documentation of visual design standards", tooltip: "Maintains brand consistency" },
+    { id: "component-library", name: "Component Library", description: "Reusable UI components", tooltip: "Speeds up development and ensures consistency" },
+    { id: "handoff-docs", name: "Handoff Documentation", description: "Specifications for developers", tooltip: "Bridges the gap between design and development" },
+    { id: "qa-checklist", name: "QA Checklist", description: "List of items to verify before launch", tooltip: "Ensures quality before release" }
+  ]
+};
+
 const getToolsByFrameworkAndStage = (framework: string, stage: string) => {
-  const toolMap: { [key: string]: { [key: string]: any[] } } = {
+  // Map framework stages to common tool categories
+  const stageMappings: { [key: string]: { [key: string]: string[] } } = {
     "design-thinking": {
-      "Empathize": [
-        { id: "interviews", name: "User Interviews", description: "Deep conversations with users to understand needs", tooltip: "Qualitative technique to get direct insights from users" },
-        { id: "empathy-map", name: "Empathy Map", description: "Visualization of what the user thinks, feels, sees and does", tooltip: "Visual tool to synthesize observations about users" },
-        { id: "personas", name: "Personas", description: "User archetypes based on research", tooltip: "Fictional representations of real users based on data" },
-        { id: "journey-map", name: "User Journey Map", description: "Visualization of the complete user experience", tooltip: "Mapping of all touchpoints in the user experience" }
-      ],
-      "Define": [
-        { id: "problem-statement", name: "Problem Statement", description: "Clear and concise definition of the problem to solve", tooltip: "Specific formulation of the user-centered challenge" },
-        { id: "hmw", name: "How Might We...?", description: "Questions that reframe problems as opportunities", tooltip: "Technique to convert problems into design opportunities" },
-        { id: "pov", name: "Point of View", description: "Specific perspective on the user and their needs", tooltip: "Statement combining user, need and insight" }
-      ],
-      "Ideate": [
-        { id: "brainstorming", name: "Brainstorming", description: "Free generation of ideas without restrictions", tooltip: "Group technique to generate many creative ideas" },
-        { id: "crazy-8s", name: "Crazy 8s", description: "8 ideas in 8 minutes to force creativity", tooltip: "Quick sketching exercise to generate diverse ideas" },
-        { id: "scamper", name: "SCAMPER", description: "Systematic technique to modify existing ideas", tooltip: "Substitute, Combine, Adapt, Modify, Put to other uses, Eliminate, Rearrange" }
-      ],
-      "Prototype": [
-        { id: "sketches", name: "Sketches", description: "Quick drawings to explore ideas", tooltip: "Fast visual representations of concepts" },
-        { id: "wireframes", name: "Wireframes", description: "Basic interface structure without visual design", tooltip: "Layouts showing element arrangement without styling" },
-        { id: "mockups", name: "Mockups", description: "High-fidelity visual representations", tooltip: "Detailed designs showing final appearance" }
-      ],
-      "Test": [
-        { id: "usability-testing", name: "Usability Testing", description: "Evaluation of ease of use with real users", tooltip: "Direct observation of users interacting with the product" },
-        { id: "ab-testing", name: "A/B Testing", description: "Comparison of two versions to see which works better", tooltip: "Statistical method to compare effectiveness of variants" }
-      ]
-    },
-    "lean-ux": {
-      "Think": [
-        { id: "assumptions", name: "Assumption Mapping", description: "Identification of beliefs about users and business", tooltip: "Documentation of hypotheses that need validation" },
-        { id: "proto-personas", name: "Proto-Personas", description: "Initial personas based on assumptions", tooltip: "Early versions of personas before formal research" }
-      ],
-      "Make": [
-        { id: "mvp", name: "MVP Design", description: "Minimum viable product design", tooltip: "Simplest version that allows learning about users" },
-        { id: "wireframes", name: "Wireframes", description: "Basic interface structure", tooltip: "Layout schemes without detailed visual elements" }
-      ],
-      "Check": [
-        { id: "user-testing", name: "User Testing", description: "Quick validation with real users", tooltip: "Agile testing to validate design hypotheses" },
-        { id: "analytics", name: "Metrics Analysis", description: "Evaluation of behavioral data", tooltip: "Interpretation of quantitative data about product usage" }
-      ]
+      "Empathize": ["research"],
+      "Define": ["define"],
+      "Ideate": ["ideate"],
+      "Prototype": ["prototype"],
+      "Test": ["test"],
+      "Implement": ["implement"]
     },
     "double-diamond": {
-      "Discover": [
-        { id: "user-research", name: "User Research", description: "Broad exploration of the problem space", tooltip: "Diverse methods to understand context and needs" },
-        { id: "market-analysis", name: "Market Analysis", description: "Evaluation of competitive landscape", tooltip: "Research on competitors and market opportunities" }
-      ],
-      "Define": [
-        { id: "problem-definition", name: "Problem Definition", description: "Synthesis of findings into specific problem", tooltip: "Convergence of insights into clear and actionable problem" },
-        { id: "design-brief", name: "Design Brief", description: "Document that guides the design process", tooltip: "Clear specifications about what to design and why" }
-      ],
-      "Develop": [
-        { id: "concept-development", name: "Concept Development", description: "Exploration of multiple solutions", tooltip: "Generation and refinement of solution ideas" },
-        { id: "prototyping", name: "Prototyping", description: "Creation of early versions of the solution", tooltip: "Building tangible representations of ideas" }
-      ],
-      "Deliver": [
-        { id: "final-design", name: "Final Design", description: "Refinement to ready-for-implementation version", tooltip: "Fully specified and validated solution" },
-        { id: "implementation", name: "Implementation", description: "Handoff to development and launch", tooltip: "Technical handoff and construction oversight" }
-      ]
+      "Discover": ["research"],
+      "Define": ["define"],
+      "Develop": ["ideate", "prototype"],
+      "Deliver": ["test", "implement"]
+    },
+    "lean-ux": {
+      "Think": ["research", "define"],
+      "Make": ["ideate", "prototype"],
+      "Check": ["test"]
+    },
+    "google-design-sprint": {
+      "Understand (Mon)": ["research"],
+      "Ideate (Tue)": ["ideate"],
+      "Decide (Wed)": ["define"],
+      "Prototype (Thu)": ["prototype"],
+      "Test (Fri)": ["test"]
+    },
+    "human-centered-design": {
+      "Research": ["research"],
+      "Ideation": ["ideate"],
+      "Prototyping": ["prototype"],
+      "Implementation": ["implement"]
+    },
+    "jobs-to-be-done": {
+      "Define the job": ["research"],
+      "Map the process": ["research", "define"],
+      "Identify opportunities": ["define", "ideate"],
+      "Design solutions": ["prototype", "test"]
+    },
+    "agile-ux": {
+      "UX Sprint Planning": ["research", "define"],
+      "Design Sprint": ["ideate", "prototype"],
+      "Validation": ["test"],
+      "Iteration": ["implement"]
+    },
+    "ux-lifecycle": {
+      "Analysis": ["research"],
+      "Design": ["define", "ideate"],
+      "Development": ["prototype"],
+      "Evaluation": ["test"],
+      "Implementation": ["implement"]
+    },
+    "ux-honeycomb": {
+      "Useful": ["research", "define"],
+      "Usable": ["prototype", "test"],
+      "Desirable": ["ideate", "prototype"],
+      "Accessible": ["test", "implement"],
+      "Findable": ["define", "prototype"],
+      "Credible": ["test"],
+      "Valuable": ["test", "implement"]
+    },
+    "user-centered-design": {
+      "Context of use": ["research"],
+      "Requirements": ["define"],
+      "Design": ["ideate", "prototype"],
+      "Evaluation": ["test"]
+    },
+    "heart-framework": {
+      "Happiness": ["research", "test"],
+      "Engagement": ["research", "test"],
+      "Adoption": ["test", "implement"],
+      "Retention": ["test", "implement"],
+      "Task Success": ["test"]
+    },
+    "hooked-model": {
+      "Trigger": ["research", "define"],
+      "Action": ["ideate", "prototype"],
+      "Variable Reward": ["ideate", "test"],
+      "Investment": ["test", "implement"]
     }
   };
 
-  return toolMap[framework]?.[stage] || [];
+  // Get the tool categories for this framework and stage
+  const toolCategories = stageMappings[framework]?.[stage] || [];
+  
+  // If no mapping found, return empty array
+  if (toolCategories.length === 0) return [];
+  
+  // Get all tools from the mapped categories and remove duplicates
+  const tools = toolCategories.flatMap(category => commonTools[category] || []);
+  
+  // Remove duplicates by id
+  const uniqueTools = Array.from(new Map(tools.map(tool => [tool.id, tool])).values());
+  
+  return uniqueTools;
 };
+
+// Validation function to ensure all frameworks and stages have tool mappings
+const validateToolMappings = () => {
+  const allFrameworks = [
+    "design-thinking", "double-diamond", "lean-ux", "google-design-sprint",
+    "human-centered-design", "jobs-to-be-done", "agile-ux", "ux-lifecycle",
+    "ux-honeycomb", "user-centered-design", "heart-framework", "hooked-model"
+  ];
+
+  const stageMappings = {
+    "design-thinking": ["Empathize", "Define", "Ideate", "Prototype", "Test", "Implement"],
+    "double-diamond": ["Discover", "Define", "Develop", "Deliver"],
+    "lean-ux": ["Think", "Make", "Check"],
+    "google-design-sprint": ["Understand (Mon)", "Ideate (Tue)", "Decide (Wed)", "Prototype (Thu)", "Test (Fri)"],
+    "human-centered-design": ["Research", "Ideation", "Prototyping", "Implementation"],
+    "jobs-to-be-done": ["Define the job", "Map the process", "Identify opportunities", "Design solutions"],
+    "agile-ux": ["UX Sprint Planning", "Design Sprint", "Validation", "Iteration"],
+    "ux-lifecycle": ["Analysis", "Design", "Development", "Evaluation", "Implementation"],
+    "ux-honeycomb": ["Useful", "Usable", "Desirable", "Accessible", "Findable", "Credible", "Valuable"],
+    "user-centered-design": ["Context of use", "Requirements", "Design", "Evaluation"],
+    "heart-framework": ["Happiness", "Engagement", "Adoption", "Retention", "Task Success"],
+    "hooked-model": ["Trigger", "Action", "Variable Reward", "Investment"]
+  };
+
+  const errors: string[] = [];
+  const warnings: string[] = [];
+  const results: {[key: string]: any} = {};
+
+  // Check each framework
+  allFrameworks.forEach(framework => {
+    const stages = stageMappings[framework] || [];
+    const frameworkResults: {[key: string]: any} = {};
+    
+    if (stages.length === 0) {
+      errors.push(`No stages defined for framework: ${framework}`);
+      return;
+    }
+
+    // Check each stage
+    stages.forEach(stage => {
+      const tools = getToolsByFrameworkAndStage(framework, stage);
+      frameworkResults[stage] = {
+        toolCount: tools.length,
+        tools: tools.map((t: any) => t.name)
+      };
+
+      if (tools.length === 0) {
+        warnings.push(`No tools found for ${framework} - ${stage}`);
+      } else if (tools.length < 2) {
+        warnings.push(`Only ${tools.length} tools found for ${framework} - ${stage}`);
+      }
+    });
+
+    results[framework] = frameworkResults;
+  });
+
+  return {
+    errors,
+    warnings,
+    results,
+    summary: {
+      frameworks: allFrameworks.length,
+      totalStages: Object.values(stageMappings).reduce((sum, stages) => sum + stages.length, 0),
+      frameworksWithErrors: errors.length > 0 ? errors.filter(e => e.includes('No stages defined')).length : 0,
+      stagesWithWarnings: warnings.length
+    }
+  };
+};
+
+// Uncomment to run validation
+// const validation = validateToolMappings();
+// console.log('Tool Mapping Validation:', validation);
 
 const getSuggestedTools = (projectStage: string) => {
   const suggestions: { [key: string]: any[] } = {

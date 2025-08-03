@@ -431,19 +431,21 @@ Make the prompt concise yet comprehensive enough to get high-quality results. Th
         return;
       }
 
-      // Include the AI tool in the API call
-      const { data, error } = await post('generate-ai-response', {
-        prompt: newPrompt,
-        projectContext: { 
-          ...(projectContext || {}), 
-          ...(basicInfo || {}),
-          selectedAITool: aiToolToUse
-        },
-        selectedFramework,
-        frameworkStage,
-        selectedTool,
-        aiModel: aiToolToUse === 'chatgpt' ? 'gpt-4o-mini' : 'default-model',
-        aiTool: aiToolToUse
+      // Use Supabase function to generate AI response
+      const { data, error } = await supabase.functions.invoke('generate-ai-response', {
+        body: {
+          prompt: newPrompt,
+          projectContext: { 
+            ...(projectContext || {}), 
+            ...(basicInfo || {}),
+            selectedAITool: aiToolToUse
+          },
+          selectedFramework,
+          frameworkStage,
+          selectedTool,
+          aiModel: aiToolToUse === 'chatgpt' ? 'gpt-4o-mini' : 'default-model',
+          aiTool: aiToolToUse
+        }
       });
 
       if (error) throw new Error(error.message);
@@ -576,7 +578,7 @@ Make the prompt concise yet comprehensive enough to get high-quality results. Th
         // since they might not exist in the database yet
         // These fields will be stored in local state until we can update the database schema
 
-        const { error } = await put('projects', updateData, {
+        const { error } = await put('/rest/v1/projects', updateData, {
         headers: {
           'Content-Type': 'application/json'
         },
@@ -639,7 +641,7 @@ Make the prompt concise yet comprehensive enough to get high-quality results. Th
         // since they might not exist in the database yet
         // These fields will be stored in local state until we can update the database schema
 
-        const { error } = await put('projects', updateData, {
+        const { error } = await put('/rest/v1/projects', updateData, {
         headers: {
           'Content-Type': 'application/json'
         },
