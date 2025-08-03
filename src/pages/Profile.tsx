@@ -1,50 +1,80 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
-import { Eye, EyeOff, Plus, FolderOpen, Calendar, MessageSquare, User, Folder } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Eye, EyeOff, Crown, Loader2, Camera, User, Save, X, Edit2 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+
+type UserType = 'guest' | 'registered_free' | 'registered_premium';
 
 const Profile = () => {
   const { user } = useAuth();
-  const navigate = useNavigate();
-  const [displayName, setDisplayName] = useState("");
   const [openaiApiKey, setOpenaiApiKey] = useState("");
   const [showApiKey, setShowApiKey] = useState(false);
   const [loading, setLoading] = useState(false);
   const [profileLoading, setProfileLoading] = useState(true);
-  const [projects, setProjects] = useState<any[]>([]);
-  const [projectsLoading, setProjectsLoading] = useState(true);
+  const [userType, setUserType] = useState<UserType>('guest');
+  const [profileName, setProfileName] = useState('');
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [tempProfileName, setTempProfileName] = useState('');
+  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    // Load profile image from localStorage if it exists
+    const savedImage = localStorage.getItem('profileImage');
+    if (savedImage) {
+      setProfileImage(savedImage);
+    }
+    
     if (user) {
       loadProfile();
-      loadProjects();
+      // Set initial profile name from user's email
+      if (user.email) {
+        const nameFromEmail = user.email.split('@')[0];
+        setProfileName(nameFromEmail);
+        setTempProfileName(nameFromEmail);
+      }
     }
   }, [user]);
 
   const loadProfile = async () => {
     try {
-      const { data, error } = await supabase
+      if (!user) return;
+      
+      // First get the profile with API key
+      const { data: profileData, error: profileError } = await supabase
         .from('profiles')
-        .select('*')
-        .eq('user_id', user?.id)
-        .maybeSingle();
+        .select('openai_api_key, display_name')
+        .eq('user_id', user.id)
+        .single();
 
-      if (error) throw error;
+      if (profileError) throw profileError;
 
-      if (data) {
-        setDisplayName(data.display_name || "");
-        setOpenaiApiKey(data.openai_api_key || "");
+      // Determine user type based on API key presence
+      const hasApiKey = !!profileData?.openai_api_key;
+      const userType: UserType = hasApiKey ? 'registered_premium' : 'registered_free';
+      
+      setUserType(userType);
+      setOpenaiApiKey(profileData?.openai_api_key || "");
+      
+      // Set profile name if available, otherwise use email username
+      if (profileData?.display_name) {
+        setProfileName(profileData.display_name);
+        setTempProfileName(profileData.display_name);
+      } else if (user.email) {
+        const nameFromEmail = user.email.split('@')[0];
+        setProfileName(nameFromEmail);
+        setTempProfileName(nameFromEmail);
       }
-    } catch (error: any) {
+    } catch (error) {
+      console.error('Error loading profile:', error);
       toast.error("Error loading profile");
-      console.error(error);
     } finally {
       setProfileLoading(false);
     }
@@ -55,245 +85,297 @@ const Profile = () => {
     if (!user) return;
 
     setLoading(true);
+    
     try {
       const { error } = await supabase
         .from('profiles')
-        .upsert({
-          user_id: user.id,
-          display_name: displayName,
+        .update({ 
           openai_api_key: openaiApiKey,
-        }, {
-          onConflict: 'user_id'
-        });
+          display_name: profileName,
+          updated_at: new Date().toISOString()
+        })
+        .eq('user_id', user.id);
 
       if (error) throw error;
-
+      
+      if (isEditingName) {
+        setIsEditingName(false);
+      }
+      
       toast.success("Profile updated successfully");
-    } catch (error: any) {
-      toast.error("Error updating profile");
-      console.error(error);
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      toast.error("Failed to update profile");
     } finally {
       setLoading(false);
     }
   };
+  
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    // Check if file is an image
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please upload an image file');
+      return;
+    }
+    
+    // Check file size (max 2MB)
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error('Image size should be less than 2MB');
+      return;
+    }
+    
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const imageDataUrl = reader.result as string;
+      setProfileImage(imageDataUrl);
+      // Save to localStorage
+      localStorage.setItem('profileImage', imageDataUrl);
+      toast.success('Profile image updated');
+    };
+    reader.readAsDataURL(file);
+  };
+  
+  const removeProfileImage = () => {
+    setProfileImage(null);
+    localStorage.removeItem('profileImage');
+    toast.info('Profile image removed');
+  };
+  
+  const handleNameEdit = () => {
+    setTempProfileName(profileName);
+    setIsEditingName(true);
+  };
+  
+  const saveNameEdit = () => {
+    setProfileName(tempProfileName);
+    setIsEditingName(false);
+  };
+  
+  const cancelNameEdit = () => {
+    setIsEditingName(false);
+  };
 
-  const loadProjects = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('projects')
-        .select(`
-          *,
-          generated_prompts(count)
-        `)
-        .eq('user_id', user?.id)
-        .order('updated_at', { ascending: false });
-
-      if (error) throw error;
-      setProjects(data || []);
-    } catch (error: any) {
-      toast.error("Error loading projects");
-      console.error(error);
-    } finally {
-      setProjectsLoading(false);
+  const getUserTypeInfo = () => {
+    switch (userType) {
+      case 'registered_premium':
+        return {
+          label: 'Premium Member',
+          description: 'You have full access to all features',
+          icon: <Crown className="h-4 w-4 text-yellow-500" />,
+          className: 'bg-yellow-50 text-yellow-700 border-yellow-200'
+        };
+      case 'registered_free':
+        return {
+          label: 'Free Account',
+          description: 'Upgrade to Premium for full access',
+          icon: null,
+          className: 'bg-blue-50 text-blue-700 border-blue-200'
+        };
+      default:
+        return {
+          label: 'Guest',
+          description: 'Sign up to save your settings',
+          icon: null,
+          className: 'bg-gray-50 text-gray-700 border-gray-200'
+        };
     }
   };
 
+  const userTypeInfo = getUserTypeInfo();
+
   if (profileLoading) {
     return (
-      <div className="container mx-auto py-8">
-        <div className="max-w-2xl mx-auto">
-          <Card>
-            <CardHeader>
-              <CardTitle>Loading profile...</CardTitle>
-            </CardHeader>
-          </Card>
-        </div>
+      <div className="container mx-auto p-4 max-w-4xl flex items-center justify-center h-64">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto py-8">
-      <div className="max-w-4xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Account Settings</h1>
-          <p className="text-muted-foreground">
-            Manage your profile, projects, and account preferences
-          </p>
-        </div>
-
-        <Tabs defaultValue="projects" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="projects" className="gap-2">
-              <Folder className="h-4 w-4" />
-              My Projects
-            </TabsTrigger>
-            <TabsTrigger value="profile" className="gap-2">
-              <User className="h-4 w-4" />
-              Profile
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="projects" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle>My Projects</CardTitle>
-                    <CardDescription>
-                      Manage all your UX projects and their generated prompts
-                    </CardDescription>
-                  </div>
-                  <Button 
-                    onClick={() => navigate('/generator')}
-                    className="gap-2"
+    <div className="container mx-auto p-4 max-w-4xl space-y-6">
+      {/* Profile Header */}
+      <Card>
+        <CardHeader>
+          <div className="flex flex-col items-center space-y-4">
+            <div className="relative group">
+              <Avatar className="h-24 w-24 overflow-hidden">
+                <AvatarImage 
+                  src={profileImage || ''} 
+                  className="h-full w-auto object-cover object-center"
+                  style={{ minHeight: '100%', minWidth: '100%' }}
+                />
+                <AvatarFallback className="bg-gray-200 text-gray-700 text-2xl h-full w-full flex items-center justify-center">
+                  {profileName ? profileName.charAt(0).toUpperCase() : <User className="h-12 w-12" />}
+                </AvatarFallback>
+              </Avatar>
+              <label 
+                className="absolute bottom-0 right-0 bg-white rounded-full p-2 shadow-md cursor-pointer hover:bg-gray-100 transition-colors"
+                title="Change profile image"
+              >
+                <Camera className="h-5 w-5 text-gray-700" />
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleImageUpload}
+                  accept="image/*"
+                  className="hidden"
+                />
+              </label>
+              {profileImage && (
+                <button
+                  onClick={removeProfileImage}
+                  className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                  title="Remove profile image"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              )}
+            </div>
+            
+            <div className="text-center">
+              {isEditingName ? (
+                <div className="flex items-center gap-2">
+                  <Input
+                    value={tempProfileName}
+                    onChange={(e) => setTempProfileName(e.target.value)}
+                    className="text-xl font-bold text-center"
+                    autoFocus
+                  />
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={saveNameEdit}
+                    disabled={!tempProfileName.trim()}
                   >
-                    <Plus className="h-4 w-4" />
-                    New Project
+                    <Save className="h-4 w-4 mr-1" /> Save
+                  </Button>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="ghost"
+                    onClick={cancelNameEdit}
+                  >
+                    <X className="h-4 w-4" />
                   </Button>
                 </div>
-              </CardHeader>
-              
-              <CardContent>
-                {projectsLoading ? (
-                  <div className="text-center py-8">
-                    <p className="text-muted-foreground">Loading projects...</p>
-                  </div>
-                ) : projects.length === 0 ? (
-                  <div className="text-center py-8">
-                    <FolderOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                    <p className="text-muted-foreground mb-4">You don't have any projects created yet</p>
-                    <Button 
-                      onClick={() => navigate('/generator')}
-                      variant="outline"
-                      className="gap-2"
-                    >
-                      <Plus className="h-4 w-4" />
-                      Create my first project
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="grid gap-4">
-                    {projects.map((project) => (
-                      <Card 
-                        key={project.id} 
-                        className="cursor-pointer hover:shadow-md transition-shadow"
-                        onClick={() => navigate(`/projects/${project.id}`)}
-                      >
-                        <CardContent className="p-4">
-                          <div className="flex items-start justify-between">
-                            <div className="flex-1">
-                              <h3 className="font-semibold text-lg mb-2">{project.name}</h3>
-                              {project.description && (
-                                <p className="text-muted-foreground text-sm mb-3">{project.description}</p>
-                              )}
-                              <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                                <div className="flex items-center gap-1">
-                                  <Calendar className="h-3 w-3" />
-                                  {new Date(project.updated_at).toLocaleDateString()}
-                                </div>
-                                <div className="flex items-center gap-1">
-                                  <MessageSquare className="h-3 w-3" />
-                                  {project.generated_prompts?.[0]?.count || 0} prompts
-                                </div>
-                                <div className="px-2 py-1 bg-primary/10 text-primary rounded-full text-xs">
-                                  {project.selected_framework}
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="profile" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Profile Settings</CardTitle>
-                <CardDescription>
-                  Configure your personal information and OpenAI API key
-                </CardDescription>
-              </CardHeader>
-              
-              <CardContent>
-                <form onSubmit={updateProfile} className="space-y-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
-                    <Input
-                      id="email"
-                      value={user?.email || ""}
-                      disabled
-                      className="bg-muted"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="displayName">Display Name</Label>
-                    <Input
-                      id="displayName"
-                      value={displayName}
-                      onChange={(e) => setDisplayName(e.target.value)}
-                      placeholder="Your full name"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="openaiApiKey">
-                      OpenAI API Key
-                      <span className="text-sm text-muted-foreground ml-2">
-                        (Required to generate AI responses)
-                      </span>
-                    </Label>
-                    <div className="relative">
-                      <Input
-                        id="openaiApiKey"
-                        type={showApiKey ? "text" : "password"}
-                        value={openaiApiKey}
-                        onChange={(e) => setOpenaiApiKey(e.target.value)}
-                        placeholder="sk-..."
-                        className="pr-10"
-                      />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                        onClick={() => setShowApiKey(!showApiKey)}
-                      >
-                        {showApiKey ? (
-                          <EyeOff className="h-4 w-4" />
-                        ) : (
-                          <Eye className="h-4 w-4" />
-                        )}
-                      </Button>
-                    </div>
-                    <p className="text-xs text-muted-foreground">
-                      Get your API key at{" "}
-                      <a 
-                        href="https://platform.openai.com/api-keys" 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="text-primary hover:underline"
-                      >
-                        platform.openai.com/api-keys
-                      </a>
-                    </p>
-                  </div>
-
-                  <Button type="submit" disabled={loading} className="w-full">
-                    {loading ? "Saving..." : "Save Changes"}
+              ) : (
+                <div className="flex items-center gap-2">
+                  <h2 className="text-2xl font-bold">{profileName}</h2>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6 text-gray-500 hover:text-gray-700"
+                    onClick={handleNameEdit}
+                    title="Edit name"
+                  >
+                    <Edit2 className="h-3.5 w-3.5" />
                   </Button>
-                </form>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
-      </div>
+                </div>
+              )}
+              
+              <p className="text-muted-foreground">{user?.email}</p>
+            </div>
+          </div>
+        </CardHeader>
+      </Card>
+      
+      {/* Account Status Card */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle>Account Status</CardTitle>
+            <Badge className={`${userTypeInfo.className} flex items-center gap-1`}>
+              {userTypeInfo.icon}
+              {userTypeInfo.label}
+            </Badge>
+          </div>
+          <CardDescription>
+            {userTypeInfo.description}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {userType === 'registered_free' && (
+            <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+              <h4 className="font-medium text-blue-800 mb-2">Upgrade to Premium</h4>
+              <p className="text-sm text-blue-700 mb-3">
+                Get unlimited access to all features and priority support by upgrading to our Premium plan.
+              </p>
+              <Button variant="outline" size="sm" onClick={() => (window.location.href = '/pricing')}>
+                View Plans
+              </Button>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* API Settings Card */}
+      <Card>
+        <CardHeader>
+          <CardTitle>API Settings</CardTitle>
+          <CardDescription>
+            Manage your API keys and integration settings
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={updateProfile} className="space-y-4">
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="openai-api-key">OpenAI API Key</Label>
+                {userType === 'registered_premium' && (
+                  <Badge variant="outline" className="text-xs">
+                    Active
+                  </Badge>
+                )}
+              </div>
+              <div className="relative">
+                <Input
+                  id="openai-api-key"
+                  type={showApiKey ? "text" : "password"}
+                  value={openaiApiKey}
+                  onChange={(e) => setOpenaiApiKey(e.target.value)}
+                  placeholder="sk-..."
+                  className="pr-10 font-mono text-sm"
+                />
+                <button
+                  type="button"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  onClick={() => setShowApiKey(!showApiKey)}
+                  aria-label={showApiKey ? "Hide API key" : "Show API key"}
+                >
+                  {showApiKey ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Your API key is stored securely and only used for your requests.
+              </p>
+            </div>
+            
+            <div className="flex items-center gap-2 pt-2">
+              <Button type="submit" disabled={loading}>
+                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {loading ? "Saving..." : "Save Changes"}
+              </Button>
+              
+              {userType === 'registered_premium' && (
+                <Button 
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setOpenaiApiKey("");
+                    toast.info("API key cleared. Don't forget to save changes!");
+                  }}
+                >
+                  Clear Key
+                </Button>
+              )}
+            </div>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 };

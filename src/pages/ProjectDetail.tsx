@@ -47,7 +47,7 @@ const ProjectDetail = () => {
     } catch (error: any) {
       toast.error("Error loading project details");
       console.error(error);
-      navigate('/profile');
+      navigate('/projects');
     } finally {
       setLoading(false);
     }
@@ -68,7 +68,7 @@ const ProjectDetail = () => {
       if (error) throw error;
 
       toast.success("Project deleted successfully");
-      navigate('/profile');
+      navigate('/projects');
     } catch (error: any) {
       toast.error("Error deleting project");
       console.error(error);
@@ -94,9 +94,9 @@ const ProjectDetail = () => {
       <div className="container mx-auto py-8">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-2xl font-bold mb-4">Project not found</h1>
-          <Button onClick={() => navigate('/profile')}>
+          <Button onClick={() => navigate('/projects')}>
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to profile
+            Back to Project List
           </Button>
         </div>
       </div>
@@ -110,11 +110,11 @@ const ProjectDetail = () => {
         <div className="mb-8">
           <Button 
             variant="ghost" 
-            onClick={() => navigate('/profile')}
+            onClick={() => navigate('/projects')}
             className="mb-4"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to profile
+            Back to Project List
           </Button>
           
           <div className="flex items-start justify-between">

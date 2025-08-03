@@ -2,7 +2,9 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, Sparkles, Bot, MessageSquare, Palette, FileText, Zap } from "lucide-react";
+import { Check, Sparkles, Bot, MessageSquare, Palette, FileText, Zap, ArrowRight } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Info } from "lucide-react";
 
 export interface AIModel {
   id: string;
@@ -96,9 +98,10 @@ interface AIModelSelectorProps {
   selectedModel: string;
   onModelSelect: (modelId: string) => void;
   onContinue: () => void;
+  className?: string;
 }
 
-export const AIModelSelector = ({ selectedModel, onModelSelect, onContinue }: AIModelSelectorProps) => {
+export const AIModelSelector = ({ selectedModel, onModelSelect, onContinue, className = '' }: AIModelSelectorProps) => {
   const [selectedCategory, setSelectedCategory] = useState<"all" | "design" | "general" | "productivity">("all");
 
   const filteredModels = selectedCategory === "all" 
@@ -107,99 +110,122 @@ export const AIModelSelector = ({ selectedModel, onModelSelect, onContinue }: AI
 
   const selectedModelData = aiModels.find(model => model.id === selectedModel);
 
-  return (
-    <Card className="bg-gradient-card shadow-medium">
-      <CardHeader>
-        <CardTitle>Choose Your AI Tool</CardTitle>
-        <CardDescription>
-          Select the AI tool you'll use with this prompt to customize it accordingly
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        {/* Category Filter */}
-        <div className="flex gap-2">
-          {[
-            { id: "all", name: "All" },
-            { id: "design", name: "Design Tools" },
-            { id: "general", name: "General AI" },
-            { id: "productivity", name: "Productivity" }
-          ].map((category) => (
-            <Button
-              key={category.id}
-              variant={selectedCategory === category.id ? "default" : "outline"}
-              size="sm"
-              onClick={() => setSelectedCategory(category.id as "all" | "design" | "general" | "productivity")}
-            >
-              {category.name}
-            </Button>
-          ))}
-        </div>
+  // Group models by category
+  const modelsByCategory = filteredModels.reduce((acc, model) => {
+    if (!acc[model.category]) {
+      acc[model.category] = [];
+    }
+    acc[model.category].push(model);
+    return acc;
+  }, {} as Record<string, typeof aiModels>);
 
-        {/* AI Models Grid */}
-        <div className="grid gap-3 md:grid-cols-2">
-          {filteredModels.map((model) => (
-            <Card
-              key={model.id}
-              className={`cursor-pointer transition-all hover:shadow-md border-2 ${
-                selectedModel === model.id 
-                  ? "border-primary bg-primary/5" 
-                  : "border-border hover:border-primary/50"
-              }`}
-              onClick={() => onModelSelect(model.id)}
-            >
-              <CardContent className="p-4">
-                <div className="flex items-start gap-3">
-                  <div className="flex-shrink-0">
-                    <div className="p-2 rounded-lg bg-primary/10 text-primary">
-                      {model.icon}
-                    </div>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h3 className="font-semibold text-sm">{model.name}</h3>
-                      {selectedModel === model.id && (
-                        <Check className="h-4 w-4 text-primary" />
+  const categoryLabels = {
+    design: 'Design Tools',
+    productivity: 'Productivity',
+    general: 'General AI'
+  } as const;
+
+  return (
+    <div className={`space-y-6 ${className}`}>
+      <div className="space-y-2">
+        <h2 className="text-2xl font-bold">Select AI Model</h2>
+        <p className="text-muted-foreground">
+          Choose the AI model that best fits your needs. The prompt will be optimized for your selection.
+        </p>
+      </div>
+
+      {/* Category Filter */}
+      <div className="flex flex-wrap gap-2">
+        {[
+          { id: "all", name: "All" },
+          { id: "design", name: "Design Tools" },
+          { id: "general", name: "General AI" },
+          { id: "productivity", name: "Productivity" }
+        ].map((category) => (
+          <Button
+            key={category.id}
+            variant={selectedCategory === category.id ? "default" : "outline"}
+            size="sm"
+            onClick={() => setSelectedCategory(category.id as any)}
+          >
+            {category.name}
+          </Button>
+        ))}
+      </div>
+
+      {/* AI Models Grid */}
+      <div className="space-y-6">
+        {Object.entries(modelsByCategory).map(([category, models]) => (
+          <div key={category} className="space-y-3">
+            <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
+              {categoryLabels[category as keyof typeof categoryLabels] || category}
+            </h3>
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {models.map((model) => (
+                <Card 
+                  key={model.id}
+                  className={`cursor-pointer transition-all duration-200 ${
+                    selectedModel === model.id 
+                      ? 'ring-2 ring-primary bg-primary/5' 
+                      : 'hover:bg-accent/50 hover:shadow-md'
+                  }`}
+                  onClick={() => onModelSelect(model.id)}
+                >
+                  <CardHeader className="pb-3">
+                    <div className="flex items-start justify-between">
+                      <CardTitle className="text-base flex items-center gap-2">
+                        <span className="flex-shrink-0">{model.icon}</span>
+                        {model.name}
+                        {selectedModel === model.id && (
+                          <Badge variant="outline" className="ml-2">
+                            Selected
+                          </Badge>
+                        )}
+                      </CardTitle>
+                      {model.instructions && (
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Info className="h-4 w-4 text-muted-foreground hover:text-foreground transition-colors flex-shrink-0 mt-1" />
+                            </TooltipTrigger>
+                            <TooltipContent side="top" className="max-w-xs">
+                              <p className="text-sm">{model.instructions}</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
                       )}
                     </div>
-                    <p className="text-xs text-muted-foreground">{model.description}</p>
-                    <Badge variant="secondary" className="mt-2 text-xs">
-                      {model.category}
-                    </Badge>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        {/* Selected Model Details */}
-        {selectedModelData && (
-          <div className="bg-muted/30 p-4 rounded-lg">
-            <h4 className="font-semibold mb-2">Customization for {selectedModelData.name}</h4>
-            <p className="text-sm text-muted-foreground mb-3">
-              {selectedModelData.instructions}
-            </p>
-            {selectedModelData.promptPrefix && (
-              <div className="text-xs bg-background p-2 rounded border">
-                <strong>Prompt prefix:</strong> {selectedModelData.promptPrefix}
-              </div>
-            )}
+                    <CardDescription className="text-sm leading-relaxed">
+                      {model.description}
+                    </CardDescription>
+                  </CardHeader>
+                  {selectedModel === model.id && model.promptPrefix && (
+                    <CardContent className="pt-0">
+                      <div className="text-xs text-muted-foreground bg-accent/30 p-2 rounded-md">
+                        <p className="font-medium text-foreground mb-1">Prompt Format:</p>
+                        <p className="italic">"{model.promptPrefix}..."</p>
+                      </div>
+                    </CardContent>
+                  )}
+                </Card>
+              ))}
+            </div>
           </div>
-        )}
+        ))}
+      </div>
 
-        {/* Continue Button */}
-        <div className="flex justify-end pt-4">
-          <Button 
-            onClick={onContinue}
-            disabled={!selectedModel}
-            size="lg"
-            className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
-          >
-            <Sparkles className="mr-2 h-4 w-4" />
-            Use with {selectedModelData?.name || "Selected AI"}
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+      {/* Continue Button */}
+      <div className="flex justify-end pt-4">
+        <Button 
+          onClick={onContinue}
+          disabled={!selectedModel}
+          size="lg"
+          className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
+        >
+          <Sparkles className="mr-2 h-4 w-4" />
+          {selectedModelData ? `Use with ${selectedModelData.name}` : 'Continue'}
+        </Button>
+      </div>
+    </div>
   );
 };

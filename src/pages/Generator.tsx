@@ -2,9 +2,10 @@ import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Copy, RefreshCw, Save, Download, Sparkles, RotateCcw, Library } from "lucide-react";
+import { Copy, RefreshCw, Save, Download, Sparkles, RotateCcw, Library, Zap, Settings } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { ProjectContextStep, ProjectContext } from "@/components/generator/ProjectContextStep";
@@ -20,6 +21,7 @@ import { ProjectBasicInfoStep, ProjectBasicInfo } from "@/components/generator/P
 type Step = "project" | "basic-info" | "stage" | "framework" | "tool" | "context" | "result";
 
 import { supabase } from "@/integrations/supabase/client";
+import { post, put } from "@/utils/api";
 
 // Add this helper function to get framework-specific context
 const formatEnhancedPrompt = (prompt: any): string => {
@@ -100,6 +102,15 @@ const Generator = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [currentStep, setCurrentStep] = useState<Step>("project");
+
+  // Check for skipToProjectCreate in location state
+  useEffect(() => {
+    if (location.state?.skipToProjectCreate) {
+      setCurrentStep("project");
+      // Clear the state to prevent re-triggering on re-renders
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location, navigate]);
   const [currentProject, setCurrentProject] = useState<any>(null);
   const [projectContext, setProjectContext] = useState<ProjectContext | null>(null);
   const [projectStage, setProjectStage] = useState("");
@@ -112,6 +123,7 @@ const Generator = () => {
   const [isGeneratingAI, setIsGeneratingAI] = useState(false);
   const [isGeneratingPrompt, setIsGeneratingPrompt] = useState(false);
   const [basicInfo, setBasicInfo] = useState<ProjectBasicInfo | null>(null);
+  const [selectedAITool, setSelectedAITool] = useState<string>('chatgpt'); // Default to ChatGPT
 
   const copyToClipboard = () => {
     if (generatedPrompt) {
@@ -131,6 +143,7 @@ const Generator = () => {
     setGeneratedPrompt("");
     setAiResponse("");
     setBasicInfo(null);
+    setSelectedAITool('chatgpt'); // Reset to default on reset
   };
 
   const savePromptToProject = async () => {
@@ -155,20 +168,20 @@ const Generator = () => {
     try {
       const { error } = await supabase
         .from('generated_prompts')
-        .insert({
+        .insert([{
           user_id: user.id,
           project_id: currentProject.id,
-          project_context: JSON.stringify({
+          project_context: {
             ...(projectContext || {}),
             ...(basicInfo || {}),
             stage: projectStage,
-          }),
+          },
           selected_framework: selectedFramework,
           framework_stage: frameworkStage,
           selected_tool: selectedTool,
           original_prompt: generatedPrompt,
           ai_response: aiResponse,
-        });
+        }]);
 
       if (error) throw error;
 
@@ -199,6 +212,92 @@ const Generator = () => {
     });
   };
 
+  // AI Tool specific instructions mapping
+  const getAIToolInstructions = (aiToolId?: string) => {
+    if (!aiToolId) return '';
+    
+    const instructions: Record<string, {description: string; bestPractices: string[]}> = {
+      'chatgpt': {
+        description: 'ChatGPT is a versatile AI language model that excels at generating text-based responses, analyzing information, and providing detailed explanations.',
+        bestPractices: [
+          'Use clear, step-by-step instructions',
+          'Provide context before asking questions',
+          'Use markdown for formatting (headings, lists, code blocks)',
+          'Be specific about the desired output format',
+          'Include examples when possible'
+        ]
+      },
+      'miro': {
+        description: 'Miro is a visual collaboration platform that works well for brainstorming, diagramming, and organizing information spatially.',
+        bestPractices: [
+          'Define clear sections for different board areas',
+          'Specify visual elements (sticky notes, shapes, connectors)',
+          'Include color-coding suggestions',
+          'Consider board layout and organization',
+          'Mention any templates or frameworks to use'
+        ]
+      },
+      'figma': {
+        description: 'Figma is a collaborative interface design tool with powerful features for creating UI/UX designs and prototypes.',
+        bestPractices: [
+          'Specify frames, components, and constraints',
+          'Mention any design systems or UI kits to use',
+          'Include responsive design requirements',
+          'Specify interactive elements and states',
+          'Note any Figma plugins that should be utilized'
+        ]
+      },
+      'uxpilot': {
+        description: 'UX Pilot is a user research platform that helps with testing and gathering user feedback.',
+        bestPractices: [
+          'Define clear research objectives',
+          'Specify participant criteria',
+          'Outline test scenarios and tasks',
+          'Include data collection methods',
+          'Note any specific metrics to track'
+        ]
+      },
+      'mural': {
+        description: 'Mural is a digital workspace for visual collaboration, ideal for workshops and team activities.',
+        bestPractices: [
+          'Structure activities with clear timing',
+          'Specify templates or frameworks to use',
+          'Include instructions for voting and timer features',
+          'Define participant roles and permissions',
+          'Consider different collaboration modes (diverging/converging)'
+        ]
+      },
+      'notion': {
+        description: 'Notion is an all-in-one workspace for notes, tasks, wikis, and databases.',
+        bestPractices: [
+          'Define database properties and relations',
+          'Specify views (table, board, calendar, etc.)',
+          'Include template structures',
+          'Note any automations or formulas',
+          'Consider permission levels for different users'
+        ]
+      }
+    };
+    
+    const toolInfo = instructions[aiToolId] || {
+      description: 'A versatile tool for various tasks',
+      bestPractices: [
+        'Be clear about the desired outcome',
+        'Provide sufficient context',
+        'Specify any constraints or requirements',
+        'Include examples if helpful',
+        'Consider the tool\'s strengths and limitations'
+      ]
+    };
+    
+    return `## AI Tool Information
+**Tool:** ${aiToolId.charAt(0).toUpperCase() + aiToolId.slice(1)}
+**Description:** ${toolInfo.description}
+
+### Best Practices for This Tool:
+${toolInfo.bestPractices.map((item, i) => `- ${item}`).join('\n')}`;
+  };
+
   const generatePromptWithContext = async (tool: string, context: {
     projectContext: ProjectContext | null;
     projectStage: string | null;
@@ -206,8 +305,9 @@ const Generator = () => {
     frameworkStage: string | null;
     currentProject: any | null;
     basicInfo: any | null;
+    selectedAITool?: string;
   }) => {
-    const { projectContext, projectStage, selectedFramework, frameworkStage, currentProject, basicInfo } = context;
+    const { projectContext, projectStage, selectedFramework, frameworkStage, currentProject, basicInfo, selectedAITool } = context;
     
     const missingFields = [];
     if (!projectContext) missingFields.push("project context");
@@ -232,17 +332,53 @@ const Generator = () => {
     setAiResponse("");
   
     const frameworkContext = getFrameworkContext(selectedFramework, frameworkStage, tool);
+    const aiToolInstructions = getAIToolInstructions(selectedAITool);
+    
+    // Add AI tool context if available
+    const aiToolContext = selectedAITool ? `\n\n## 🛠️ AI Tool Configuration\n${aiToolInstructions}` : '';
 
-    const initialPrompt = `As an expert UX designer, generate a detailed and practical prompt for an AI assistant. The prompt should be based on the following context:\n\n**Project:** ${currentProject.name}\n**Description:** ${currentProject.description}\n**Product Type:** ${basicInfo.productType}\n**Industry:** ${basicInfo.industry}\n**Target Audience:** ${basicInfo.targetAudience}\n\n**Current UX Stage:** ${projectStage}\n**Framework:** ${selectedFramework}\n**Framework Stage:** ${frameworkStage}\n**Selected Tool/Method:** ${tool}\n\n**Framework Context:**\n${frameworkContext}\n\n**Document Content:**\n${projectContext.documentContent || 'No file provided.'}\n\nBased on this, generate a prompt that I can use to ask an AI to perform the following task: ${tool}. The prompt should be structured to elicit a comprehensive and actionable response from the AI, including specific examples and practical recommendations.`;
+    const initialPrompt = `# AI Prompt Generation Request
+
+## 📋 Project Overview
+**Project:** ${currentProject.name}\n**Description:** ${currentProject.description || 'No description provided.'}\n**Product Type:** ${basicInfo.productType || 'Not specified'}\n**Industry:** ${basicInfo.industry || 'Not specified'}\n**Target Audience:** ${basicInfo.targetAudience || 'Not specified'}
+
+## 🎯 UX Context
+**Current UX Stage:** ${projectStage}\n**Framework:** ${selectedFramework} (${frameworkStage} stage)\n**Selected Tool/Method:** ${tool}
+
+## 📚 Framework Context
+${frameworkContext}
+
+## 📄 Document Content
+${projectContext.documentContent || 'No additional context provided.'}${aiToolContext}
+
+## ✨ Prompt Generation Instructions
+Generate a detailed and effective prompt for the specified AI tool to help with the following task: **${tool}**.
+
+The generated prompt should:
+1. Be optimized for the selected AI tool's capabilities and limitations
+2. Include clear, step-by-step instructions
+3. Provide necessary context and background information
+4. Specify any requirements or constraints
+5. Define the desired output format and structure
+6. Include relevant examples or templates if helpful
+7. Follow best practices for the specific AI tool
+
+Make the prompt concise yet comprehensive enough to get high-quality results. The prompt should be immediately usable with the selected AI tool.`;
 
     try {
       const { data, error } = await supabase.functions.invoke('generate-enhanced-prompt', {
-        body: { prompt: initialPrompt },
+        body: {
+          prompt: initialPrompt,
+          aiTool: selectedAITool || 'chatgpt',
+          tool: tool,
+          framework: selectedFramework,
+          frameworkStage: frameworkStage
+        }
       });
 
-      if (error) throw new Error(error.message);
+      if (error) throw error;
       
-      const finalPrompt = data.enhancedPrompt;
+      const finalPrompt = data.enhancedPrompt || initialPrompt;
       const formattedPrompt = formatEnhancedPrompt(finalPrompt);
       setGeneratedPrompt(formattedPrompt);
       return finalPrompt;
@@ -272,22 +408,44 @@ const Generator = () => {
     setAiResponse("");
 
     try {
-      const newPrompt = generatedPrompt || await generatePrompt(selectedTool);
+      // Ensure we have a selected AI tool (default to chatgpt if not set)
+      const aiToolToUse = selectedAITool || 'chatgpt';
+      
+      // Pass the selected AI tool to generate the prompt
+      const newPrompt = generatedPrompt || await generatePromptWithContext(selectedTool, {
+        projectContext,
+        projectStage,
+        selectedFramework,
+        frameworkStage,
+        currentProject,
+        basicInfo,
+        selectedAITool: aiToolToUse
+      });
 
       if (!newPrompt) {
-        toast({ title: "Failed to generate prompt.", description: "Could not generate a prompt. Please check previous steps.", variant: "destructive" });
+        toast({ 
+          title: "Failed to generate prompt.", 
+          description: "Could not generate a prompt. Please check previous steps.", 
+          variant: "destructive" 
+        });
         setIsGeneratingAI(false);
         return;
       }
 
+      // Use Supabase function to generate AI response
       const { data, error } = await supabase.functions.invoke('generate-ai-response', {
         body: {
           prompt: newPrompt,
-          projectContext: { ...(projectContext || {}), ...(basicInfo || {}) },
+          projectContext: { 
+            ...(projectContext || {}), 
+            ...(basicInfo || {}),
+            selectedAITool: aiToolToUse
+          },
           selectedFramework,
           frameworkStage,
           selectedTool,
-          aiModel: 'gpt-4o-mini'
+          aiModel: aiToolToUse === 'chatgpt' ? 'gpt-4o-mini' : 'default-model',
+          aiTool: aiToolToUse
         }
       });
 
@@ -308,39 +466,100 @@ const Generator = () => {
   const handleProjectSelect = async (project: any) => {
     setCurrentProject(project);
     
-    // Always set basic info, even if some fields are empty
-    setBasicInfo({
-      productType: project.product_type || "",
-      industry: project.industry || "",
-      targetAudience: project.target_audience || ""
-    });
-    
-    const hasBasicInfo = project.product_type || project.industry || project.target_audience;
-    
-    // Set project context if available
-    const hasProjectContext = project.project_description || project.document_content;
-    if (hasProjectContext) {
-      setProjectContext({
-        projectDescription: project.project_description || "",
-        documentContent: project.document_content || ""
-      });
-    }
-    
-    // Set framework and stage if they exist
-    if (project.selected_framework && project.selected_framework !== "None") {
-      setSelectedFramework(project.selected_framework);
-      if (project.framework_stage) {
-        setFrameworkStage(project.framework_stage);
+    try {
+      // Try to get the most recent prompt for this project
+      const { data: prompts, error } = await supabase
+        .from('generated_prompts')
+        .select('*')
+        .eq('project_id', project.id)
+        .order('created_at', { ascending: false })
+        .limit(1);
+
+      let hasPreviousPrompt = false;
+      
+      if (!error && prompts && prompts.length > 0) {
+        const latestPrompt = prompts[0];
+        hasPreviousPrompt = true;
+        
+        // Set basic info from the latest prompt
+        const promptBasicInfo = {
+          productType: latestPrompt.industry || project.product_type || "",
+          industry: latestPrompt.industry || project.industry || "",
+          targetAudience: latestPrompt.target_audience || project.target_audience || ""
+        };
+        
+        setBasicInfo(promptBasicInfo);
+        
+        // Set project context from the latest prompt
+        if (latestPrompt.project_context) {
+          setProjectContext({
+            projectDescription: latestPrompt.project_context.projectDescription || "",
+            documentContent: latestPrompt.project_context.documentContent || ""
+          });
+        } else if (project.project_description || project.document_content) {
+          setProjectContext({
+            projectDescription: project.project_description || "",
+            documentContent: project.document_content || ""
+          });
+        }
+        
+        // Set framework and stage from the latest prompt
+        if (latestPrompt.selected_framework && latestPrompt.selected_framework !== "None") {
+          setSelectedFramework(latestPrompt.selected_framework);
+          if (latestPrompt.framework_stage) {
+            setFrameworkStage(latestPrompt.framework_stage);
+          }
+        } else if (project.selected_framework && project.selected_framework !== "None") {
+          setSelectedFramework(project.selected_framework);
+          if (project.framework_stage) {
+            setFrameworkStage(project.framework_stage);
+          }
+        }
+        
+        // Skip to the stage selection since we have all the info we need
+        setCurrentStep("stage");
+        return;
       }
-    }
-    
-    // Check if we should skip to the stage selection
-    // Either because the project has all required info or explicitly set via skipToStage flag
-    const shouldSkipToStage = (hasBasicInfo && hasProjectContext) || project.skipToStage === true;
-    
-    if (shouldSkipToStage) {
-      setCurrentStep("stage");
-    } else {
+      
+      // If no previous prompts found, use the project's basic info
+      const projectBasicInfo = {
+        productType: project.product_type || "",
+        industry: project.industry || "",
+        targetAudience: project.target_audience || ""
+      };
+      
+      setBasicInfo(projectBasicInfo);
+      
+      // Check if we have enough info to skip to stage
+      const hasBasicInfo = projectBasicInfo.productType || projectBasicInfo.industry || projectBasicInfo.targetAudience;
+      const hasProjectContext = project.project_description || project.document_content;
+      
+      if (hasBasicInfo && hasProjectContext) {
+        setProjectContext({
+          projectDescription: project.project_description || "",
+          documentContent: project.document_content || ""
+        });
+        
+        if (project.selected_framework && project.selected_framework !== "None") {
+          setSelectedFramework(project.selected_framework);
+          if (project.framework_stage) {
+            setFrameworkStage(project.framework_stage);
+          }
+        }
+        
+        setCurrentStep("stage");
+      } else {
+        setCurrentStep("basic-info");
+      }
+      
+    } catch (error) {
+      console.error("Error fetching project prompts:", error);
+      // Fall back to basic behavior if there's an error
+      setBasicInfo({
+        productType: project.product_type || "",
+        industry: project.industry || "",
+        targetAudience: project.target_audience || ""
+      });
       setCurrentStep("basic-info");
     }
   };
@@ -360,10 +579,13 @@ const Generator = () => {
         // since they might not exist in the database yet
         // These fields will be stored in local state until we can update the database schema
 
-        const { error } = await supabase
-          .from('projects')
-          .update(updateData)
-          .eq('id', currentProject.id);
+        // Use the project ID in the URL for the primary key filter
+        const { error } = await put(`/projects?id=eq.${currentProject.id}`, updateData, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+          }
+        });
         
         if (error) {
           console.warn("Could not update project:", error);
@@ -394,9 +616,18 @@ const Generator = () => {
     setCurrentStep("context");
   };
 
-  const handleContextComplete = async (context: ProjectContext) => {
+  const handleContextComplete = async (context: ProjectContext & { selectedAITool?: string }) => {
     // First update the context in state
-    setProjectContext(context);
+    const { selectedAITool, ...restContext } = context;
+    setProjectContext(restContext);
+    
+    // Store the selected AI tool separately if it exists
+    if (selectedAITool) {
+      setSelectedAITool(selectedAITool);
+    } else {
+      // Default to ChatGPT if no AI tool is selected
+      setSelectedAITool('chatgpt');
+    }
     
     // Update the project with the context (only if we have a project)
     if (currentProject) {
@@ -410,10 +641,13 @@ const Generator = () => {
         // since they might not exist in the database yet
         // These fields will be stored in local state until we can update the database schema
 
-        const { error } = await supabase
-          .from('projects')
-          .update(updateData)
-          .eq('id', currentProject.id);
+        // Use the project ID in the URL for the primary key filter
+        const { error } = await put(`/projects?id=eq.${currentProject.id}`, updateData, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+          }
+        });
         
         if (error) {
           console.warn("Could not update project:", error);
@@ -740,6 +974,24 @@ const Generator = () => {
     }
   }, [user, navigate, location.state]);
 
+  // State for active tab
+  const [activeFlow, setActiveFlow] = useState<'easy' | 'advanced'>('easy');
+
+  // Update the URL hash when the active flow changes
+  useEffect(() => {
+    window.location.hash = activeFlow;
+  }, [activeFlow]);
+
+  // Set the active flow based on URL hash on initial load
+  useEffect(() => {
+    const hash = window.location.hash.replace('#', '');
+    if (hash === 'advanced') {
+      setActiveFlow('advanced');
+    } else {
+      setActiveFlow('easy');
+    }
+  }, []);
+
   return (
     <div className="min-h-screen bg-gradient-subtle py-12">
       <LoadingPromptGeneration 
@@ -764,7 +1016,56 @@ const Generator = () => {
           <UsageLimitCard />
         </div>
 
-        {renderCurrentStep()}
+        <Tabs 
+          value={activeFlow} 
+          onValueChange={(value) => setActiveFlow(value as 'easy' | 'advanced')}
+          className="w-full"
+          defaultValue="easy"
+        >
+          <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto mb-8">
+            <TabsTrigger value="easy" className="flex items-center gap-2">
+              <Zap className="h-4 w-4" />
+              Easy Flow
+            </TabsTrigger>
+            <TabsTrigger value="advanced" className="flex items-center gap-2">
+              <Settings className="h-4 w-4" />
+              Advanced (B2B)
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="easy" className="mt-0">
+            {renderCurrentStep()}
+          </TabsContent>
+
+          <TabsContent value="advanced" className="mt-0">
+            <Card className="bg-muted/50">
+              <CardHeader>
+                <CardTitle>Advanced Generator (Coming Soon)</CardTitle>
+                <CardDescription>
+                  The advanced generator with B2B features is under development.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <p className="text-sm text-muted-foreground">
+                    This will include additional features for B2B use cases, such as:
+                  </p>
+                  <ul className="list-disc pl-5 space-y-2 text-sm text-muted-foreground">
+                    <li>Advanced framework customization</li>
+                    <li>Team collaboration features</li>
+                    <li>Enterprise integration options</li>
+                    <li>Custom template management</li>
+                  </ul>
+                  <div className="pt-4">
+                    <p className="text-sm text-muted-foreground mb-2">
+                      For now, please use the Easy Flow or check back later for updates.
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );

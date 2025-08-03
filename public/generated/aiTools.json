@@ -1,0 +1,5210 @@
+[
+  {
+    "name": "UX Pilot",
+    "description": "Suggests user stories and refines backlog items.",
+    "framework": "Agile UX",
+    "stage": "Backlog",
+    "uxTool": "User Stories"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Formats stories and roadmap narratives.",
+    "framework": "Agile UX",
+    "stage": "Backlog",
+    "uxTool": "User Stories"
+  },
+  {
+    "name": "Notion AI",
+    "description": "Creates and organizes planning documents.",
+    "framework": "Agile UX",
+    "stage": "Backlog",
+    "uxTool": "User Stories"
+  },
+  {
+    "name": "Miro AI",
+    "description": "Visualizes impact mapping.",
+    "framework": "Agile UX",
+    "stage": "Backlog",
+    "uxTool": "User Stories"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Suggests user stories and refines backlog items.",
+    "framework": "Agile UX",
+    "stage": "Backlog",
+    "uxTool": "Impact Maps"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Formats stories and roadmap narratives.",
+    "framework": "Agile UX",
+    "stage": "Backlog",
+    "uxTool": "Impact Maps"
+  },
+  {
+    "name": "Notion AI",
+    "description": "Creates and organizes planning documents.",
+    "framework": "Agile UX",
+    "stage": "Backlog",
+    "uxTool": "Impact Maps"
+  },
+  {
+    "name": "Miro AI",
+    "description": "Visualizes impact mapping.",
+    "framework": "Agile UX",
+    "stage": "Backlog",
+    "uxTool": "Impact Maps"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Suggests user stories and refines backlog items.",
+    "framework": "Agile UX",
+    "stage": "Backlog",
+    "uxTool": "Jira"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Formats stories and roadmap narratives.",
+    "framework": "Agile UX",
+    "stage": "Backlog",
+    "uxTool": "Jira"
+  },
+  {
+    "name": "Notion AI",
+    "description": "Creates and organizes planning documents.",
+    "framework": "Agile UX",
+    "stage": "Backlog",
+    "uxTool": "Jira"
+  },
+  {
+    "name": "Miro AI",
+    "description": "Visualizes impact mapping.",
+    "framework": "Agile UX",
+    "stage": "Backlog",
+    "uxTool": "Jira"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Suggests user stories and refines backlog items.",
+    "framework": "Agile UX",
+    "stage": "Backlog",
+    "uxTool": "Confluence"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Formats stories and roadmap narratives.",
+    "framework": "Agile UX",
+    "stage": "Backlog",
+    "uxTool": "Confluence"
+  },
+  {
+    "name": "Notion AI",
+    "description": "Creates and organizes planning documents.",
+    "framework": "Agile UX",
+    "stage": "Backlog",
+    "uxTool": "Confluence"
+  },
+  {
+    "name": "Miro AI",
+    "description": "Visualizes impact mapping.",
+    "framework": "Agile UX",
+    "stage": "Backlog",
+    "uxTool": "Confluence"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Suggests user stories and refines backlog items.",
+    "framework": "Agile UX",
+    "stage": "Backlog",
+    "uxTool": "Roadmaps"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Formats stories and roadmap narratives.",
+    "framework": "Agile UX",
+    "stage": "Backlog",
+    "uxTool": "Roadmaps"
+  },
+  {
+    "name": "Notion AI",
+    "description": "Creates and organizes planning documents.",
+    "framework": "Agile UX",
+    "stage": "Backlog",
+    "uxTool": "Roadmaps"
+  },
+  {
+    "name": "Miro AI",
+    "description": "Visualizes impact mapping.",
+    "framework": "Agile UX",
+    "stage": "Backlog",
+    "uxTool": "Roadmaps"
+  },
+  {
+    "name": "Figma Make",
+    "description": "Creates UI prototypes and flows.",
+    "framework": "Agile UX",
+    "stage": "Design",
+    "uxTool": "Sketch"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Uses design tokens and systems.",
+    "framework": "Agile UX",
+    "stage": "Design",
+    "uxTool": "Sketch"
+  },
+  {
+    "name": "Magician",
+    "description": "Applies layout suggestions.",
+    "framework": "Agile UX",
+    "stage": "Design",
+    "uxTool": "Sketch"
+  },
+  {
+    "name": "Uizard",
+    "description": "Turns sketches into interactive flows.",
+    "framework": "Agile UX",
+    "stage": "Design",
+    "uxTool": "Sketch"
+  },
+  {
+    "name": "Figma Make",
+    "description": "Creates UI prototypes and flows.",
+    "framework": "Agile UX",
+    "stage": "Design",
+    "uxTool": "Figma"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Uses design tokens and systems.",
+    "framework": "Agile UX",
+    "stage": "Design",
+    "uxTool": "Figma"
+  },
+  {
+    "name": "Magician",
+    "description": "Applies layout suggestions.",
+    "framework": "Agile UX",
+    "stage": "Design",
+    "uxTool": "Figma"
+  },
+  {
+    "name": "Uizard",
+    "description": "Turns sketches into interactive flows.",
+    "framework": "Agile UX",
+    "stage": "Design",
+    "uxTool": "Figma"
+  },
+  {
+    "name": "Figma Make",
+    "description": "Creates UI prototypes and flows.",
+    "framework": "Agile UX",
+    "stage": "Design",
+    "uxTool": "Design Systems"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Uses design tokens and systems.",
+    "framework": "Agile UX",
+    "stage": "Design",
+    "uxTool": "Design Systems"
+  },
+  {
+    "name": "Magician",
+    "description": "Applies layout suggestions.",
+    "framework": "Agile UX",
+    "stage": "Design",
+    "uxTool": "Design Systems"
+  },
+  {
+    "name": "Uizard",
+    "description": "Turns sketches into interactive flows.",
+    "framework": "Agile UX",
+    "stage": "Design",
+    "uxTool": "Design Systems"
+  },
+  {
+    "name": "Figma Make",
+    "description": "Creates UI prototypes and flows.",
+    "framework": "Agile UX",
+    "stage": "Design",
+    "uxTool": "Prototypes"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Uses design tokens and systems.",
+    "framework": "Agile UX",
+    "stage": "Design",
+    "uxTool": "Prototypes"
+  },
+  {
+    "name": "Magician",
+    "description": "Applies layout suggestions.",
+    "framework": "Agile UX",
+    "stage": "Design",
+    "uxTool": "Prototypes"
+  },
+  {
+    "name": "Uizard",
+    "description": "Turns sketches into interactive flows.",
+    "framework": "Agile UX",
+    "stage": "Design",
+    "uxTool": "Prototypes"
+  },
+  {
+    "name": "Figma Make",
+    "description": "Creates UI prototypes and flows.",
+    "framework": "Agile UX",
+    "stage": "Design",
+    "uxTool": "UX Pin"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Uses design tokens and systems.",
+    "framework": "Agile UX",
+    "stage": "Design",
+    "uxTool": "UX Pin"
+  },
+  {
+    "name": "Magician",
+    "description": "Applies layout suggestions.",
+    "framework": "Agile UX",
+    "stage": "Design",
+    "uxTool": "UX Pin"
+  },
+  {
+    "name": "Uizard",
+    "description": "Turns sketches into interactive flows.",
+    "framework": "Agile UX",
+    "stage": "Design",
+    "uxTool": "UX Pin"
+  },
+  {
+    "name": "Maze",
+    "description": "Analyzes A/B test data.",
+    "framework": "Agile UX",
+    "stage": "Test",
+    "uxTool": "TestRail"
+  },
+  {
+    "name": "PlaybookUX",
+    "description": "Aggregates usability feedback.",
+    "framework": "Agile UX",
+    "stage": "Test",
+    "uxTool": "TestRail"
+  },
+  {
+    "name": "Hotjar AI",
+    "description": "Identifies behavioral blockers.",
+    "framework": "Agile UX",
+    "stage": "Test",
+    "uxTool": "TestRail"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Generates test summaries.",
+    "framework": "Agile UX",
+    "stage": "Test",
+    "uxTool": "TestRail"
+  },
+  {
+    "name": "Maze",
+    "description": "Analyzes A/B test data.",
+    "framework": "Agile UX",
+    "stage": "Test",
+    "uxTool": "A/B Testing"
+  },
+  {
+    "name": "PlaybookUX",
+    "description": "Aggregates usability feedback.",
+    "framework": "Agile UX",
+    "stage": "Test",
+    "uxTool": "A/B Testing"
+  },
+  {
+    "name": "Hotjar AI",
+    "description": "Identifies behavioral blockers.",
+    "framework": "Agile UX",
+    "stage": "Test",
+    "uxTool": "A/B Testing"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Generates test summaries.",
+    "framework": "Agile UX",
+    "stage": "Test",
+    "uxTool": "A/B Testing"
+  },
+  {
+    "name": "Maze",
+    "description": "Analyzes A/B test data.",
+    "framework": "Agile UX",
+    "stage": "Test",
+    "uxTool": "Usability Feedback"
+  },
+  {
+    "name": "PlaybookUX",
+    "description": "Aggregates usability feedback.",
+    "framework": "Agile UX",
+    "stage": "Test",
+    "uxTool": "Usability Feedback"
+  },
+  {
+    "name": "Hotjar AI",
+    "description": "Identifies behavioral blockers.",
+    "framework": "Agile UX",
+    "stage": "Test",
+    "uxTool": "Usability Feedback"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Generates test summaries.",
+    "framework": "Agile UX",
+    "stage": "Test",
+    "uxTool": "Usability Feedback"
+  },
+  {
+    "name": "Maze",
+    "description": "Analyzes A/B test data.",
+    "framework": "Agile UX",
+    "stage": "Test",
+    "uxTool": "Surveys"
+  },
+  {
+    "name": "PlaybookUX",
+    "description": "Aggregates usability feedback.",
+    "framework": "Agile UX",
+    "stage": "Test",
+    "uxTool": "Surveys"
+  },
+  {
+    "name": "Hotjar AI",
+    "description": "Identifies behavioral blockers.",
+    "framework": "Agile UX",
+    "stage": "Test",
+    "uxTool": "Surveys"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Generates test summaries.",
+    "framework": "Agile UX",
+    "stage": "Test",
+    "uxTool": "Surveys"
+  },
+  {
+    "name": "Zeplin AI",
+    "description": "Generates developer-ready assets.",
+    "framework": "Agile UX",
+    "stage": "Release",
+    "uxTool": "GitHub Issues"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Annotates UI components for dev.",
+    "framework": "Agile UX",
+    "stage": "Release",
+    "uxTool": "GitHub Issues"
+  },
+  {
+    "name": "Stark",
+    "description": "Checks WCAG compliance.",
+    "framework": "Agile UX",
+    "stage": "Release",
+    "uxTool": "GitHub Issues"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Summarizes sprint results.",
+    "framework": "Agile UX",
+    "stage": "Release",
+    "uxTool": "GitHub Issues"
+  },
+  {
+    "name": "Zeplin AI",
+    "description": "Generates developer-ready assets.",
+    "framework": "Agile UX",
+    "stage": "Release",
+    "uxTool": "Dev Handoff"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Annotates UI components for dev.",
+    "framework": "Agile UX",
+    "stage": "Release",
+    "uxTool": "Dev Handoff"
+  },
+  {
+    "name": "Stark",
+    "description": "Checks WCAG compliance.",
+    "framework": "Agile UX",
+    "stage": "Release",
+    "uxTool": "Dev Handoff"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Summarizes sprint results.",
+    "framework": "Agile UX",
+    "stage": "Release",
+    "uxTool": "Dev Handoff"
+  },
+  {
+    "name": "Zeplin AI",
+    "description": "Generates developer-ready assets.",
+    "framework": "Agile UX",
+    "stage": "Release",
+    "uxTool": "QA Sheets"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Annotates UI components for dev.",
+    "framework": "Agile UX",
+    "stage": "Release",
+    "uxTool": "QA Sheets"
+  },
+  {
+    "name": "Stark",
+    "description": "Checks WCAG compliance.",
+    "framework": "Agile UX",
+    "stage": "Release",
+    "uxTool": "QA Sheets"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Summarizes sprint results.",
+    "framework": "Agile UX",
+    "stage": "Release",
+    "uxTool": "QA Sheets"
+  },
+  {
+    "name": "Otter.ai",
+    "description": "Transcribes and summarizes interviews using NLP.",
+    "framework": "Design Thinking",
+    "stage": "Empathize",
+    "uxTool": "Interviews"
+  },
+  {
+    "name": "Dovetail",
+    "description": "Clusters qualitative data and detects themes.",
+    "framework": "Design Thinking",
+    "stage": "Empathize",
+    "uxTool": "Interviews"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Synthesizes empathy maps and identifies pain points.",
+    "framework": "Design Thinking",
+    "stage": "Empathize",
+    "uxTool": "Interviews"
+  },
+  {
+    "name": "MonkeyLearn",
+    "description": "Performs sentiment analysis on textual data.",
+    "framework": "Design Thinking",
+    "stage": "Empathize",
+    "uxTool": "Interviews"
+  },
+  {
+    "name": "Otter.ai",
+    "description": "Transcribes and summarizes interviews using NLP.",
+    "framework": "Design Thinking",
+    "stage": "Empathize",
+    "uxTool": "Contextual Inquiry"
+  },
+  {
+    "name": "Dovetail",
+    "description": "Clusters qualitative data and detects themes.",
+    "framework": "Design Thinking",
+    "stage": "Empathize",
+    "uxTool": "Contextual Inquiry"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Synthesizes empathy maps and identifies pain points.",
+    "framework": "Design Thinking",
+    "stage": "Empathize",
+    "uxTool": "Contextual Inquiry"
+  },
+  {
+    "name": "MonkeyLearn",
+    "description": "Performs sentiment analysis on textual data.",
+    "framework": "Design Thinking",
+    "stage": "Empathize",
+    "uxTool": "Contextual Inquiry"
+  },
+  {
+    "name": "Otter.ai",
+    "description": "Transcribes and summarizes interviews using NLP.",
+    "framework": "Design Thinking",
+    "stage": "Empathize",
+    "uxTool": "Diary Studies"
+  },
+  {
+    "name": "Dovetail",
+    "description": "Clusters qualitative data and detects themes.",
+    "framework": "Design Thinking",
+    "stage": "Empathize",
+    "uxTool": "Diary Studies"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Synthesizes empathy maps and identifies pain points.",
+    "framework": "Design Thinking",
+    "stage": "Empathize",
+    "uxTool": "Diary Studies"
+  },
+  {
+    "name": "MonkeyLearn",
+    "description": "Performs sentiment analysis on textual data.",
+    "framework": "Design Thinking",
+    "stage": "Empathize",
+    "uxTool": "Diary Studies"
+  },
+  {
+    "name": "Otter.ai",
+    "description": "Transcribes and summarizes interviews using NLP.",
+    "framework": "Design Thinking",
+    "stage": "Empathize",
+    "uxTool": "Empathy Maps"
+  },
+  {
+    "name": "Dovetail",
+    "description": "Clusters qualitative data and detects themes.",
+    "framework": "Design Thinking",
+    "stage": "Empathize",
+    "uxTool": "Empathy Maps"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Synthesizes empathy maps and identifies pain points.",
+    "framework": "Design Thinking",
+    "stage": "Empathize",
+    "uxTool": "Empathy Maps"
+  },
+  {
+    "name": "MonkeyLearn",
+    "description": "Performs sentiment analysis on textual data.",
+    "framework": "Design Thinking",
+    "stage": "Empathize",
+    "uxTool": "Empathy Maps"
+  },
+  {
+    "name": "Otter.ai",
+    "description": "Transcribes and summarizes interviews using NLP.",
+    "framework": "Design Thinking",
+    "stage": "Empathize",
+    "uxTool": "Field Studies"
+  },
+  {
+    "name": "Dovetail",
+    "description": "Clusters qualitative data and detects themes.",
+    "framework": "Design Thinking",
+    "stage": "Empathize",
+    "uxTool": "Field Studies"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Synthesizes empathy maps and identifies pain points.",
+    "framework": "Design Thinking",
+    "stage": "Empathize",
+    "uxTool": "Field Studies"
+  },
+  {
+    "name": "MonkeyLearn",
+    "description": "Performs sentiment analysis on textual data.",
+    "framework": "Design Thinking",
+    "stage": "Empathize",
+    "uxTool": "Field Studies"
+  },
+  {
+    "name": "Otter.ai",
+    "description": "Transcribes and summarizes interviews using NLP.",
+    "framework": "Design Thinking",
+    "stage": "Empathize",
+    "uxTool": "Stakeholder Maps"
+  },
+  {
+    "name": "Dovetail",
+    "description": "Clusters qualitative data and detects themes.",
+    "framework": "Design Thinking",
+    "stage": "Empathize",
+    "uxTool": "Stakeholder Maps"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Synthesizes empathy maps and identifies pain points.",
+    "framework": "Design Thinking",
+    "stage": "Empathize",
+    "uxTool": "Stakeholder Maps"
+  },
+  {
+    "name": "MonkeyLearn",
+    "description": "Performs sentiment analysis on textual data.",
+    "framework": "Design Thinking",
+    "stage": "Empathize",
+    "uxTool": "Stakeholder Maps"
+  },
+  {
+    "name": "Miro AI",
+    "description": "Clusters sticky notes into affinity groups.",
+    "framework": "Design Thinking",
+    "stage": "Define",
+    "uxTool": "Affinity Diagrams"
+  },
+  {
+    "name": "FigJam AI",
+    "description": "Generates Point-of-View and Problem Statements.",
+    "framework": "Design Thinking",
+    "stage": "Define",
+    "uxTool": "Affinity Diagrams"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Synthesizes user needs into personas.",
+    "framework": "Design Thinking",
+    "stage": "Define",
+    "uxTool": "Affinity Diagrams"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Helps write HMW questions and generate user problem narratives.",
+    "framework": "Design Thinking",
+    "stage": "Define",
+    "uxTool": "Affinity Diagrams"
+  },
+  {
+    "name": "Miro AI",
+    "description": "Clusters sticky notes into affinity groups.",
+    "framework": "Design Thinking",
+    "stage": "Define",
+    "uxTool": "Point-of-View Statements"
+  },
+  {
+    "name": "FigJam AI",
+    "description": "Generates Point-of-View and Problem Statements.",
+    "framework": "Design Thinking",
+    "stage": "Define",
+    "uxTool": "Point-of-View Statements"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Synthesizes user needs into personas.",
+    "framework": "Design Thinking",
+    "stage": "Define",
+    "uxTool": "Point-of-View Statements"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Helps write HMW questions and generate user problem narratives.",
+    "framework": "Design Thinking",
+    "stage": "Define",
+    "uxTool": "Point-of-View Statements"
+  },
+  {
+    "name": "Miro AI",
+    "description": "Clusters sticky notes into affinity groups.",
+    "framework": "Design Thinking",
+    "stage": "Define",
+    "uxTool": "Problem Statements"
+  },
+  {
+    "name": "FigJam AI",
+    "description": "Generates Point-of-View and Problem Statements.",
+    "framework": "Design Thinking",
+    "stage": "Define",
+    "uxTool": "Problem Statements"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Synthesizes user needs into personas.",
+    "framework": "Design Thinking",
+    "stage": "Define",
+    "uxTool": "Problem Statements"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Helps write HMW questions and generate user problem narratives.",
+    "framework": "Design Thinking",
+    "stage": "Define",
+    "uxTool": "Problem Statements"
+  },
+  {
+    "name": "Miro AI",
+    "description": "Clusters sticky notes into affinity groups.",
+    "framework": "Design Thinking",
+    "stage": "Define",
+    "uxTool": "Journey Maps"
+  },
+  {
+    "name": "FigJam AI",
+    "description": "Generates Point-of-View and Problem Statements.",
+    "framework": "Design Thinking",
+    "stage": "Define",
+    "uxTool": "Journey Maps"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Synthesizes user needs into personas.",
+    "framework": "Design Thinking",
+    "stage": "Define",
+    "uxTool": "Journey Maps"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Helps write HMW questions and generate user problem narratives.",
+    "framework": "Design Thinking",
+    "stage": "Define",
+    "uxTool": "Journey Maps"
+  },
+  {
+    "name": "Miro AI",
+    "description": "Clusters sticky notes into affinity groups.",
+    "framework": "Design Thinking",
+    "stage": "Define",
+    "uxTool": "\"How Might We\" questions"
+  },
+  {
+    "name": "FigJam AI",
+    "description": "Generates Point-of-View and Problem Statements.",
+    "framework": "Design Thinking",
+    "stage": "Define",
+    "uxTool": "\"How Might We\" questions"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Synthesizes user needs into personas.",
+    "framework": "Design Thinking",
+    "stage": "Define",
+    "uxTool": "\"How Might We\" questions"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Helps write HMW questions and generate user problem narratives.",
+    "framework": "Design Thinking",
+    "stage": "Define",
+    "uxTool": "\"How Might We\" questions"
+  },
+  {
+    "name": "Whimsical AI",
+    "description": "Assists with mind mapping and idea generation.",
+    "framework": "Design Thinking",
+    "stage": "Ideate",
+    "uxTool": "Brainstorming"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Facilitates SCAMPER ideation and Crazy 8s idea expansion.",
+    "framework": "Design Thinking",
+    "stage": "Ideate",
+    "uxTool": "Brainstorming"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Clusters ideas and suggests opportunity areas.",
+    "framework": "Design Thinking",
+    "stage": "Ideate",
+    "uxTool": "Brainstorming"
+  },
+  {
+    "name": "Ideanote",
+    "description": "Evaluates and ranks concepts.",
+    "framework": "Design Thinking",
+    "stage": "Ideate",
+    "uxTool": "Brainstorming"
+  },
+  {
+    "name": "Whimsical AI",
+    "description": "Assists with mind mapping and idea generation.",
+    "framework": "Design Thinking",
+    "stage": "Ideate",
+    "uxTool": "SCAMPER"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Facilitates SCAMPER ideation and Crazy 8s idea expansion.",
+    "framework": "Design Thinking",
+    "stage": "Ideate",
+    "uxTool": "SCAMPER"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Clusters ideas and suggests opportunity areas.",
+    "framework": "Design Thinking",
+    "stage": "Ideate",
+    "uxTool": "SCAMPER"
+  },
+  {
+    "name": "Ideanote",
+    "description": "Evaluates and ranks concepts.",
+    "framework": "Design Thinking",
+    "stage": "Ideate",
+    "uxTool": "SCAMPER"
+  },
+  {
+    "name": "Whimsical AI",
+    "description": "Assists with mind mapping and idea generation.",
+    "framework": "Design Thinking",
+    "stage": "Ideate",
+    "uxTool": "Mind Mapping"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Facilitates SCAMPER ideation and Crazy 8s idea expansion.",
+    "framework": "Design Thinking",
+    "stage": "Ideate",
+    "uxTool": "Mind Mapping"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Clusters ideas and suggests opportunity areas.",
+    "framework": "Design Thinking",
+    "stage": "Ideate",
+    "uxTool": "Mind Mapping"
+  },
+  {
+    "name": "Ideanote",
+    "description": "Evaluates and ranks concepts.",
+    "framework": "Design Thinking",
+    "stage": "Ideate",
+    "uxTool": "Mind Mapping"
+  },
+  {
+    "name": "Whimsical AI",
+    "description": "Assists with mind mapping and idea generation.",
+    "framework": "Design Thinking",
+    "stage": "Ideate",
+    "uxTool": "Crazy 8s"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Facilitates SCAMPER ideation and Crazy 8s idea expansion.",
+    "framework": "Design Thinking",
+    "stage": "Ideate",
+    "uxTool": "Crazy 8s"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Clusters ideas and suggests opportunity areas.",
+    "framework": "Design Thinking",
+    "stage": "Ideate",
+    "uxTool": "Crazy 8s"
+  },
+  {
+    "name": "Ideanote",
+    "description": "Evaluates and ranks concepts.",
+    "framework": "Design Thinking",
+    "stage": "Ideate",
+    "uxTool": "Crazy 8s"
+  },
+  {
+    "name": "Whimsical AI",
+    "description": "Assists with mind mapping and idea generation.",
+    "framework": "Design Thinking",
+    "stage": "Ideate",
+    "uxTool": "Storyboards"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Facilitates SCAMPER ideation and Crazy 8s idea expansion.",
+    "framework": "Design Thinking",
+    "stage": "Ideate",
+    "uxTool": "Storyboards"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Clusters ideas and suggests opportunity areas.",
+    "framework": "Design Thinking",
+    "stage": "Ideate",
+    "uxTool": "Storyboards"
+  },
+  {
+    "name": "Ideanote",
+    "description": "Evaluates and ranks concepts.",
+    "framework": "Design Thinking",
+    "stage": "Ideate",
+    "uxTool": "Storyboards"
+  },
+  {
+    "name": "Whimsical AI",
+    "description": "Assists with mind mapping and idea generation.",
+    "framework": "Design Thinking",
+    "stage": "Ideate",
+    "uxTool": "Concept Cards"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Facilitates SCAMPER ideation and Crazy 8s idea expansion.",
+    "framework": "Design Thinking",
+    "stage": "Ideate",
+    "uxTool": "Concept Cards"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Clusters ideas and suggests opportunity areas.",
+    "framework": "Design Thinking",
+    "stage": "Ideate",
+    "uxTool": "Concept Cards"
+  },
+  {
+    "name": "Ideanote",
+    "description": "Evaluates and ranks concepts.",
+    "framework": "Design Thinking",
+    "stage": "Ideate",
+    "uxTool": "Concept Cards"
+  },
+  {
+    "name": "Figma Make",
+    "description": "Generates wireframes and screens based on prompts.",
+    "framework": "Design Thinking",
+    "stage": "Prototype",
+    "uxTool": "Paper Sketches"
+  },
+  {
+    "name": "Uizard",
+    "description": "Transforms text descriptions into interactive prototypes.",
+    "framework": "Design Thinking",
+    "stage": "Prototype",
+    "uxTool": "Paper Sketches"
+  },
+  {
+    "name": "Magician for Figma",
+    "description": "Suggests design completions inside Figma.",
+    "framework": "Design Thinking",
+    "stage": "Prototype",
+    "uxTool": "Paper Sketches"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Recommends reusable components from design systems.",
+    "framework": "Design Thinking",
+    "stage": "Prototype",
+    "uxTool": "Paper Sketches"
+  },
+  {
+    "name": "Figma Make",
+    "description": "Generates wireframes and screens based on prompts.",
+    "framework": "Design Thinking",
+    "stage": "Prototype",
+    "uxTool": "Figma"
+  },
+  {
+    "name": "Uizard",
+    "description": "Transforms text descriptions into interactive prototypes.",
+    "framework": "Design Thinking",
+    "stage": "Prototype",
+    "uxTool": "Figma"
+  },
+  {
+    "name": "Magician for Figma",
+    "description": "Suggests design completions inside Figma.",
+    "framework": "Design Thinking",
+    "stage": "Prototype",
+    "uxTool": "Figma"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Recommends reusable components from design systems.",
+    "framework": "Design Thinking",
+    "stage": "Prototype",
+    "uxTool": "Figma"
+  },
+  {
+    "name": "Figma Make",
+    "description": "Generates wireframes and screens based on prompts.",
+    "framework": "Design Thinking",
+    "stage": "Prototype",
+    "uxTool": "Balsamiq"
+  },
+  {
+    "name": "Uizard",
+    "description": "Transforms text descriptions into interactive prototypes.",
+    "framework": "Design Thinking",
+    "stage": "Prototype",
+    "uxTool": "Balsamiq"
+  },
+  {
+    "name": "Magician for Figma",
+    "description": "Suggests design completions inside Figma.",
+    "framework": "Design Thinking",
+    "stage": "Prototype",
+    "uxTool": "Balsamiq"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Recommends reusable components from design systems.",
+    "framework": "Design Thinking",
+    "stage": "Prototype",
+    "uxTool": "Balsamiq"
+  },
+  {
+    "name": "Figma Make",
+    "description": "Generates wireframes and screens based on prompts.",
+    "framework": "Design Thinking",
+    "stage": "Prototype",
+    "uxTool": "Axure"
+  },
+  {
+    "name": "Uizard",
+    "description": "Transforms text descriptions into interactive prototypes.",
+    "framework": "Design Thinking",
+    "stage": "Prototype",
+    "uxTool": "Axure"
+  },
+  {
+    "name": "Magician for Figma",
+    "description": "Suggests design completions inside Figma.",
+    "framework": "Design Thinking",
+    "stage": "Prototype",
+    "uxTool": "Axure"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Recommends reusable components from design systems.",
+    "framework": "Design Thinking",
+    "stage": "Prototype",
+    "uxTool": "Axure"
+  },
+  {
+    "name": "Figma Make",
+    "description": "Generates wireframes and screens based on prompts.",
+    "framework": "Design Thinking",
+    "stage": "Prototype",
+    "uxTool": "Adobe XD"
+  },
+  {
+    "name": "Uizard",
+    "description": "Transforms text descriptions into interactive prototypes.",
+    "framework": "Design Thinking",
+    "stage": "Prototype",
+    "uxTool": "Adobe XD"
+  },
+  {
+    "name": "Magician for Figma",
+    "description": "Suggests design completions inside Figma.",
+    "framework": "Design Thinking",
+    "stage": "Prototype",
+    "uxTool": "Adobe XD"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Recommends reusable components from design systems.",
+    "framework": "Design Thinking",
+    "stage": "Prototype",
+    "uxTool": "Adobe XD"
+  },
+  {
+    "name": "Figma Make",
+    "description": "Generates wireframes and screens based on prompts.",
+    "framework": "Design Thinking",
+    "stage": "Prototype",
+    "uxTool": "Design Systems"
+  },
+  {
+    "name": "Uizard",
+    "description": "Transforms text descriptions into interactive prototypes.",
+    "framework": "Design Thinking",
+    "stage": "Prototype",
+    "uxTool": "Design Systems"
+  },
+  {
+    "name": "Magician for Figma",
+    "description": "Suggests design completions inside Figma.",
+    "framework": "Design Thinking",
+    "stage": "Prototype",
+    "uxTool": "Design Systems"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Recommends reusable components from design systems.",
+    "framework": "Design Thinking",
+    "stage": "Prototype",
+    "uxTool": "Design Systems"
+  },
+  {
+    "name": "Figma Make",
+    "description": "Generates wireframes and screens based on prompts.",
+    "framework": "Design Thinking",
+    "stage": "Prototype",
+    "uxTool": "Component Libraries"
+  },
+  {
+    "name": "Uizard",
+    "description": "Transforms text descriptions into interactive prototypes.",
+    "framework": "Design Thinking",
+    "stage": "Prototype",
+    "uxTool": "Component Libraries"
+  },
+  {
+    "name": "Magician for Figma",
+    "description": "Suggests design completions inside Figma.",
+    "framework": "Design Thinking",
+    "stage": "Prototype",
+    "uxTool": "Component Libraries"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Recommends reusable components from design systems.",
+    "framework": "Design Thinking",
+    "stage": "Prototype",
+    "uxTool": "Component Libraries"
+  },
+  {
+    "name": "PlaybookUX",
+    "description": "Analyzes usability testing sessions and flags issues.",
+    "framework": "Design Thinking",
+    "stage": "Test",
+    "uxTool": "Usability Testing"
+  },
+  {
+    "name": "Hotjar AI",
+    "description": "Clusters feedback and detects pain points from heatmaps.",
+    "framework": "Design Thinking",
+    "stage": "Test",
+    "uxTool": "Usability Testing"
+  },
+  {
+    "name": "Maze",
+    "description": "Summarizes A/B test performance and usability metrics.",
+    "framework": "Design Thinking",
+    "stage": "Test",
+    "uxTool": "Usability Testing"
+  },
+  {
+    "name": "Lookback AI",
+    "description": "Highlights critical user behavior in remote tests.",
+    "framework": "Design Thinking",
+    "stage": "Test",
+    "uxTool": "Usability Testing"
+  },
+  {
+    "name": "PlaybookUX",
+    "description": "Analyzes usability testing sessions and flags issues.",
+    "framework": "Design Thinking",
+    "stage": "Test",
+    "uxTool": "A/B Testing"
+  },
+  {
+    "name": "Hotjar AI",
+    "description": "Clusters feedback and detects pain points from heatmaps.",
+    "framework": "Design Thinking",
+    "stage": "Test",
+    "uxTool": "A/B Testing"
+  },
+  {
+    "name": "Maze",
+    "description": "Summarizes A/B test performance and usability metrics.",
+    "framework": "Design Thinking",
+    "stage": "Test",
+    "uxTool": "A/B Testing"
+  },
+  {
+    "name": "Lookback AI",
+    "description": "Highlights critical user behavior in remote tests.",
+    "framework": "Design Thinking",
+    "stage": "Test",
+    "uxTool": "A/B Testing"
+  },
+  {
+    "name": "PlaybookUX",
+    "description": "Analyzes usability testing sessions and flags issues.",
+    "framework": "Design Thinking",
+    "stage": "Test",
+    "uxTool": "Think-Aloud Protocols"
+  },
+  {
+    "name": "Hotjar AI",
+    "description": "Clusters feedback and detects pain points from heatmaps.",
+    "framework": "Design Thinking",
+    "stage": "Test",
+    "uxTool": "Think-Aloud Protocols"
+  },
+  {
+    "name": "Maze",
+    "description": "Summarizes A/B test performance and usability metrics.",
+    "framework": "Design Thinking",
+    "stage": "Test",
+    "uxTool": "Think-Aloud Protocols"
+  },
+  {
+    "name": "Lookback AI",
+    "description": "Highlights critical user behavior in remote tests.",
+    "framework": "Design Thinking",
+    "stage": "Test",
+    "uxTool": "Think-Aloud Protocols"
+  },
+  {
+    "name": "PlaybookUX",
+    "description": "Analyzes usability testing sessions and flags issues.",
+    "framework": "Design Thinking",
+    "stage": "Test",
+    "uxTool": "Remote Testing"
+  },
+  {
+    "name": "Hotjar AI",
+    "description": "Clusters feedback and detects pain points from heatmaps.",
+    "framework": "Design Thinking",
+    "stage": "Test",
+    "uxTool": "Remote Testing"
+  },
+  {
+    "name": "Maze",
+    "description": "Summarizes A/B test performance and usability metrics.",
+    "framework": "Design Thinking",
+    "stage": "Test",
+    "uxTool": "Remote Testing"
+  },
+  {
+    "name": "Lookback AI",
+    "description": "Highlights critical user behavior in remote tests.",
+    "framework": "Design Thinking",
+    "stage": "Test",
+    "uxTool": "Remote Testing"
+  },
+  {
+    "name": "PlaybookUX",
+    "description": "Analyzes usability testing sessions and flags issues.",
+    "framework": "Design Thinking",
+    "stage": "Test",
+    "uxTool": "Feedback Surveys"
+  },
+  {
+    "name": "Hotjar AI",
+    "description": "Clusters feedback and detects pain points from heatmaps.",
+    "framework": "Design Thinking",
+    "stage": "Test",
+    "uxTool": "Feedback Surveys"
+  },
+  {
+    "name": "Maze",
+    "description": "Summarizes A/B test performance and usability metrics.",
+    "framework": "Design Thinking",
+    "stage": "Test",
+    "uxTool": "Feedback Surveys"
+  },
+  {
+    "name": "Lookback AI",
+    "description": "Highlights critical user behavior in remote tests.",
+    "framework": "Design Thinking",
+    "stage": "Test",
+    "uxTool": "Feedback Surveys"
+  },
+  {
+    "name": "PlaybookUX",
+    "description": "Analyzes usability testing sessions and flags issues.",
+    "framework": "Design Thinking",
+    "stage": "Test",
+    "uxTool": "Heatmaps"
+  },
+  {
+    "name": "Hotjar AI",
+    "description": "Clusters feedback and detects pain points from heatmaps.",
+    "framework": "Design Thinking",
+    "stage": "Test",
+    "uxTool": "Heatmaps"
+  },
+  {
+    "name": "Maze",
+    "description": "Summarizes A/B test performance and usability metrics.",
+    "framework": "Design Thinking",
+    "stage": "Test",
+    "uxTool": "Heatmaps"
+  },
+  {
+    "name": "Lookback AI",
+    "description": "Highlights critical user behavior in remote tests.",
+    "framework": "Design Thinking",
+    "stage": "Test",
+    "uxTool": "Heatmaps"
+  },
+  {
+    "name": "Zeplin AI",
+    "description": "Generates developer notes and annotations.",
+    "framework": "Design Thinking",
+    "stage": "Implement",
+    "uxTool": "Design Handoff Tools"
+  },
+  {
+    "name": "Stark",
+    "description": "Flags WCAG accessibility violations in designs.",
+    "framework": "Design Thinking",
+    "stage": "Implement",
+    "uxTool": "Design Handoff Tools"
+  },
+  {
+    "name": "Figma Dev Mode",
+    "description": "Provides implementation-ready specs.",
+    "framework": "Design Thinking",
+    "stage": "Implement",
+    "uxTool": "Design Handoff Tools"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Validates visual and accessibility QA.",
+    "framework": "Design Thinking",
+    "stage": "Implement",
+    "uxTool": "Design Handoff Tools"
+  },
+  {
+    "name": "Zeplin AI",
+    "description": "Generates developer notes and annotations.",
+    "framework": "Design Thinking",
+    "stage": "Implement",
+    "uxTool": "QA Sheets"
+  },
+  {
+    "name": "Stark",
+    "description": "Flags WCAG accessibility violations in designs.",
+    "framework": "Design Thinking",
+    "stage": "Implement",
+    "uxTool": "QA Sheets"
+  },
+  {
+    "name": "Figma Dev Mode",
+    "description": "Provides implementation-ready specs.",
+    "framework": "Design Thinking",
+    "stage": "Implement",
+    "uxTool": "QA Sheets"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Validates visual and accessibility QA.",
+    "framework": "Design Thinking",
+    "stage": "Implement",
+    "uxTool": "QA Sheets"
+  },
+  {
+    "name": "Zeplin AI",
+    "description": "Generates developer notes and annotations.",
+    "framework": "Design Thinking",
+    "stage": "Implement",
+    "uxTool": "Dev Documentation"
+  },
+  {
+    "name": "Stark",
+    "description": "Flags WCAG accessibility violations in designs.",
+    "framework": "Design Thinking",
+    "stage": "Implement",
+    "uxTool": "Dev Documentation"
+  },
+  {
+    "name": "Figma Dev Mode",
+    "description": "Provides implementation-ready specs.",
+    "framework": "Design Thinking",
+    "stage": "Implement",
+    "uxTool": "Dev Documentation"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Validates visual and accessibility QA.",
+    "framework": "Design Thinking",
+    "stage": "Implement",
+    "uxTool": "Dev Documentation"
+  },
+  {
+    "name": "Zeplin AI",
+    "description": "Generates developer notes and annotations.",
+    "framework": "Design Thinking",
+    "stage": "Implement",
+    "uxTool": "Accessibility Scanners"
+  },
+  {
+    "name": "Stark",
+    "description": "Flags WCAG accessibility violations in designs.",
+    "framework": "Design Thinking",
+    "stage": "Implement",
+    "uxTool": "Accessibility Scanners"
+  },
+  {
+    "name": "Figma Dev Mode",
+    "description": "Provides implementation-ready specs.",
+    "framework": "Design Thinking",
+    "stage": "Implement",
+    "uxTool": "Accessibility Scanners"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Validates visual and accessibility QA.",
+    "framework": "Design Thinking",
+    "stage": "Implement",
+    "uxTool": "Accessibility Scanners"
+  },
+  {
+    "name": "Dovetail",
+    "description": "Clusters qualitative insights.",
+    "framework": "Double Diamond",
+    "stage": "Discover",
+    "uxTool": "Stakeholder Interviews"
+  },
+  {
+    "name": "MonkeyLearn",
+    "description": "Sentiment analysis and trend synthesis.",
+    "framework": "Double Diamond",
+    "stage": "Discover",
+    "uxTool": "Stakeholder Interviews"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Synthesizes interview themes and insights.",
+    "framework": "Double Diamond",
+    "stage": "Discover",
+    "uxTool": "Stakeholder Interviews"
+  },
+  {
+    "name": "Crimson Hexagon",
+    "description": "Analyzes market trends and patterns.",
+    "framework": "Double Diamond",
+    "stage": "Discover",
+    "uxTool": "Stakeholder Interviews"
+  },
+  {
+    "name": "Dovetail",
+    "description": "Clusters qualitative insights.",
+    "framework": "Double Diamond",
+    "stage": "Discover",
+    "uxTool": "Contextual Inquiry"
+  },
+  {
+    "name": "MonkeyLearn",
+    "description": "Sentiment analysis and trend synthesis.",
+    "framework": "Double Diamond",
+    "stage": "Discover",
+    "uxTool": "Contextual Inquiry"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Synthesizes interview themes and insights.",
+    "framework": "Double Diamond",
+    "stage": "Discover",
+    "uxTool": "Contextual Inquiry"
+  },
+  {
+    "name": "Crimson Hexagon",
+    "description": "Analyzes market trends and patterns.",
+    "framework": "Double Diamond",
+    "stage": "Discover",
+    "uxTool": "Contextual Inquiry"
+  },
+  {
+    "name": "Dovetail",
+    "description": "Clusters qualitative insights.",
+    "framework": "Double Diamond",
+    "stage": "Discover",
+    "uxTool": "Field Studies"
+  },
+  {
+    "name": "MonkeyLearn",
+    "description": "Sentiment analysis and trend synthesis.",
+    "framework": "Double Diamond",
+    "stage": "Discover",
+    "uxTool": "Field Studies"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Synthesizes interview themes and insights.",
+    "framework": "Double Diamond",
+    "stage": "Discover",
+    "uxTool": "Field Studies"
+  },
+  {
+    "name": "Crimson Hexagon",
+    "description": "Analyzes market trends and patterns.",
+    "framework": "Double Diamond",
+    "stage": "Discover",
+    "uxTool": "Field Studies"
+  },
+  {
+    "name": "Dovetail",
+    "description": "Clusters qualitative insights.",
+    "framework": "Double Diamond",
+    "stage": "Discover",
+    "uxTool": "Surveys"
+  },
+  {
+    "name": "MonkeyLearn",
+    "description": "Sentiment analysis and trend synthesis.",
+    "framework": "Double Diamond",
+    "stage": "Discover",
+    "uxTool": "Surveys"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Synthesizes interview themes and insights.",
+    "framework": "Double Diamond",
+    "stage": "Discover",
+    "uxTool": "Surveys"
+  },
+  {
+    "name": "Crimson Hexagon",
+    "description": "Analyzes market trends and patterns.",
+    "framework": "Double Diamond",
+    "stage": "Discover",
+    "uxTool": "Surveys"
+  },
+  {
+    "name": "Dovetail",
+    "description": "Clusters qualitative insights.",
+    "framework": "Double Diamond",
+    "stage": "Discover",
+    "uxTool": "Competitive Analysis"
+  },
+  {
+    "name": "MonkeyLearn",
+    "description": "Sentiment analysis and trend synthesis.",
+    "framework": "Double Diamond",
+    "stage": "Discover",
+    "uxTool": "Competitive Analysis"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Synthesizes interview themes and insights.",
+    "framework": "Double Diamond",
+    "stage": "Discover",
+    "uxTool": "Competitive Analysis"
+  },
+  {
+    "name": "Crimson Hexagon",
+    "description": "Analyzes market trends and patterns.",
+    "framework": "Double Diamond",
+    "stage": "Discover",
+    "uxTool": "Competitive Analysis"
+  },
+  {
+    "name": "Dovetail",
+    "description": "Clusters qualitative insights.",
+    "framework": "Double Diamond",
+    "stage": "Discover",
+    "uxTool": "Ethnographic Research"
+  },
+  {
+    "name": "MonkeyLearn",
+    "description": "Sentiment analysis and trend synthesis.",
+    "framework": "Double Diamond",
+    "stage": "Discover",
+    "uxTool": "Ethnographic Research"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Synthesizes interview themes and insights.",
+    "framework": "Double Diamond",
+    "stage": "Discover",
+    "uxTool": "Ethnographic Research"
+  },
+  {
+    "name": "Crimson Hexagon",
+    "description": "Analyzes market trends and patterns.",
+    "framework": "Double Diamond",
+    "stage": "Discover",
+    "uxTool": "Ethnographic Research"
+  },
+  {
+    "name": "Miro AI",
+    "description": "Affinity grouping and journey flow clustering.",
+    "framework": "Double Diamond",
+    "stage": "Define",
+    "uxTool": "Affinity Mapping"
+  },
+  {
+    "name": "FigJam AI",
+    "description": "Persona generation and pattern recognition.",
+    "framework": "Double Diamond",
+    "stage": "Define",
+    "uxTool": "Affinity Mapping"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Need-gap analysis and statement refinement.",
+    "framework": "Double Diamond",
+    "stage": "Define",
+    "uxTool": "Affinity Mapping"
+  },
+  {
+    "name": "Notion AI",
+    "description": "Helps articulate problem statements.",
+    "framework": "Double Diamond",
+    "stage": "Define",
+    "uxTool": "Affinity Mapping"
+  },
+  {
+    "name": "Miro AI",
+    "description": "Affinity grouping and journey flow clustering.",
+    "framework": "Double Diamond",
+    "stage": "Define",
+    "uxTool": "Journey Mapping"
+  },
+  {
+    "name": "FigJam AI",
+    "description": "Persona generation and pattern recognition.",
+    "framework": "Double Diamond",
+    "stage": "Define",
+    "uxTool": "Journey Mapping"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Need-gap analysis and statement refinement.",
+    "framework": "Double Diamond",
+    "stage": "Define",
+    "uxTool": "Journey Mapping"
+  },
+  {
+    "name": "Notion AI",
+    "description": "Helps articulate problem statements.",
+    "framework": "Double Diamond",
+    "stage": "Define",
+    "uxTool": "Journey Mapping"
+  },
+  {
+    "name": "Miro AI",
+    "description": "Affinity grouping and journey flow clustering.",
+    "framework": "Double Diamond",
+    "stage": "Define",
+    "uxTool": "Persona Creation"
+  },
+  {
+    "name": "FigJam AI",
+    "description": "Persona generation and pattern recognition.",
+    "framework": "Double Diamond",
+    "stage": "Define",
+    "uxTool": "Persona Creation"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Need-gap analysis and statement refinement.",
+    "framework": "Double Diamond",
+    "stage": "Define",
+    "uxTool": "Persona Creation"
+  },
+  {
+    "name": "Notion AI",
+    "description": "Helps articulate problem statements.",
+    "framework": "Double Diamond",
+    "stage": "Define",
+    "uxTool": "Persona Creation"
+  },
+  {
+    "name": "Miro AI",
+    "description": "Affinity grouping and journey flow clustering.",
+    "framework": "Double Diamond",
+    "stage": "Define",
+    "uxTool": "UX Audit"
+  },
+  {
+    "name": "FigJam AI",
+    "description": "Persona generation and pattern recognition.",
+    "framework": "Double Diamond",
+    "stage": "Define",
+    "uxTool": "UX Audit"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Need-gap analysis and statement refinement.",
+    "framework": "Double Diamond",
+    "stage": "Define",
+    "uxTool": "UX Audit"
+  },
+  {
+    "name": "Notion AI",
+    "description": "Helps articulate problem statements.",
+    "framework": "Double Diamond",
+    "stage": "Define",
+    "uxTool": "UX Audit"
+  },
+  {
+    "name": "Miro AI",
+    "description": "Affinity grouping and journey flow clustering.",
+    "framework": "Double Diamond",
+    "stage": "Define",
+    "uxTool": "Problem Statements"
+  },
+  {
+    "name": "FigJam AI",
+    "description": "Persona generation and pattern recognition.",
+    "framework": "Double Diamond",
+    "stage": "Define",
+    "uxTool": "Problem Statements"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Need-gap analysis and statement refinement.",
+    "framework": "Double Diamond",
+    "stage": "Define",
+    "uxTool": "Problem Statements"
+  },
+  {
+    "name": "Notion AI",
+    "description": "Helps articulate problem statements.",
+    "framework": "Double Diamond",
+    "stage": "Define",
+    "uxTool": "Problem Statements"
+  },
+  {
+    "name": "Figma Make",
+    "description": "Creates wireflows and screens.",
+    "framework": "Double Diamond",
+    "stage": "Develop",
+    "uxTool": "Sketching"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Organizes IA and card sorting logic.",
+    "framework": "Double Diamond",
+    "stage": "Develop",
+    "uxTool": "Sketching"
+  },
+  {
+    "name": "Uizard",
+    "description": "Generates UI layouts from content.",
+    "framework": "Double Diamond",
+    "stage": "Develop",
+    "uxTool": "Sketching"
+  },
+  {
+    "name": "Magician",
+    "description": "Suggests layout explorations.",
+    "framework": "Double Diamond",
+    "stage": "Develop",
+    "uxTool": "Sketching"
+  },
+  {
+    "name": "Figma Make",
+    "description": "Creates wireflows and screens.",
+    "framework": "Double Diamond",
+    "stage": "Develop",
+    "uxTool": "Figma"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Organizes IA and card sorting logic.",
+    "framework": "Double Diamond",
+    "stage": "Develop",
+    "uxTool": "Figma"
+  },
+  {
+    "name": "Uizard",
+    "description": "Generates UI layouts from content.",
+    "framework": "Double Diamond",
+    "stage": "Develop",
+    "uxTool": "Figma"
+  },
+  {
+    "name": "Magician",
+    "description": "Suggests layout explorations.",
+    "framework": "Double Diamond",
+    "stage": "Develop",
+    "uxTool": "Figma"
+  },
+  {
+    "name": "Figma Make",
+    "description": "Creates wireflows and screens.",
+    "framework": "Double Diamond",
+    "stage": "Develop",
+    "uxTool": "Balsamiq"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Organizes IA and card sorting logic.",
+    "framework": "Double Diamond",
+    "stage": "Develop",
+    "uxTool": "Balsamiq"
+  },
+  {
+    "name": "Uizard",
+    "description": "Generates UI layouts from content.",
+    "framework": "Double Diamond",
+    "stage": "Develop",
+    "uxTool": "Balsamiq"
+  },
+  {
+    "name": "Magician",
+    "description": "Suggests layout explorations.",
+    "framework": "Double Diamond",
+    "stage": "Develop",
+    "uxTool": "Balsamiq"
+  },
+  {
+    "name": "Figma Make",
+    "description": "Creates wireflows and screens.",
+    "framework": "Double Diamond",
+    "stage": "Develop",
+    "uxTool": "IA Cards"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Organizes IA and card sorting logic.",
+    "framework": "Double Diamond",
+    "stage": "Develop",
+    "uxTool": "IA Cards"
+  },
+  {
+    "name": "Uizard",
+    "description": "Generates UI layouts from content.",
+    "framework": "Double Diamond",
+    "stage": "Develop",
+    "uxTool": "IA Cards"
+  },
+  {
+    "name": "Magician",
+    "description": "Suggests layout explorations.",
+    "framework": "Double Diamond",
+    "stage": "Develop",
+    "uxTool": "IA Cards"
+  },
+  {
+    "name": "Figma Make",
+    "description": "Creates wireflows and screens.",
+    "framework": "Double Diamond",
+    "stage": "Develop",
+    "uxTool": "Wireflows"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Organizes IA and card sorting logic.",
+    "framework": "Double Diamond",
+    "stage": "Develop",
+    "uxTool": "Wireflows"
+  },
+  {
+    "name": "Uizard",
+    "description": "Generates UI layouts from content.",
+    "framework": "Double Diamond",
+    "stage": "Develop",
+    "uxTool": "Wireflows"
+  },
+  {
+    "name": "Magician",
+    "description": "Suggests layout explorations.",
+    "framework": "Double Diamond",
+    "stage": "Develop",
+    "uxTool": "Wireflows"
+  },
+  {
+    "name": "Figma Make",
+    "description": "Creates wireflows and screens.",
+    "framework": "Double Diamond",
+    "stage": "Develop",
+    "uxTool": "Card Sorting"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Organizes IA and card sorting logic.",
+    "framework": "Double Diamond",
+    "stage": "Develop",
+    "uxTool": "Card Sorting"
+  },
+  {
+    "name": "Uizard",
+    "description": "Generates UI layouts from content.",
+    "framework": "Double Diamond",
+    "stage": "Develop",
+    "uxTool": "Card Sorting"
+  },
+  {
+    "name": "Magician",
+    "description": "Suggests layout explorations.",
+    "framework": "Double Diamond",
+    "stage": "Develop",
+    "uxTool": "Card Sorting"
+  },
+  {
+    "name": "Figma Make",
+    "description": "Creates wireflows and screens.",
+    "framework": "Double Diamond",
+    "stage": "Develop",
+    "uxTool": "Content Maps"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Organizes IA and card sorting logic.",
+    "framework": "Double Diamond",
+    "stage": "Develop",
+    "uxTool": "Content Maps"
+  },
+  {
+    "name": "Uizard",
+    "description": "Generates UI layouts from content.",
+    "framework": "Double Diamond",
+    "stage": "Develop",
+    "uxTool": "Content Maps"
+  },
+  {
+    "name": "Magician",
+    "description": "Suggests layout explorations.",
+    "framework": "Double Diamond",
+    "stage": "Develop",
+    "uxTool": "Content Maps"
+  },
+  {
+    "name": "Hotjar AI",
+    "description": "Clustering feedback loops.",
+    "framework": "Double Diamond",
+    "stage": "Deliver",
+    "uxTool": "Usability Testing"
+  },
+  {
+    "name": "Maze",
+    "description": "Reports usability outcomes.",
+    "framework": "Double Diamond",
+    "stage": "Deliver",
+    "uxTool": "Usability Testing"
+  },
+  {
+    "name": "Zeplin AI",
+    "description": "Handoff automation.",
+    "framework": "Double Diamond",
+    "stage": "Deliver",
+    "uxTool": "Usability Testing"
+  },
+  {
+    "name": "Stark",
+    "description": "Checks accessibility compliance.",
+    "framework": "Double Diamond",
+    "stage": "Deliver",
+    "uxTool": "Usability Testing"
+  },
+  {
+    "name": "Hotjar AI",
+    "description": "Clustering feedback loops.",
+    "framework": "Double Diamond",
+    "stage": "Deliver",
+    "uxTool": "Handoff Tools"
+  },
+  {
+    "name": "Maze",
+    "description": "Reports usability outcomes.",
+    "framework": "Double Diamond",
+    "stage": "Deliver",
+    "uxTool": "Handoff Tools"
+  },
+  {
+    "name": "Zeplin AI",
+    "description": "Handoff automation.",
+    "framework": "Double Diamond",
+    "stage": "Deliver",
+    "uxTool": "Handoff Tools"
+  },
+  {
+    "name": "Stark",
+    "description": "Checks accessibility compliance.",
+    "framework": "Double Diamond",
+    "stage": "Deliver",
+    "uxTool": "Handoff Tools"
+  },
+  {
+    "name": "Hotjar AI",
+    "description": "Clustering feedback loops.",
+    "framework": "Double Diamond",
+    "stage": "Deliver",
+    "uxTool": "QA Testing"
+  },
+  {
+    "name": "Maze",
+    "description": "Reports usability outcomes.",
+    "framework": "Double Diamond",
+    "stage": "Deliver",
+    "uxTool": "QA Testing"
+  },
+  {
+    "name": "Zeplin AI",
+    "description": "Handoff automation.",
+    "framework": "Double Diamond",
+    "stage": "Deliver",
+    "uxTool": "QA Testing"
+  },
+  {
+    "name": "Stark",
+    "description": "Checks accessibility compliance.",
+    "framework": "Double Diamond",
+    "stage": "Deliver",
+    "uxTool": "QA Testing"
+  },
+  {
+    "name": "Hotjar AI",
+    "description": "Clustering feedback loops.",
+    "framework": "Double Diamond",
+    "stage": "Deliver",
+    "uxTool": "Feedback Loops"
+  },
+  {
+    "name": "Maze",
+    "description": "Reports usability outcomes.",
+    "framework": "Double Diamond",
+    "stage": "Deliver",
+    "uxTool": "Feedback Loops"
+  },
+  {
+    "name": "Zeplin AI",
+    "description": "Handoff automation.",
+    "framework": "Double Diamond",
+    "stage": "Deliver",
+    "uxTool": "Feedback Loops"
+  },
+  {
+    "name": "Stark",
+    "description": "Checks accessibility compliance.",
+    "framework": "Double Diamond",
+    "stage": "Deliver",
+    "uxTool": "Feedback Loops"
+  },
+  {
+    "name": "Hotjar AI",
+    "description": "Clustering feedback loops.",
+    "framework": "Double Diamond",
+    "stage": "Deliver",
+    "uxTool": "Accessibility Testing"
+  },
+  {
+    "name": "Maze",
+    "description": "Reports usability outcomes.",
+    "framework": "Double Diamond",
+    "stage": "Deliver",
+    "uxTool": "Accessibility Testing"
+  },
+  {
+    "name": "Zeplin AI",
+    "description": "Handoff automation.",
+    "framework": "Double Diamond",
+    "stage": "Deliver",
+    "uxTool": "Accessibility Testing"
+  },
+  {
+    "name": "Stark",
+    "description": "Checks accessibility compliance.",
+    "framework": "Double Diamond",
+    "stage": "Deliver",
+    "uxTool": "Accessibility Testing"
+  },
+  {
+    "name": "Otter.ai",
+    "description": "Summarizes expert interviews and talks.",
+    "framework": "Google Design Sprint",
+    "stage": "Understand",
+    "uxTool": "Expert Interviews"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Extracts goals and journey stages.",
+    "framework": "Google Design Sprint",
+    "stage": "Understand",
+    "uxTool": "Expert Interviews"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Suggests HMW questions from input.",
+    "framework": "Google Design Sprint",
+    "stage": "Understand",
+    "uxTool": "Expert Interviews"
+  },
+  {
+    "name": "Miro AI",
+    "description": "Visualizes goals and sprint tasks.",
+    "framework": "Google Design Sprint",
+    "stage": "Understand",
+    "uxTool": "Expert Interviews"
+  },
+  {
+    "name": "Otter.ai",
+    "description": "Summarizes expert interviews and talks.",
+    "framework": "Google Design Sprint",
+    "stage": "Understand",
+    "uxTool": "Lightning Talks"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Extracts goals and journey stages.",
+    "framework": "Google Design Sprint",
+    "stage": "Understand",
+    "uxTool": "Lightning Talks"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Suggests HMW questions from input.",
+    "framework": "Google Design Sprint",
+    "stage": "Understand",
+    "uxTool": "Lightning Talks"
+  },
+  {
+    "name": "Miro AI",
+    "description": "Visualizes goals and sprint tasks.",
+    "framework": "Google Design Sprint",
+    "stage": "Understand",
+    "uxTool": "Lightning Talks"
+  },
+  {
+    "name": "Otter.ai",
+    "description": "Summarizes expert interviews and talks.",
+    "framework": "Google Design Sprint",
+    "stage": "Understand",
+    "uxTool": "User Journey Mapping"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Extracts goals and journey stages.",
+    "framework": "Google Design Sprint",
+    "stage": "Understand",
+    "uxTool": "User Journey Mapping"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Suggests HMW questions from input.",
+    "framework": "Google Design Sprint",
+    "stage": "Understand",
+    "uxTool": "User Journey Mapping"
+  },
+  {
+    "name": "Miro AI",
+    "description": "Visualizes goals and sprint tasks.",
+    "framework": "Google Design Sprint",
+    "stage": "Understand",
+    "uxTool": "User Journey Mapping"
+  },
+  {
+    "name": "Otter.ai",
+    "description": "Summarizes expert interviews and talks.",
+    "framework": "Google Design Sprint",
+    "stage": "Understand",
+    "uxTool": "Sprint Goals Canvas"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Extracts goals and journey stages.",
+    "framework": "Google Design Sprint",
+    "stage": "Understand",
+    "uxTool": "Sprint Goals Canvas"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Suggests HMW questions from input.",
+    "framework": "Google Design Sprint",
+    "stage": "Understand",
+    "uxTool": "Sprint Goals Canvas"
+  },
+  {
+    "name": "Miro AI",
+    "description": "Visualizes goals and sprint tasks.",
+    "framework": "Google Design Sprint",
+    "stage": "Understand",
+    "uxTool": "Sprint Goals Canvas"
+  },
+  {
+    "name": "Otter.ai",
+    "description": "Summarizes expert interviews and talks.",
+    "framework": "Google Design Sprint",
+    "stage": "Understand",
+    "uxTool": "HMW Notes"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Extracts goals and journey stages.",
+    "framework": "Google Design Sprint",
+    "stage": "Understand",
+    "uxTool": "HMW Notes"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Suggests HMW questions from input.",
+    "framework": "Google Design Sprint",
+    "stage": "Understand",
+    "uxTool": "HMW Notes"
+  },
+  {
+    "name": "Miro AI",
+    "description": "Visualizes goals and sprint tasks.",
+    "framework": "Google Design Sprint",
+    "stage": "Understand",
+    "uxTool": "HMW Notes"
+  },
+  {
+    "name": "Whimsical AI",
+    "description": "Generates and clusters mind maps.",
+    "framework": "Google Design Sprint",
+    "stage": "Ideate",
+    "uxTool": "Mind Maps"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Suggests concept clusters.",
+    "framework": "Google Design Sprint",
+    "stage": "Ideate",
+    "uxTool": "Mind Maps"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Generates ideas using SCAMPER.",
+    "framework": "Google Design Sprint",
+    "stage": "Ideate",
+    "uxTool": "Mind Maps"
+  },
+  {
+    "name": "Miro AI",
+    "description": "Sketching assistance and variation generation.",
+    "framework": "Google Design Sprint",
+    "stage": "Ideate",
+    "uxTool": "Mind Maps"
+  },
+  {
+    "name": "Whimsical AI",
+    "description": "Generates and clusters mind maps.",
+    "framework": "Google Design Sprint",
+    "stage": "Ideate",
+    "uxTool": "Lightning Demos"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Suggests concept clusters.",
+    "framework": "Google Design Sprint",
+    "stage": "Ideate",
+    "uxTool": "Lightning Demos"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Generates ideas using SCAMPER.",
+    "framework": "Google Design Sprint",
+    "stage": "Ideate",
+    "uxTool": "Lightning Demos"
+  },
+  {
+    "name": "Miro AI",
+    "description": "Sketching assistance and variation generation.",
+    "framework": "Google Design Sprint",
+    "stage": "Ideate",
+    "uxTool": "Lightning Demos"
+  },
+  {
+    "name": "Whimsical AI",
+    "description": "Generates and clusters mind maps.",
+    "framework": "Google Design Sprint",
+    "stage": "Ideate",
+    "uxTool": "Sketching"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Suggests concept clusters.",
+    "framework": "Google Design Sprint",
+    "stage": "Ideate",
+    "uxTool": "Sketching"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Generates ideas using SCAMPER.",
+    "framework": "Google Design Sprint",
+    "stage": "Ideate",
+    "uxTool": "Sketching"
+  },
+  {
+    "name": "Miro AI",
+    "description": "Sketching assistance and variation generation.",
+    "framework": "Google Design Sprint",
+    "stage": "Ideate",
+    "uxTool": "Sketching"
+  },
+  {
+    "name": "Whimsical AI",
+    "description": "Generates and clusters mind maps.",
+    "framework": "Google Design Sprint",
+    "stage": "Ideate",
+    "uxTool": "SCAMPER"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Suggests concept clusters.",
+    "framework": "Google Design Sprint",
+    "stage": "Ideate",
+    "uxTool": "SCAMPER"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Generates ideas using SCAMPER.",
+    "framework": "Google Design Sprint",
+    "stage": "Ideate",
+    "uxTool": "SCAMPER"
+  },
+  {
+    "name": "Miro AI",
+    "description": "Sketching assistance and variation generation.",
+    "framework": "Google Design Sprint",
+    "stage": "Ideate",
+    "uxTool": "SCAMPER"
+  },
+  {
+    "name": "Miro AI",
+    "description": "Visualizes prioritization matrices.",
+    "framework": "Google Design Sprint",
+    "stage": "Decide",
+    "uxTool": "Dot Voting"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Ranks and clusters ideas.",
+    "framework": "Google Design Sprint",
+    "stage": "Decide",
+    "uxTool": "Dot Voting"
+  },
+  {
+    "name": "FigJam AI",
+    "description": "Generates storyboard outlines.",
+    "framework": "Google Design Sprint",
+    "stage": "Decide",
+    "uxTool": "Dot Voting"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Suggests effort/impact analysis.",
+    "framework": "Google Design Sprint",
+    "stage": "Decide",
+    "uxTool": "Dot Voting"
+  },
+  {
+    "name": "Miro AI",
+    "description": "Visualizes prioritization matrices.",
+    "framework": "Google Design Sprint",
+    "stage": "Decide",
+    "uxTool": "Heat Maps"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Ranks and clusters ideas.",
+    "framework": "Google Design Sprint",
+    "stage": "Decide",
+    "uxTool": "Heat Maps"
+  },
+  {
+    "name": "FigJam AI",
+    "description": "Generates storyboard outlines.",
+    "framework": "Google Design Sprint",
+    "stage": "Decide",
+    "uxTool": "Heat Maps"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Suggests effort/impact analysis.",
+    "framework": "Google Design Sprint",
+    "stage": "Decide",
+    "uxTool": "Heat Maps"
+  },
+  {
+    "name": "Miro AI",
+    "description": "Visualizes prioritization matrices.",
+    "framework": "Google Design Sprint",
+    "stage": "Decide",
+    "uxTool": "Storyboarding"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Ranks and clusters ideas.",
+    "framework": "Google Design Sprint",
+    "stage": "Decide",
+    "uxTool": "Storyboarding"
+  },
+  {
+    "name": "FigJam AI",
+    "description": "Generates storyboard outlines.",
+    "framework": "Google Design Sprint",
+    "stage": "Decide",
+    "uxTool": "Storyboarding"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Suggests effort/impact analysis.",
+    "framework": "Google Design Sprint",
+    "stage": "Decide",
+    "uxTool": "Storyboarding"
+  },
+  {
+    "name": "Miro AI",
+    "description": "Visualizes prioritization matrices.",
+    "framework": "Google Design Sprint",
+    "stage": "Decide",
+    "uxTool": "Prioritization Matrix"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Ranks and clusters ideas.",
+    "framework": "Google Design Sprint",
+    "stage": "Decide",
+    "uxTool": "Prioritization Matrix"
+  },
+  {
+    "name": "FigJam AI",
+    "description": "Generates storyboard outlines.",
+    "framework": "Google Design Sprint",
+    "stage": "Decide",
+    "uxTool": "Prioritization Matrix"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Suggests effort/impact analysis.",
+    "framework": "Google Design Sprint",
+    "stage": "Decide",
+    "uxTool": "Prioritization Matrix"
+  },
+  {
+    "name": "Figma Make",
+    "description": "Creates UI prototypes.",
+    "framework": "Google Design Sprint",
+    "stage": "Prototype",
+    "uxTool": "Figma"
+  },
+  {
+    "name": "Uizard",
+    "description": "Transforms flows into interactive mockups.",
+    "framework": "Google Design Sprint",
+    "stage": "Prototype",
+    "uxTool": "Figma"
+  },
+  {
+    "name": "Magician",
+    "description": "Auto-generates layouts.",
+    "framework": "Google Design Sprint",
+    "stage": "Prototype",
+    "uxTool": "Figma"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Fills prototypes with realistic content.",
+    "framework": "Google Design Sprint",
+    "stage": "Prototype",
+    "uxTool": "Figma"
+  },
+  {
+    "name": "Figma Make",
+    "description": "Creates UI prototypes.",
+    "framework": "Google Design Sprint",
+    "stage": "Prototype",
+    "uxTool": "Adobe XD"
+  },
+  {
+    "name": "Uizard",
+    "description": "Transforms flows into interactive mockups.",
+    "framework": "Google Design Sprint",
+    "stage": "Prototype",
+    "uxTool": "Adobe XD"
+  },
+  {
+    "name": "Magician",
+    "description": "Auto-generates layouts.",
+    "framework": "Google Design Sprint",
+    "stage": "Prototype",
+    "uxTool": "Adobe XD"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Fills prototypes with realistic content.",
+    "framework": "Google Design Sprint",
+    "stage": "Prototype",
+    "uxTool": "Adobe XD"
+  },
+  {
+    "name": "Figma Make",
+    "description": "Creates UI prototypes.",
+    "framework": "Google Design Sprint",
+    "stage": "Prototype",
+    "uxTool": "Clickable Prototypes"
+  },
+  {
+    "name": "Uizard",
+    "description": "Transforms flows into interactive mockups.",
+    "framework": "Google Design Sprint",
+    "stage": "Prototype",
+    "uxTool": "Clickable Prototypes"
+  },
+  {
+    "name": "Magician",
+    "description": "Auto-generates layouts.",
+    "framework": "Google Design Sprint",
+    "stage": "Prototype",
+    "uxTool": "Clickable Prototypes"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Fills prototypes with realistic content.",
+    "framework": "Google Design Sprint",
+    "stage": "Prototype",
+    "uxTool": "Clickable Prototypes"
+  },
+  {
+    "name": "Figma Make",
+    "description": "Creates UI prototypes.",
+    "framework": "Google Design Sprint",
+    "stage": "Prototype",
+    "uxTool": "Design Systems"
+  },
+  {
+    "name": "Uizard",
+    "description": "Transforms flows into interactive mockups.",
+    "framework": "Google Design Sprint",
+    "stage": "Prototype",
+    "uxTool": "Design Systems"
+  },
+  {
+    "name": "Magician",
+    "description": "Auto-generates layouts.",
+    "framework": "Google Design Sprint",
+    "stage": "Prototype",
+    "uxTool": "Design Systems"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Fills prototypes with realistic content.",
+    "framework": "Google Design Sprint",
+    "stage": "Prototype",
+    "uxTool": "Design Systems"
+  },
+  {
+    "name": "Figma Make",
+    "description": "Creates UI prototypes.",
+    "framework": "Google Design Sprint",
+    "stage": "Prototype",
+    "uxTool": "InVision"
+  },
+  {
+    "name": "Uizard",
+    "description": "Transforms flows into interactive mockups.",
+    "framework": "Google Design Sprint",
+    "stage": "Prototype",
+    "uxTool": "InVision"
+  },
+  {
+    "name": "Magician",
+    "description": "Auto-generates layouts.",
+    "framework": "Google Design Sprint",
+    "stage": "Prototype",
+    "uxTool": "InVision"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Fills prototypes with realistic content.",
+    "framework": "Google Design Sprint",
+    "stage": "Prototype",
+    "uxTool": "InVision"
+  },
+  {
+    "name": "Lookback AI",
+    "description": "Analyzes test interviews.",
+    "framework": "Google Design Sprint",
+    "stage": "Test",
+    "uxTool": "User Testing Script"
+  },
+  {
+    "name": "Hotjar AI",
+    "description": "Summarizes written feedback.",
+    "framework": "Google Design Sprint",
+    "stage": "Test",
+    "uxTool": "User Testing Script"
+  },
+  {
+    "name": "PlaybookUX",
+    "description": "Clusters insights and friction points.",
+    "framework": "Google Design Sprint",
+    "stage": "Test",
+    "uxTool": "User Testing Script"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Generates summary reports.",
+    "framework": "Google Design Sprint",
+    "stage": "Test",
+    "uxTool": "User Testing Script"
+  },
+  {
+    "name": "Lookback AI",
+    "description": "Analyzes test interviews.",
+    "framework": "Google Design Sprint",
+    "stage": "Test",
+    "uxTool": "Feedback Capture Sheet"
+  },
+  {
+    "name": "Hotjar AI",
+    "description": "Summarizes written feedback.",
+    "framework": "Google Design Sprint",
+    "stage": "Test",
+    "uxTool": "Feedback Capture Sheet"
+  },
+  {
+    "name": "PlaybookUX",
+    "description": "Clusters insights and friction points.",
+    "framework": "Google Design Sprint",
+    "stage": "Test",
+    "uxTool": "Feedback Capture Sheet"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Generates summary reports.",
+    "framework": "Google Design Sprint",
+    "stage": "Test",
+    "uxTool": "Feedback Capture Sheet"
+  },
+  {
+    "name": "Lookback AI",
+    "description": "Analyzes test interviews.",
+    "framework": "Google Design Sprint",
+    "stage": "Test",
+    "uxTool": "Interview Grid"
+  },
+  {
+    "name": "Hotjar AI",
+    "description": "Summarizes written feedback.",
+    "framework": "Google Design Sprint",
+    "stage": "Test",
+    "uxTool": "Interview Grid"
+  },
+  {
+    "name": "PlaybookUX",
+    "description": "Clusters insights and friction points.",
+    "framework": "Google Design Sprint",
+    "stage": "Test",
+    "uxTool": "Interview Grid"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Generates summary reports.",
+    "framework": "Google Design Sprint",
+    "stage": "Test",
+    "uxTool": "Interview Grid"
+  },
+  {
+    "name": "Amplitude",
+    "description": "Tracks engagement metrics.",
+    "framework": "HEART Framework",
+    "stage": "Metrics",
+    "uxTool": "NPS Surveys"
+  },
+  {
+    "name": "Hotjar AI",
+    "description": "Analyzes emotion and task success.",
+    "framework": "HEART Framework",
+    "stage": "Metrics",
+    "uxTool": "NPS Surveys"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Highlights churn risks.",
+    "framework": "HEART Framework",
+    "stage": "Metrics",
+    "uxTool": "NPS Surveys"
+  },
+  {
+    "name": "Mixpanel",
+    "description": "Tracks user adoption.",
+    "framework": "HEART Framework",
+    "stage": "Metrics",
+    "uxTool": "NPS Surveys"
+  },
+  {
+    "name": "Amplitude",
+    "description": "Tracks engagement metrics.",
+    "framework": "HEART Framework",
+    "stage": "Metrics",
+    "uxTool": "Funnels"
+  },
+  {
+    "name": "Hotjar AI",
+    "description": "Analyzes emotion and task success.",
+    "framework": "HEART Framework",
+    "stage": "Metrics",
+    "uxTool": "Funnels"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Highlights churn risks.",
+    "framework": "HEART Framework",
+    "stage": "Metrics",
+    "uxTool": "Funnels"
+  },
+  {
+    "name": "Mixpanel",
+    "description": "Tracks user adoption.",
+    "framework": "HEART Framework",
+    "stage": "Metrics",
+    "uxTool": "Funnels"
+  },
+  {
+    "name": "Amplitude",
+    "description": "Tracks engagement metrics.",
+    "framework": "HEART Framework",
+    "stage": "Metrics",
+    "uxTool": "Retention Curves"
+  },
+  {
+    "name": "Hotjar AI",
+    "description": "Analyzes emotion and task success.",
+    "framework": "HEART Framework",
+    "stage": "Metrics",
+    "uxTool": "Retention Curves"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Highlights churn risks.",
+    "framework": "HEART Framework",
+    "stage": "Metrics",
+    "uxTool": "Retention Curves"
+  },
+  {
+    "name": "Mixpanel",
+    "description": "Tracks user adoption.",
+    "framework": "HEART Framework",
+    "stage": "Metrics",
+    "uxTool": "Retention Curves"
+  },
+  {
+    "name": "Amplitude",
+    "description": "Tracks engagement metrics.",
+    "framework": "HEART Framework",
+    "stage": "Metrics",
+    "uxTool": "Task Analysis"
+  },
+  {
+    "name": "Hotjar AI",
+    "description": "Analyzes emotion and task success.",
+    "framework": "HEART Framework",
+    "stage": "Metrics",
+    "uxTool": "Task Analysis"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Highlights churn risks.",
+    "framework": "HEART Framework",
+    "stage": "Metrics",
+    "uxTool": "Task Analysis"
+  },
+  {
+    "name": "Mixpanel",
+    "description": "Tracks user adoption.",
+    "framework": "HEART Framework",
+    "stage": "Metrics",
+    "uxTool": "Task Analysis"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Identifies motivational drivers.",
+    "framework": "Hooked Model",
+    "stage": "Trigger",
+    "uxTool": "Behavioral Maps"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Detects trigger points.",
+    "framework": "Hooked Model",
+    "stage": "Trigger",
+    "uxTool": "Behavioral Maps"
+  },
+  {
+    "name": "Miro AI",
+    "description": "Maps behaviors.",
+    "framework": "Hooked Model",
+    "stage": "Trigger",
+    "uxTool": "Behavioral Maps"
+  },
+  {
+    "name": "Notion AI",
+    "description": "Describes motivation states.",
+    "framework": "Hooked Model",
+    "stage": "Trigger",
+    "uxTool": "Behavioral Maps"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Identifies motivational drivers.",
+    "framework": "Hooked Model",
+    "stage": "Trigger",
+    "uxTool": "Motivation Matrix"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Detects trigger points.",
+    "framework": "Hooked Model",
+    "stage": "Trigger",
+    "uxTool": "Motivation Matrix"
+  },
+  {
+    "name": "Miro AI",
+    "description": "Maps behaviors.",
+    "framework": "Hooked Model",
+    "stage": "Trigger",
+    "uxTool": "Motivation Matrix"
+  },
+  {
+    "name": "Notion AI",
+    "description": "Describes motivation states.",
+    "framework": "Hooked Model",
+    "stage": "Trigger",
+    "uxTool": "Motivation Matrix"
+  },
+  {
+    "name": "Figma Make",
+    "description": "Suggests microinteraction components.",
+    "framework": "Hooked Model",
+    "stage": "Action",
+    "uxTool": "Microinteraction Design"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Optimizes user flows.",
+    "framework": "Hooked Model",
+    "stage": "Action",
+    "uxTool": "Microinteraction Design"
+  },
+  {
+    "name": "Magician",
+    "description": "Streamlines interface actions.",
+    "framework": "Hooked Model",
+    "stage": "Action",
+    "uxTool": "Microinteraction Design"
+  },
+  {
+    "name": "Uizard",
+    "description": "Simulates interactions.",
+    "framework": "Hooked Model",
+    "stage": "Action",
+    "uxTool": "Microinteraction Design"
+  },
+  {
+    "name": "Figma Make",
+    "description": "Suggests microinteraction components.",
+    "framework": "Hooked Model",
+    "stage": "Action",
+    "uxTool": "Task Flows"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Optimizes user flows.",
+    "framework": "Hooked Model",
+    "stage": "Action",
+    "uxTool": "Task Flows"
+  },
+  {
+    "name": "Magician",
+    "description": "Streamlines interface actions.",
+    "framework": "Hooked Model",
+    "stage": "Action",
+    "uxTool": "Task Flows"
+  },
+  {
+    "name": "Uizard",
+    "description": "Simulates interactions.",
+    "framework": "Hooked Model",
+    "stage": "Action",
+    "uxTool": "Task Flows"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Personalizes user rewards.",
+    "framework": "Hooked Model",
+    "stage": "Variable Reward",
+    "uxTool": "Feedback UI"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Designs gamified flows.",
+    "framework": "Hooked Model",
+    "stage": "Variable Reward",
+    "uxTool": "Feedback UI"
+  },
+  {
+    "name": "Notion AI",
+    "description": "Defines reward logic.",
+    "framework": "Hooked Model",
+    "stage": "Variable Reward",
+    "uxTool": "Feedback UI"
+  },
+  {
+    "name": "FigJam AI",
+    "description": "Visualizes reward pathways.",
+    "framework": "Hooked Model",
+    "stage": "Variable Reward",
+    "uxTool": "Feedback UI"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Personalizes user rewards.",
+    "framework": "Hooked Model",
+    "stage": "Variable Reward",
+    "uxTool": "Gamification Maps"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Designs gamified flows.",
+    "framework": "Hooked Model",
+    "stage": "Variable Reward",
+    "uxTool": "Gamification Maps"
+  },
+  {
+    "name": "Notion AI",
+    "description": "Defines reward logic.",
+    "framework": "Hooked Model",
+    "stage": "Variable Reward",
+    "uxTool": "Gamification Maps"
+  },
+  {
+    "name": "FigJam AI",
+    "description": "Visualizes reward pathways.",
+    "framework": "Hooked Model",
+    "stage": "Variable Reward",
+    "uxTool": "Gamification Maps"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Suggests engagement strategies.",
+    "framework": "Hooked Model",
+    "stage": "Investment",
+    "uxTool": "Account Setup UX"
+  },
+  {
+    "name": "Amplitude",
+    "description": "Tracks user habits.",
+    "framework": "Hooked Model",
+    "stage": "Investment",
+    "uxTool": "Account Setup UX"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Creates habit loops.",
+    "framework": "Hooked Model",
+    "stage": "Investment",
+    "uxTool": "Account Setup UX"
+  },
+  {
+    "name": "Uizard",
+    "description": "Designs habit-forming flows.",
+    "framework": "Hooked Model",
+    "stage": "Investment",
+    "uxTool": "Account Setup UX"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Suggests engagement strategies.",
+    "framework": "Hooked Model",
+    "stage": "Investment",
+    "uxTool": "Habit Tracking UI"
+  },
+  {
+    "name": "Amplitude",
+    "description": "Tracks user habits.",
+    "framework": "Hooked Model",
+    "stage": "Investment",
+    "uxTool": "Habit Tracking UI"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Creates habit loops.",
+    "framework": "Hooked Model",
+    "stage": "Investment",
+    "uxTool": "Habit Tracking UI"
+  },
+  {
+    "name": "Uizard",
+    "description": "Designs habit-forming flows.",
+    "framework": "Hooked Model",
+    "stage": "Investment",
+    "uxTool": "Habit Tracking UI"
+  },
+  {
+    "name": "Dovetail",
+    "description": "Extracts pain points from research.",
+    "framework": "Human-Centered Design",
+    "stage": "Research",
+    "uxTool": "Contextual Inquiry"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Maps behaviors to design needs.",
+    "framework": "Human-Centered Design",
+    "stage": "Research",
+    "uxTool": "Contextual Inquiry"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Assists with stakeholder synthesis.",
+    "framework": "Human-Centered Design",
+    "stage": "Research",
+    "uxTool": "Contextual Inquiry"
+  },
+  {
+    "name": "MonkeyLearn",
+    "description": "Performs thematic clustering.",
+    "framework": "Human-Centered Design",
+    "stage": "Research",
+    "uxTool": "Contextual Inquiry"
+  },
+  {
+    "name": "Dovetail",
+    "description": "Extracts pain points from research.",
+    "framework": "Human-Centered Design",
+    "stage": "Research",
+    "uxTool": "Ethnographic Research"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Maps behaviors to design needs.",
+    "framework": "Human-Centered Design",
+    "stage": "Research",
+    "uxTool": "Ethnographic Research"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Assists with stakeholder synthesis.",
+    "framework": "Human-Centered Design",
+    "stage": "Research",
+    "uxTool": "Ethnographic Research"
+  },
+  {
+    "name": "MonkeyLearn",
+    "description": "Performs thematic clustering.",
+    "framework": "Human-Centered Design",
+    "stage": "Research",
+    "uxTool": "Ethnographic Research"
+  },
+  {
+    "name": "Dovetail",
+    "description": "Extracts pain points from research.",
+    "framework": "Human-Centered Design",
+    "stage": "Research",
+    "uxTool": "Participatory Design"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Maps behaviors to design needs.",
+    "framework": "Human-Centered Design",
+    "stage": "Research",
+    "uxTool": "Participatory Design"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Assists with stakeholder synthesis.",
+    "framework": "Human-Centered Design",
+    "stage": "Research",
+    "uxTool": "Participatory Design"
+  },
+  {
+    "name": "MonkeyLearn",
+    "description": "Performs thematic clustering.",
+    "framework": "Human-Centered Design",
+    "stage": "Research",
+    "uxTool": "Participatory Design"
+  },
+  {
+    "name": "Dovetail",
+    "description": "Extracts pain points from research.",
+    "framework": "Human-Centered Design",
+    "stage": "Research",
+    "uxTool": "Shadowing"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Maps behaviors to design needs.",
+    "framework": "Human-Centered Design",
+    "stage": "Research",
+    "uxTool": "Shadowing"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Assists with stakeholder synthesis.",
+    "framework": "Human-Centered Design",
+    "stage": "Research",
+    "uxTool": "Shadowing"
+  },
+  {
+    "name": "MonkeyLearn",
+    "description": "Performs thematic clustering.",
+    "framework": "Human-Centered Design",
+    "stage": "Research",
+    "uxTool": "Shadowing"
+  },
+  {
+    "name": "Dovetail",
+    "description": "Extracts pain points from research.",
+    "framework": "Human-Centered Design",
+    "stage": "Research",
+    "uxTool": "Stakeholder Maps"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Maps behaviors to design needs.",
+    "framework": "Human-Centered Design",
+    "stage": "Research",
+    "uxTool": "Stakeholder Maps"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Assists with stakeholder synthesis.",
+    "framework": "Human-Centered Design",
+    "stage": "Research",
+    "uxTool": "Stakeholder Maps"
+  },
+  {
+    "name": "MonkeyLearn",
+    "description": "Performs thematic clustering.",
+    "framework": "Human-Centered Design",
+    "stage": "Research",
+    "uxTool": "Stakeholder Maps"
+  },
+  {
+    "name": "Miro AI",
+    "description": "Supports workshop facilitation.",
+    "framework": "Human-Centered Design",
+    "stage": "Ideation",
+    "uxTool": "Co-Creation Workshops"
+  },
+  {
+    "name": "Whimsical AI",
+    "description": "Builds mind maps and clusters ideas.",
+    "framework": "Human-Centered Design",
+    "stage": "Ideation",
+    "uxTool": "Co-Creation Workshops"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Generates themes from experience maps.",
+    "framework": "Human-Centered Design",
+    "stage": "Ideation",
+    "uxTool": "Co-Creation Workshops"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Ranks brainstormed concepts.",
+    "framework": "Human-Centered Design",
+    "stage": "Ideation",
+    "uxTool": "Co-Creation Workshops"
+  },
+  {
+    "name": "Miro AI",
+    "description": "Supports workshop facilitation.",
+    "framework": "Human-Centered Design",
+    "stage": "Ideation",
+    "uxTool": "Mind Maps"
+  },
+  {
+    "name": "Whimsical AI",
+    "description": "Builds mind maps and clusters ideas.",
+    "framework": "Human-Centered Design",
+    "stage": "Ideation",
+    "uxTool": "Mind Maps"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Generates themes from experience maps.",
+    "framework": "Human-Centered Design",
+    "stage": "Ideation",
+    "uxTool": "Mind Maps"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Ranks brainstormed concepts.",
+    "framework": "Human-Centered Design",
+    "stage": "Ideation",
+    "uxTool": "Mind Maps"
+  },
+  {
+    "name": "Miro AI",
+    "description": "Supports workshop facilitation.",
+    "framework": "Human-Centered Design",
+    "stage": "Ideation",
+    "uxTool": "Brainstorming Sessions"
+  },
+  {
+    "name": "Whimsical AI",
+    "description": "Builds mind maps and clusters ideas.",
+    "framework": "Human-Centered Design",
+    "stage": "Ideation",
+    "uxTool": "Brainstorming Sessions"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Generates themes from experience maps.",
+    "framework": "Human-Centered Design",
+    "stage": "Ideation",
+    "uxTool": "Brainstorming Sessions"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Ranks brainstormed concepts.",
+    "framework": "Human-Centered Design",
+    "stage": "Ideation",
+    "uxTool": "Brainstorming Sessions"
+  },
+  {
+    "name": "Miro AI",
+    "description": "Supports workshop facilitation.",
+    "framework": "Human-Centered Design",
+    "stage": "Ideation",
+    "uxTool": "Experience Mapping"
+  },
+  {
+    "name": "Whimsical AI",
+    "description": "Builds mind maps and clusters ideas.",
+    "framework": "Human-Centered Design",
+    "stage": "Ideation",
+    "uxTool": "Experience Mapping"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Generates themes from experience maps.",
+    "framework": "Human-Centered Design",
+    "stage": "Ideation",
+    "uxTool": "Experience Mapping"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Ranks brainstormed concepts.",
+    "framework": "Human-Centered Design",
+    "stage": "Ideation",
+    "uxTool": "Experience Mapping"
+  },
+  {
+    "name": "Figma Make",
+    "description": "Generates interface mockups.",
+    "framework": "Human-Centered Design",
+    "stage": "Prototyping",
+    "uxTool": "Lo-fi Sketching"
+  },
+  {
+    "name": "Uizard",
+    "description": "Converts sketches to lo-fi prototypes.",
+    "framework": "Human-Centered Design",
+    "stage": "Prototyping",
+    "uxTool": "Lo-fi Sketching"
+  },
+  {
+    "name": "Magician",
+    "description": "Suggests layout refinements.",
+    "framework": "Human-Centered Design",
+    "stage": "Prototyping",
+    "uxTool": "Lo-fi Sketching"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Applies components from system.",
+    "framework": "Human-Centered Design",
+    "stage": "Prototyping",
+    "uxTool": "Lo-fi Sketching"
+  },
+  {
+    "name": "Figma Make",
+    "description": "Generates interface mockups.",
+    "framework": "Human-Centered Design",
+    "stage": "Prototyping",
+    "uxTool": "Clickable Prototypes"
+  },
+  {
+    "name": "Uizard",
+    "description": "Converts sketches to lo-fi prototypes.",
+    "framework": "Human-Centered Design",
+    "stage": "Prototyping",
+    "uxTool": "Clickable Prototypes"
+  },
+  {
+    "name": "Magician",
+    "description": "Suggests layout refinements.",
+    "framework": "Human-Centered Design",
+    "stage": "Prototyping",
+    "uxTool": "Clickable Prototypes"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Applies components from system.",
+    "framework": "Human-Centered Design",
+    "stage": "Prototyping",
+    "uxTool": "Clickable Prototypes"
+  },
+  {
+    "name": "Figma Make",
+    "description": "Generates interface mockups.",
+    "framework": "Human-Centered Design",
+    "stage": "Prototyping",
+    "uxTool": "Design Systems"
+  },
+  {
+    "name": "Uizard",
+    "description": "Converts sketches to lo-fi prototypes.",
+    "framework": "Human-Centered Design",
+    "stage": "Prototyping",
+    "uxTool": "Design Systems"
+  },
+  {
+    "name": "Magician",
+    "description": "Suggests layout refinements.",
+    "framework": "Human-Centered Design",
+    "stage": "Prototyping",
+    "uxTool": "Design Systems"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Applies components from system.",
+    "framework": "Human-Centered Design",
+    "stage": "Prototyping",
+    "uxTool": "Design Systems"
+  },
+  {
+    "name": "Stark",
+    "description": "Conducts accessibility scans.",
+    "framework": "Human-Centered Design",
+    "stage": "Implementation",
+    "uxTool": "Development Sprints"
+  },
+  {
+    "name": "Zeplin AI",
+    "description": "Supports dev handoff.",
+    "framework": "Human-Centered Design",
+    "stage": "Implementation",
+    "uxTool": "Development Sprints"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Flags QA design issues.",
+    "framework": "Human-Centered Design",
+    "stage": "Implementation",
+    "uxTool": "Development Sprints"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Summarizes user feedback.",
+    "framework": "Human-Centered Design",
+    "stage": "Implementation",
+    "uxTool": "Development Sprints"
+  },
+  {
+    "name": "Stark",
+    "description": "Conducts accessibility scans.",
+    "framework": "Human-Centered Design",
+    "stage": "Implementation",
+    "uxTool": "QA"
+  },
+  {
+    "name": "Zeplin AI",
+    "description": "Supports dev handoff.",
+    "framework": "Human-Centered Design",
+    "stage": "Implementation",
+    "uxTool": "QA"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Flags QA design issues.",
+    "framework": "Human-Centered Design",
+    "stage": "Implementation",
+    "uxTool": "QA"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Summarizes user feedback.",
+    "framework": "Human-Centered Design",
+    "stage": "Implementation",
+    "uxTool": "QA"
+  },
+  {
+    "name": "Stark",
+    "description": "Conducts accessibility scans.",
+    "framework": "Human-Centered Design",
+    "stage": "Implementation",
+    "uxTool": "Accessibility Checks"
+  },
+  {
+    "name": "Zeplin AI",
+    "description": "Supports dev handoff.",
+    "framework": "Human-Centered Design",
+    "stage": "Implementation",
+    "uxTool": "Accessibility Checks"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Flags QA design issues.",
+    "framework": "Human-Centered Design",
+    "stage": "Implementation",
+    "uxTool": "Accessibility Checks"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Summarizes user feedback.",
+    "framework": "Human-Centered Design",
+    "stage": "Implementation",
+    "uxTool": "Accessibility Checks"
+  },
+  {
+    "name": "Stark",
+    "description": "Conducts accessibility scans.",
+    "framework": "Human-Centered Design",
+    "stage": "Implementation",
+    "uxTool": "Feedback Reviews"
+  },
+  {
+    "name": "Zeplin AI",
+    "description": "Supports dev handoff.",
+    "framework": "Human-Centered Design",
+    "stage": "Implementation",
+    "uxTool": "Feedback Reviews"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Flags QA design issues.",
+    "framework": "Human-Centered Design",
+    "stage": "Implementation",
+    "uxTool": "Feedback Reviews"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Summarizes user feedback.",
+    "framework": "Human-Centered Design",
+    "stage": "Implementation",
+    "uxTool": "Feedback Reviews"
+  },
+  {
+    "name": "Otter.ai",
+    "description": "Transcribes and summarizes interviews.",
+    "framework": "Jobs To Be Done",
+    "stage": "Job Discovery",
+    "uxTool": "JTBD Interviews"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Extracts user jobs and pain points.",
+    "framework": "Jobs To Be Done",
+    "stage": "Job Discovery",
+    "uxTool": "JTBD Interviews"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Generates job stories.",
+    "framework": "Jobs To Be Done",
+    "stage": "Job Discovery",
+    "uxTool": "JTBD Interviews"
+  },
+  {
+    "name": "Miro AI",
+    "description": "Maps forces and user progress.",
+    "framework": "Jobs To Be Done",
+    "stage": "Job Discovery",
+    "uxTool": "JTBD Interviews"
+  },
+  {
+    "name": "Otter.ai",
+    "description": "Transcribes and summarizes interviews.",
+    "framework": "Jobs To Be Done",
+    "stage": "Job Discovery",
+    "uxTool": "Timeline Mapping"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Extracts user jobs and pain points.",
+    "framework": "Jobs To Be Done",
+    "stage": "Job Discovery",
+    "uxTool": "Timeline Mapping"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Generates job stories.",
+    "framework": "Jobs To Be Done",
+    "stage": "Job Discovery",
+    "uxTool": "Timeline Mapping"
+  },
+  {
+    "name": "Miro AI",
+    "description": "Maps forces and user progress.",
+    "framework": "Jobs To Be Done",
+    "stage": "Job Discovery",
+    "uxTool": "Timeline Mapping"
+  },
+  {
+    "name": "Otter.ai",
+    "description": "Transcribes and summarizes interviews.",
+    "framework": "Jobs To Be Done",
+    "stage": "Job Discovery",
+    "uxTool": "Job Stories"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Extracts user jobs and pain points.",
+    "framework": "Jobs To Be Done",
+    "stage": "Job Discovery",
+    "uxTool": "Job Stories"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Generates job stories.",
+    "framework": "Jobs To Be Done",
+    "stage": "Job Discovery",
+    "uxTool": "Job Stories"
+  },
+  {
+    "name": "Miro AI",
+    "description": "Maps forces and user progress.",
+    "framework": "Jobs To Be Done",
+    "stage": "Job Discovery",
+    "uxTool": "Job Stories"
+  },
+  {
+    "name": "Otter.ai",
+    "description": "Transcribes and summarizes interviews.",
+    "framework": "Jobs To Be Done",
+    "stage": "Job Discovery",
+    "uxTool": "Forces of Progress Canvas"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Extracts user jobs and pain points.",
+    "framework": "Jobs To Be Done",
+    "stage": "Job Discovery",
+    "uxTool": "Forces of Progress Canvas"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Generates job stories.",
+    "framework": "Jobs To Be Done",
+    "stage": "Job Discovery",
+    "uxTool": "Forces of Progress Canvas"
+  },
+  {
+    "name": "Miro AI",
+    "description": "Maps forces and user progress.",
+    "framework": "Jobs To Be Done",
+    "stage": "Job Discovery",
+    "uxTool": "Forces of Progress Canvas"
+  },
+  {
+    "name": "Miro AI",
+    "description": "Visualizes jobs and steps.",
+    "framework": "Jobs To Be Done",
+    "stage": "Job Mapping",
+    "uxTool": "Job Map"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Clusters jobs by phase.",
+    "framework": "Jobs To Be Done",
+    "stage": "Job Mapping",
+    "uxTool": "Job Map"
+  },
+  {
+    "name": "FigJam AI",
+    "description": "Maps unmet needs.",
+    "framework": "Jobs To Be Done",
+    "stage": "Job Mapping",
+    "uxTool": "Job Map"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Suggests value props.",
+    "framework": "Jobs To Be Done",
+    "stage": "Job Mapping",
+    "uxTool": "Job Map"
+  },
+  {
+    "name": "Miro AI",
+    "description": "Visualizes jobs and steps.",
+    "framework": "Jobs To Be Done",
+    "stage": "Job Mapping",
+    "uxTool": "Opportunity Solution Trees"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Clusters jobs by phase.",
+    "framework": "Jobs To Be Done",
+    "stage": "Job Mapping",
+    "uxTool": "Opportunity Solution Trees"
+  },
+  {
+    "name": "FigJam AI",
+    "description": "Maps unmet needs.",
+    "framework": "Jobs To Be Done",
+    "stage": "Job Mapping",
+    "uxTool": "Opportunity Solution Trees"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Suggests value props.",
+    "framework": "Jobs To Be Done",
+    "stage": "Job Mapping",
+    "uxTool": "Opportunity Solution Trees"
+  },
+  {
+    "name": "Miro AI",
+    "description": "Visualizes jobs and steps.",
+    "framework": "Jobs To Be Done",
+    "stage": "Job Mapping",
+    "uxTool": "Value Proposition Canvas"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Clusters jobs by phase.",
+    "framework": "Jobs To Be Done",
+    "stage": "Job Mapping",
+    "uxTool": "Value Proposition Canvas"
+  },
+  {
+    "name": "FigJam AI",
+    "description": "Maps unmet needs.",
+    "framework": "Jobs To Be Done",
+    "stage": "Job Mapping",
+    "uxTool": "Value Proposition Canvas"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Suggests value props.",
+    "framework": "Jobs To Be Done",
+    "stage": "Job Mapping",
+    "uxTool": "Value Proposition Canvas"
+  },
+  {
+    "name": "Uizard",
+    "description": "Builds MVP sketches.",
+    "framework": "Jobs To Be Done",
+    "stage": "Solution Ideation",
+    "uxTool": "Storyboarding"
+  },
+  {
+    "name": "Whimsical AI",
+    "description": "Maps experience flows.",
+    "framework": "Jobs To Be Done",
+    "stage": "Solution Ideation",
+    "uxTool": "Storyboarding"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Generates JTBD-linked ideas.",
+    "framework": "Jobs To Be Done",
+    "stage": "Solution Ideation",
+    "uxTool": "Storyboarding"
+  },
+  {
+    "name": "Magician",
+    "description": "Creates UI concepts.",
+    "framework": "Jobs To Be Done",
+    "stage": "Solution Ideation",
+    "uxTool": "Storyboarding"
+  },
+  {
+    "name": "Uizard",
+    "description": "Builds MVP sketches.",
+    "framework": "Jobs To Be Done",
+    "stage": "Solution Ideation",
+    "uxTool": "Experience Mapping"
+  },
+  {
+    "name": "Whimsical AI",
+    "description": "Maps experience flows.",
+    "framework": "Jobs To Be Done",
+    "stage": "Solution Ideation",
+    "uxTool": "Experience Mapping"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Generates JTBD-linked ideas.",
+    "framework": "Jobs To Be Done",
+    "stage": "Solution Ideation",
+    "uxTool": "Experience Mapping"
+  },
+  {
+    "name": "Magician",
+    "description": "Creates UI concepts.",
+    "framework": "Jobs To Be Done",
+    "stage": "Solution Ideation",
+    "uxTool": "Experience Mapping"
+  },
+  {
+    "name": "Uizard",
+    "description": "Builds MVP sketches.",
+    "framework": "Jobs To Be Done",
+    "stage": "Solution Ideation",
+    "uxTool": "MVP Sketches"
+  },
+  {
+    "name": "Whimsical AI",
+    "description": "Maps experience flows.",
+    "framework": "Jobs To Be Done",
+    "stage": "Solution Ideation",
+    "uxTool": "MVP Sketches"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Generates JTBD-linked ideas.",
+    "framework": "Jobs To Be Done",
+    "stage": "Solution Ideation",
+    "uxTool": "MVP Sketches"
+  },
+  {
+    "name": "Magician",
+    "description": "Creates UI concepts.",
+    "framework": "Jobs To Be Done",
+    "stage": "Solution Ideation",
+    "uxTool": "MVP Sketches"
+  },
+  {
+    "name": "PlaybookUX",
+    "description": "Analyzes test output.",
+    "framework": "Jobs To Be Done",
+    "stage": "Validation",
+    "uxTool": "Customer Interviews"
+  },
+  {
+    "name": "Lookback AI",
+    "description": "Interprets interview data.",
+    "framework": "Jobs To Be Done",
+    "stage": "Validation",
+    "uxTool": "Customer Interviews"
+  },
+  {
+    "name": "Amplitude",
+    "description": "Evaluates solution fit.",
+    "framework": "Jobs To Be Done",
+    "stage": "Validation",
+    "uxTool": "Customer Interviews"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Summarizes test sessions.",
+    "framework": "Jobs To Be Done",
+    "stage": "Validation",
+    "uxTool": "Customer Interviews"
+  },
+  {
+    "name": "PlaybookUX",
+    "description": "Analyzes test output.",
+    "framework": "Jobs To Be Done",
+    "stage": "Validation",
+    "uxTool": "Usability Tests"
+  },
+  {
+    "name": "Lookback AI",
+    "description": "Interprets interview data.",
+    "framework": "Jobs To Be Done",
+    "stage": "Validation",
+    "uxTool": "Usability Tests"
+  },
+  {
+    "name": "Amplitude",
+    "description": "Evaluates solution fit.",
+    "framework": "Jobs To Be Done",
+    "stage": "Validation",
+    "uxTool": "Usability Tests"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Summarizes test sessions.",
+    "framework": "Jobs To Be Done",
+    "stage": "Validation",
+    "uxTool": "Usability Tests"
+  },
+  {
+    "name": "PlaybookUX",
+    "description": "Analyzes test output.",
+    "framework": "Jobs To Be Done",
+    "stage": "Validation",
+    "uxTool": "KPI Dashboards"
+  },
+  {
+    "name": "Lookback AI",
+    "description": "Interprets interview data.",
+    "framework": "Jobs To Be Done",
+    "stage": "Validation",
+    "uxTool": "KPI Dashboards"
+  },
+  {
+    "name": "Amplitude",
+    "description": "Evaluates solution fit.",
+    "framework": "Jobs To Be Done",
+    "stage": "Validation",
+    "uxTool": "KPI Dashboards"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Summarizes test sessions.",
+    "framework": "Jobs To Be Done",
+    "stage": "Validation",
+    "uxTool": "KPI Dashboards"
+  },
+  {
+    "name": "Notion AI",
+    "description": "Populates and structures canvases.",
+    "framework": "Lean UX",
+    "stage": "Think",
+    "uxTool": "Hypothesis Canvas"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Synthesizes assumptions into hypotheses.",
+    "framework": "Lean UX",
+    "stage": "Think",
+    "uxTool": "Hypothesis Canvas"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Refines business model hypotheses.",
+    "framework": "Lean UX",
+    "stage": "Think",
+    "uxTool": "Hypothesis Canvas"
+  },
+  {
+    "name": "Miro AI",
+    "description": "Collaborative assumption mapping.",
+    "framework": "Lean UX",
+    "stage": "Think",
+    "uxTool": "Hypothesis Canvas"
+  },
+  {
+    "name": "Notion AI",
+    "description": "Populates and structures canvases.",
+    "framework": "Lean UX",
+    "stage": "Think",
+    "uxTool": "Assumption Mapping"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Synthesizes assumptions into hypotheses.",
+    "framework": "Lean UX",
+    "stage": "Think",
+    "uxTool": "Assumption Mapping"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Refines business model hypotheses.",
+    "framework": "Lean UX",
+    "stage": "Think",
+    "uxTool": "Assumption Mapping"
+  },
+  {
+    "name": "Miro AI",
+    "description": "Collaborative assumption mapping.",
+    "framework": "Lean UX",
+    "stage": "Think",
+    "uxTool": "Assumption Mapping"
+  },
+  {
+    "name": "Notion AI",
+    "description": "Populates and structures canvases.",
+    "framework": "Lean UX",
+    "stage": "Think",
+    "uxTool": "Proto-Personas"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Synthesizes assumptions into hypotheses.",
+    "framework": "Lean UX",
+    "stage": "Think",
+    "uxTool": "Proto-Personas"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Refines business model hypotheses.",
+    "framework": "Lean UX",
+    "stage": "Think",
+    "uxTool": "Proto-Personas"
+  },
+  {
+    "name": "Miro AI",
+    "description": "Collaborative assumption mapping.",
+    "framework": "Lean UX",
+    "stage": "Think",
+    "uxTool": "Proto-Personas"
+  },
+  {
+    "name": "Notion AI",
+    "description": "Populates and structures canvases.",
+    "framework": "Lean UX",
+    "stage": "Think",
+    "uxTool": "Business Model Canvas"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Synthesizes assumptions into hypotheses.",
+    "framework": "Lean UX",
+    "stage": "Think",
+    "uxTool": "Business Model Canvas"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Refines business model hypotheses.",
+    "framework": "Lean UX",
+    "stage": "Think",
+    "uxTool": "Business Model Canvas"
+  },
+  {
+    "name": "Miro AI",
+    "description": "Collaborative assumption mapping.",
+    "framework": "Lean UX",
+    "stage": "Think",
+    "uxTool": "Business Model Canvas"
+  },
+  {
+    "name": "Notion AI",
+    "description": "Populates and structures canvases.",
+    "framework": "Lean UX",
+    "stage": "Think",
+    "uxTool": "Research Plans"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Synthesizes assumptions into hypotheses.",
+    "framework": "Lean UX",
+    "stage": "Think",
+    "uxTool": "Research Plans"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Refines business model hypotheses.",
+    "framework": "Lean UX",
+    "stage": "Think",
+    "uxTool": "Research Plans"
+  },
+  {
+    "name": "Miro AI",
+    "description": "Collaborative assumption mapping.",
+    "framework": "Lean UX",
+    "stage": "Think",
+    "uxTool": "Research Plans"
+  },
+  {
+    "name": "Figma Make",
+    "description": "Generates wireframes and UI components.",
+    "framework": "Lean UX",
+    "stage": "Make",
+    "uxTool": "Sketching"
+  },
+  {
+    "name": "Uizard",
+    "description": "Converts sketches to MVP prototypes.",
+    "framework": "Lean UX",
+    "stage": "Make",
+    "uxTool": "Sketching"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Auto-suggests UI kits.",
+    "framework": "Lean UX",
+    "stage": "Make",
+    "uxTool": "Sketching"
+  },
+  {
+    "name": "Magician",
+    "description": "Applies layout rules and tokens.",
+    "framework": "Lean UX",
+    "stage": "Make",
+    "uxTool": "Sketching"
+  },
+  {
+    "name": "Figma Make",
+    "description": "Generates wireframes and UI components.",
+    "framework": "Lean UX",
+    "stage": "Make",
+    "uxTool": "Wireframes"
+  },
+  {
+    "name": "Uizard",
+    "description": "Converts sketches to MVP prototypes.",
+    "framework": "Lean UX",
+    "stage": "Make",
+    "uxTool": "Wireframes"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Auto-suggests UI kits.",
+    "framework": "Lean UX",
+    "stage": "Make",
+    "uxTool": "Wireframes"
+  },
+  {
+    "name": "Magician",
+    "description": "Applies layout rules and tokens.",
+    "framework": "Lean UX",
+    "stage": "Make",
+    "uxTool": "Wireframes"
+  },
+  {
+    "name": "Figma Make",
+    "description": "Generates wireframes and UI components.",
+    "framework": "Lean UX",
+    "stage": "Make",
+    "uxTool": "Figma"
+  },
+  {
+    "name": "Uizard",
+    "description": "Converts sketches to MVP prototypes.",
+    "framework": "Lean UX",
+    "stage": "Make",
+    "uxTool": "Figma"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Auto-suggests UI kits.",
+    "framework": "Lean UX",
+    "stage": "Make",
+    "uxTool": "Figma"
+  },
+  {
+    "name": "Magician",
+    "description": "Applies layout rules and tokens.",
+    "framework": "Lean UX",
+    "stage": "Make",
+    "uxTool": "Figma"
+  },
+  {
+    "name": "Figma Make",
+    "description": "Generates wireframes and UI components.",
+    "framework": "Lean UX",
+    "stage": "Make",
+    "uxTool": "UI Kits"
+  },
+  {
+    "name": "Uizard",
+    "description": "Converts sketches to MVP prototypes.",
+    "framework": "Lean UX",
+    "stage": "Make",
+    "uxTool": "UI Kits"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Auto-suggests UI kits.",
+    "framework": "Lean UX",
+    "stage": "Make",
+    "uxTool": "UI Kits"
+  },
+  {
+    "name": "Magician",
+    "description": "Applies layout rules and tokens.",
+    "framework": "Lean UX",
+    "stage": "Make",
+    "uxTool": "UI Kits"
+  },
+  {
+    "name": "Figma Make",
+    "description": "Generates wireframes and UI components.",
+    "framework": "Lean UX",
+    "stage": "Make",
+    "uxTool": "Design Tokens"
+  },
+  {
+    "name": "Uizard",
+    "description": "Converts sketches to MVP prototypes.",
+    "framework": "Lean UX",
+    "stage": "Make",
+    "uxTool": "Design Tokens"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Auto-suggests UI kits.",
+    "framework": "Lean UX",
+    "stage": "Make",
+    "uxTool": "Design Tokens"
+  },
+  {
+    "name": "Magician",
+    "description": "Applies layout rules and tokens.",
+    "framework": "Lean UX",
+    "stage": "Make",
+    "uxTool": "Design Tokens"
+  },
+  {
+    "name": "Figma Make",
+    "description": "Generates wireframes and UI components.",
+    "framework": "Lean UX",
+    "stage": "Make",
+    "uxTool": "MVP Planning Tools"
+  },
+  {
+    "name": "Uizard",
+    "description": "Converts sketches to MVP prototypes.",
+    "framework": "Lean UX",
+    "stage": "Make",
+    "uxTool": "MVP Planning Tools"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Auto-suggests UI kits.",
+    "framework": "Lean UX",
+    "stage": "Make",
+    "uxTool": "MVP Planning Tools"
+  },
+  {
+    "name": "Magician",
+    "description": "Applies layout rules and tokens.",
+    "framework": "Lean UX",
+    "stage": "Make",
+    "uxTool": "MVP Planning Tools"
+  },
+  {
+    "name": "Amplitude",
+    "description": "Summarizes KPIs and user behavior.",
+    "framework": "Lean UX",
+    "stage": "Check",
+    "uxTool": "MVP Testing"
+  },
+  {
+    "name": "Hotjar AI",
+    "description": "Analyzes retention patterns.",
+    "framework": "Lean UX",
+    "stage": "Check",
+    "uxTool": "MVP Testing"
+  },
+  {
+    "name": "PlaybookUX",
+    "description": "Interprets user feedback.",
+    "framework": "Lean UX",
+    "stage": "Check",
+    "uxTool": "MVP Testing"
+  },
+  {
+    "name": "Mixpanel",
+    "description": "Monitors feature adoption.",
+    "framework": "Lean UX",
+    "stage": "Check",
+    "uxTool": "MVP Testing"
+  },
+  {
+    "name": "Amplitude",
+    "description": "Summarizes KPIs and user behavior.",
+    "framework": "Lean UX",
+    "stage": "Check",
+    "uxTool": "Feature Flags"
+  },
+  {
+    "name": "Hotjar AI",
+    "description": "Analyzes retention patterns.",
+    "framework": "Lean UX",
+    "stage": "Check",
+    "uxTool": "Feature Flags"
+  },
+  {
+    "name": "PlaybookUX",
+    "description": "Interprets user feedback.",
+    "framework": "Lean UX",
+    "stage": "Check",
+    "uxTool": "Feature Flags"
+  },
+  {
+    "name": "Mixpanel",
+    "description": "Monitors feature adoption.",
+    "framework": "Lean UX",
+    "stage": "Check",
+    "uxTool": "Feature Flags"
+  },
+  {
+    "name": "Amplitude",
+    "description": "Summarizes KPIs and user behavior.",
+    "framework": "Lean UX",
+    "stage": "Check",
+    "uxTool": "KPI Dashboards"
+  },
+  {
+    "name": "Hotjar AI",
+    "description": "Analyzes retention patterns.",
+    "framework": "Lean UX",
+    "stage": "Check",
+    "uxTool": "KPI Dashboards"
+  },
+  {
+    "name": "PlaybookUX",
+    "description": "Interprets user feedback.",
+    "framework": "Lean UX",
+    "stage": "Check",
+    "uxTool": "KPI Dashboards"
+  },
+  {
+    "name": "Mixpanel",
+    "description": "Monitors feature adoption.",
+    "framework": "Lean UX",
+    "stage": "Check",
+    "uxTool": "KPI Dashboards"
+  },
+  {
+    "name": "Amplitude",
+    "description": "Summarizes KPIs and user behavior.",
+    "framework": "Lean UX",
+    "stage": "Check",
+    "uxTool": "User Testing"
+  },
+  {
+    "name": "Hotjar AI",
+    "description": "Analyzes retention patterns.",
+    "framework": "Lean UX",
+    "stage": "Check",
+    "uxTool": "User Testing"
+  },
+  {
+    "name": "PlaybookUX",
+    "description": "Interprets user feedback.",
+    "framework": "Lean UX",
+    "stage": "Check",
+    "uxTool": "User Testing"
+  },
+  {
+    "name": "Mixpanel",
+    "description": "Monitors feature adoption.",
+    "framework": "Lean UX",
+    "stage": "Check",
+    "uxTool": "User Testing"
+  },
+  {
+    "name": "Amplitude",
+    "description": "Summarizes KPIs and user behavior.",
+    "framework": "Lean UX",
+    "stage": "Check",
+    "uxTool": "Retention Metrics"
+  },
+  {
+    "name": "Hotjar AI",
+    "description": "Analyzes retention patterns.",
+    "framework": "Lean UX",
+    "stage": "Check",
+    "uxTool": "Retention Metrics"
+  },
+  {
+    "name": "PlaybookUX",
+    "description": "Interprets user feedback.",
+    "framework": "Lean UX",
+    "stage": "Check",
+    "uxTool": "Retention Metrics"
+  },
+  {
+    "name": "Mixpanel",
+    "description": "Monitors feature adoption.",
+    "framework": "Lean UX",
+    "stage": "Check",
+    "uxTool": "Retention Metrics"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Clusters contextual data.",
+    "framework": "User-Centered Design",
+    "stage": "Understand Context",
+    "uxTool": "Task Analysis"
+  },
+  {
+    "name": "Dovetail",
+    "description": "Identifies user goals.",
+    "framework": "User-Centered Design",
+    "stage": "Understand Context",
+    "uxTool": "Task Analysis"
+  },
+  {
+    "name": "Otter.ai",
+    "description": "Transcribes field data.",
+    "framework": "User-Centered Design",
+    "stage": "Understand Context",
+    "uxTool": "Task Analysis"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Summarizes user environments.",
+    "framework": "User-Centered Design",
+    "stage": "Understand Context",
+    "uxTool": "Task Analysis"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Clusters contextual data.",
+    "framework": "User-Centered Design",
+    "stage": "Understand Context",
+    "uxTool": "Contextual Inquiry"
+  },
+  {
+    "name": "Dovetail",
+    "description": "Identifies user goals.",
+    "framework": "User-Centered Design",
+    "stage": "Understand Context",
+    "uxTool": "Contextual Inquiry"
+  },
+  {
+    "name": "Otter.ai",
+    "description": "Transcribes field data.",
+    "framework": "User-Centered Design",
+    "stage": "Understand Context",
+    "uxTool": "Contextual Inquiry"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Summarizes user environments.",
+    "framework": "User-Centered Design",
+    "stage": "Understand Context",
+    "uxTool": "Contextual Inquiry"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Clusters contextual data.",
+    "framework": "User-Centered Design",
+    "stage": "Understand Context",
+    "uxTool": "User Environment Maps"
+  },
+  {
+    "name": "Dovetail",
+    "description": "Identifies user goals.",
+    "framework": "User-Centered Design",
+    "stage": "Understand Context",
+    "uxTool": "User Environment Maps"
+  },
+  {
+    "name": "Otter.ai",
+    "description": "Transcribes field data.",
+    "framework": "User-Centered Design",
+    "stage": "Understand Context",
+    "uxTool": "User Environment Maps"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Summarizes user environments.",
+    "framework": "User-Centered Design",
+    "stage": "Understand Context",
+    "uxTool": "User Environment Maps"
+  },
+  {
+    "name": "Notion AI",
+    "description": "Generates requirement documentation.",
+    "framework": "User-Centered Design",
+    "stage": "Specify Requirements",
+    "uxTool": "User Scenarios"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Creates use-case mappings.",
+    "framework": "User-Centered Design",
+    "stage": "Specify Requirements",
+    "uxTool": "User Scenarios"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Writes detailed user scenarios.",
+    "framework": "User-Centered Design",
+    "stage": "Specify Requirements",
+    "uxTool": "User Scenarios"
+  },
+  {
+    "name": "FigJam AI",
+    "description": "Visualizes persona behaviors.",
+    "framework": "User-Centered Design",
+    "stage": "Specify Requirements",
+    "uxTool": "User Scenarios"
+  },
+  {
+    "name": "Notion AI",
+    "description": "Generates requirement documentation.",
+    "framework": "User-Centered Design",
+    "stage": "Specify Requirements",
+    "uxTool": "Personas"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Creates use-case mappings.",
+    "framework": "User-Centered Design",
+    "stage": "Specify Requirements",
+    "uxTool": "Personas"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Writes detailed user scenarios.",
+    "framework": "User-Centered Design",
+    "stage": "Specify Requirements",
+    "uxTool": "Personas"
+  },
+  {
+    "name": "FigJam AI",
+    "description": "Visualizes persona behaviors.",
+    "framework": "User-Centered Design",
+    "stage": "Specify Requirements",
+    "uxTool": "Personas"
+  },
+  {
+    "name": "Notion AI",
+    "description": "Generates requirement documentation.",
+    "framework": "User-Centered Design",
+    "stage": "Specify Requirements",
+    "uxTool": "Functional Requirements"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Creates use-case mappings.",
+    "framework": "User-Centered Design",
+    "stage": "Specify Requirements",
+    "uxTool": "Functional Requirements"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Writes detailed user scenarios.",
+    "framework": "User-Centered Design",
+    "stage": "Specify Requirements",
+    "uxTool": "Functional Requirements"
+  },
+  {
+    "name": "FigJam AI",
+    "description": "Visualizes persona behaviors.",
+    "framework": "User-Centered Design",
+    "stage": "Specify Requirements",
+    "uxTool": "Functional Requirements"
+  },
+  {
+    "name": "Figma Make",
+    "description": "Creates screens using tokens.",
+    "framework": "User-Centered Design",
+    "stage": "Create Design",
+    "uxTool": "Wireframes"
+  },
+  {
+    "name": "Magician",
+    "description": "Applies layout and UI kits.",
+    "framework": "User-Centered Design",
+    "stage": "Create Design",
+    "uxTool": "Wireframes"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Generates interaction flows.",
+    "framework": "User-Centered Design",
+    "stage": "Create Design",
+    "uxTool": "Wireframes"
+  },
+  {
+    "name": "Uizard",
+    "description": "Builds functional wireframes.",
+    "framework": "User-Centered Design",
+    "stage": "Create Design",
+    "uxTool": "Wireframes"
+  },
+  {
+    "name": "Figma Make",
+    "description": "Creates screens using tokens.",
+    "framework": "User-Centered Design",
+    "stage": "Create Design",
+    "uxTool": "UI Kits"
+  },
+  {
+    "name": "Magician",
+    "description": "Applies layout and UI kits.",
+    "framework": "User-Centered Design",
+    "stage": "Create Design",
+    "uxTool": "UI Kits"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Generates interaction flows.",
+    "framework": "User-Centered Design",
+    "stage": "Create Design",
+    "uxTool": "UI Kits"
+  },
+  {
+    "name": "Uizard",
+    "description": "Builds functional wireframes.",
+    "framework": "User-Centered Design",
+    "stage": "Create Design",
+    "uxTool": "UI Kits"
+  },
+  {
+    "name": "Figma Make",
+    "description": "Creates screens using tokens.",
+    "framework": "User-Centered Design",
+    "stage": "Create Design",
+    "uxTool": "Flowcharts"
+  },
+  {
+    "name": "Magician",
+    "description": "Applies layout and UI kits.",
+    "framework": "User-Centered Design",
+    "stage": "Create Design",
+    "uxTool": "Flowcharts"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Generates interaction flows.",
+    "framework": "User-Centered Design",
+    "stage": "Create Design",
+    "uxTool": "Flowcharts"
+  },
+  {
+    "name": "Uizard",
+    "description": "Builds functional wireframes.",
+    "framework": "User-Centered Design",
+    "stage": "Create Design",
+    "uxTool": "Flowcharts"
+  },
+  {
+    "name": "Figma Make",
+    "description": "Creates screens using tokens.",
+    "framework": "User-Centered Design",
+    "stage": "Create Design",
+    "uxTool": "Design Tokens"
+  },
+  {
+    "name": "Magician",
+    "description": "Applies layout and UI kits.",
+    "framework": "User-Centered Design",
+    "stage": "Create Design",
+    "uxTool": "Design Tokens"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Generates interaction flows.",
+    "framework": "User-Centered Design",
+    "stage": "Create Design",
+    "uxTool": "Design Tokens"
+  },
+  {
+    "name": "Uizard",
+    "description": "Builds functional wireframes.",
+    "framework": "User-Centered Design",
+    "stage": "Create Design",
+    "uxTool": "Design Tokens"
+  },
+  {
+    "name": "PlaybookUX",
+    "description": "Summarizes usability results.",
+    "framework": "User-Centered Design",
+    "stage": "Evaluate",
+    "uxTool": "Usability Testing"
+  },
+  {
+    "name": "Hotjar AI",
+    "description": "Extracts survey insights.",
+    "framework": "User-Centered Design",
+    "stage": "Evaluate",
+    "uxTool": "Usability Testing"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Rates usability scores.",
+    "framework": "User-Centered Design",
+    "stage": "Evaluate",
+    "uxTool": "Usability Testing"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Generates expert review summaries.",
+    "framework": "User-Centered Design",
+    "stage": "Evaluate",
+    "uxTool": "Usability Testing"
+  },
+  {
+    "name": "PlaybookUX",
+    "description": "Summarizes usability results.",
+    "framework": "User-Centered Design",
+    "stage": "Evaluate",
+    "uxTool": "Surveys"
+  },
+  {
+    "name": "Hotjar AI",
+    "description": "Extracts survey insights.",
+    "framework": "User-Centered Design",
+    "stage": "Evaluate",
+    "uxTool": "Surveys"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Rates usability scores.",
+    "framework": "User-Centered Design",
+    "stage": "Evaluate",
+    "uxTool": "Surveys"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Generates expert review summaries.",
+    "framework": "User-Centered Design",
+    "stage": "Evaluate",
+    "uxTool": "Surveys"
+  },
+  {
+    "name": "PlaybookUX",
+    "description": "Summarizes usability results.",
+    "framework": "User-Centered Design",
+    "stage": "Evaluate",
+    "uxTool": "Expert Reviews"
+  },
+  {
+    "name": "Hotjar AI",
+    "description": "Extracts survey insights.",
+    "framework": "User-Centered Design",
+    "stage": "Evaluate",
+    "uxTool": "Expert Reviews"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Rates usability scores.",
+    "framework": "User-Centered Design",
+    "stage": "Evaluate",
+    "uxTool": "Expert Reviews"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Generates expert review summaries.",
+    "framework": "User-Centered Design",
+    "stage": "Evaluate",
+    "uxTool": "Expert Reviews"
+  },
+  {
+    "name": "Stark",
+    "description": "Scans for accessibility violations.",
+    "framework": "UX Honeycomb",
+    "stage": "Facets",
+    "uxTool": "Heuristic Evaluation"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Generates heuristic reports.",
+    "framework": "UX Honeycomb",
+    "stage": "Facets",
+    "uxTool": "Heuristic Evaluation"
+  },
+  {
+    "name": "Hotjar AI",
+    "description": "Clusters usability issues.",
+    "framework": "UX Honeycomb",
+    "stage": "Facets",
+    "uxTool": "Heuristic Evaluation"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Suggests audit improvements.",
+    "framework": "UX Honeycomb",
+    "stage": "Facets",
+    "uxTool": "Heuristic Evaluation"
+  },
+  {
+    "name": "Stark",
+    "description": "Scans for accessibility violations.",
+    "framework": "UX Honeycomb",
+    "stage": "Facets",
+    "uxTool": "Satisfaction Surveys"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Generates heuristic reports.",
+    "framework": "UX Honeycomb",
+    "stage": "Facets",
+    "uxTool": "Satisfaction Surveys"
+  },
+  {
+    "name": "Hotjar AI",
+    "description": "Clusters usability issues.",
+    "framework": "UX Honeycomb",
+    "stage": "Facets",
+    "uxTool": "Satisfaction Surveys"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Suggests audit improvements.",
+    "framework": "UX Honeycomb",
+    "stage": "Facets",
+    "uxTool": "Satisfaction Surveys"
+  },
+  {
+    "name": "Stark",
+    "description": "Scans for accessibility violations.",
+    "framework": "UX Honeycomb",
+    "stage": "Facets",
+    "uxTool": "Accessibility Scanners"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Generates heuristic reports.",
+    "framework": "UX Honeycomb",
+    "stage": "Facets",
+    "uxTool": "Accessibility Scanners"
+  },
+  {
+    "name": "Hotjar AI",
+    "description": "Clusters usability issues.",
+    "framework": "UX Honeycomb",
+    "stage": "Facets",
+    "uxTool": "Accessibility Scanners"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Suggests audit improvements.",
+    "framework": "UX Honeycomb",
+    "stage": "Facets",
+    "uxTool": "Accessibility Scanners"
+  },
+  {
+    "name": "Stark",
+    "description": "Scans for accessibility violations.",
+    "framework": "UX Honeycomb",
+    "stage": "Facets",
+    "uxTool": "Card Sorting"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Generates heuristic reports.",
+    "framework": "UX Honeycomb",
+    "stage": "Facets",
+    "uxTool": "Card Sorting"
+  },
+  {
+    "name": "Hotjar AI",
+    "description": "Clusters usability issues.",
+    "framework": "UX Honeycomb",
+    "stage": "Facets",
+    "uxTool": "Card Sorting"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Suggests audit improvements.",
+    "framework": "UX Honeycomb",
+    "stage": "Facets",
+    "uxTool": "Card Sorting"
+  },
+  {
+    "name": "Stark",
+    "description": "Scans for accessibility violations.",
+    "framework": "UX Honeycomb",
+    "stage": "Facets",
+    "uxTool": "Content Audits"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Generates heuristic reports.",
+    "framework": "UX Honeycomb",
+    "stage": "Facets",
+    "uxTool": "Content Audits"
+  },
+  {
+    "name": "Hotjar AI",
+    "description": "Clusters usability issues.",
+    "framework": "UX Honeycomb",
+    "stage": "Facets",
+    "uxTool": "Content Audits"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Suggests audit improvements.",
+    "framework": "UX Honeycomb",
+    "stage": "Facets",
+    "uxTool": "Content Audits"
+  },
+  {
+    "name": "Otter.ai",
+    "description": "Transcribes research sessions.",
+    "framework": "UX Lifecycle",
+    "stage": "Analysis",
+    "uxTool": "Stakeholder Research"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Maps user goals and tasks.",
+    "framework": "UX Lifecycle",
+    "stage": "Analysis",
+    "uxTool": "Stakeholder Research"
+  },
+  {
+    "name": "Notion AI",
+    "description": "Generates requirement documents.",
+    "framework": "UX Lifecycle",
+    "stage": "Analysis",
+    "uxTool": "Stakeholder Research"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Clusters user stories.",
+    "framework": "UX Lifecycle",
+    "stage": "Analysis",
+    "uxTool": "Stakeholder Research"
+  },
+  {
+    "name": "Otter.ai",
+    "description": "Transcribes research sessions.",
+    "framework": "UX Lifecycle",
+    "stage": "Analysis",
+    "uxTool": "Requirement Gathering"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Maps user goals and tasks.",
+    "framework": "UX Lifecycle",
+    "stage": "Analysis",
+    "uxTool": "Requirement Gathering"
+  },
+  {
+    "name": "Notion AI",
+    "description": "Generates requirement documents.",
+    "framework": "UX Lifecycle",
+    "stage": "Analysis",
+    "uxTool": "Requirement Gathering"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Clusters user stories.",
+    "framework": "UX Lifecycle",
+    "stage": "Analysis",
+    "uxTool": "Requirement Gathering"
+  },
+  {
+    "name": "Otter.ai",
+    "description": "Transcribes research sessions.",
+    "framework": "UX Lifecycle",
+    "stage": "Analysis",
+    "uxTool": "Task Analysis"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Maps user goals and tasks.",
+    "framework": "UX Lifecycle",
+    "stage": "Analysis",
+    "uxTool": "Task Analysis"
+  },
+  {
+    "name": "Notion AI",
+    "description": "Generates requirement documents.",
+    "framework": "UX Lifecycle",
+    "stage": "Analysis",
+    "uxTool": "Task Analysis"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Clusters user stories.",
+    "framework": "UX Lifecycle",
+    "stage": "Analysis",
+    "uxTool": "Task Analysis"
+  },
+  {
+    "name": "Figma Make",
+    "description": "Generates flow-based wireframes.",
+    "framework": "UX Lifecycle",
+    "stage": "Design",
+    "uxTool": "Flow Diagrams"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Drafts UIs and applies libraries.",
+    "framework": "UX Lifecycle",
+    "stage": "Design",
+    "uxTool": "Flow Diagrams"
+  },
+  {
+    "name": "Magician",
+    "description": "Suggests design refinements.",
+    "framework": "UX Lifecycle",
+    "stage": "Design",
+    "uxTool": "Flow Diagrams"
+  },
+  {
+    "name": "FigJam AI",
+    "description": "Builds personas.",
+    "framework": "UX Lifecycle",
+    "stage": "Design",
+    "uxTool": "Flow Diagrams"
+  },
+  {
+    "name": "Figma Make",
+    "description": "Generates flow-based wireframes.",
+    "framework": "UX Lifecycle",
+    "stage": "Design",
+    "uxTool": "Wireframes"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Drafts UIs and applies libraries.",
+    "framework": "UX Lifecycle",
+    "stage": "Design",
+    "uxTool": "Wireframes"
+  },
+  {
+    "name": "Magician",
+    "description": "Suggests design refinements.",
+    "framework": "UX Lifecycle",
+    "stage": "Design",
+    "uxTool": "Wireframes"
+  },
+  {
+    "name": "FigJam AI",
+    "description": "Builds personas.",
+    "framework": "UX Lifecycle",
+    "stage": "Design",
+    "uxTool": "Wireframes"
+  },
+  {
+    "name": "Figma Make",
+    "description": "Generates flow-based wireframes.",
+    "framework": "UX Lifecycle",
+    "stage": "Design",
+    "uxTool": "UI Libraries"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Drafts UIs and applies libraries.",
+    "framework": "UX Lifecycle",
+    "stage": "Design",
+    "uxTool": "UI Libraries"
+  },
+  {
+    "name": "Magician",
+    "description": "Suggests design refinements.",
+    "framework": "UX Lifecycle",
+    "stage": "Design",
+    "uxTool": "UI Libraries"
+  },
+  {
+    "name": "FigJam AI",
+    "description": "Builds personas.",
+    "framework": "UX Lifecycle",
+    "stage": "Design",
+    "uxTool": "UI Libraries"
+  },
+  {
+    "name": "Figma Make",
+    "description": "Generates flow-based wireframes.",
+    "framework": "UX Lifecycle",
+    "stage": "Design",
+    "uxTool": "Personas"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Drafts UIs and applies libraries.",
+    "framework": "UX Lifecycle",
+    "stage": "Design",
+    "uxTool": "Personas"
+  },
+  {
+    "name": "Magician",
+    "description": "Suggests design refinements.",
+    "framework": "UX Lifecycle",
+    "stage": "Design",
+    "uxTool": "Personas"
+  },
+  {
+    "name": "FigJam AI",
+    "description": "Builds personas.",
+    "framework": "UX Lifecycle",
+    "stage": "Design",
+    "uxTool": "Personas"
+  },
+  {
+    "name": "Zeplin AI",
+    "description": "Generates spec documentation.",
+    "framework": "UX Lifecycle",
+    "stage": "Implementation",
+    "uxTool": "Handoff Sheets"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Annotates components.",
+    "framework": "UX Lifecycle",
+    "stage": "Implementation",
+    "uxTool": "Handoff Sheets"
+  },
+  {
+    "name": "Stark",
+    "description": "Validates implementation.",
+    "framework": "UX Lifecycle",
+    "stage": "Implementation",
+    "uxTool": "Handoff Sheets"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Formats developer docs.",
+    "framework": "UX Lifecycle",
+    "stage": "Implementation",
+    "uxTool": "Handoff Sheets"
+  },
+  {
+    "name": "Zeplin AI",
+    "description": "Generates spec documentation.",
+    "framework": "UX Lifecycle",
+    "stage": "Implementation",
+    "uxTool": "Component Tokens"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Annotates components.",
+    "framework": "UX Lifecycle",
+    "stage": "Implementation",
+    "uxTool": "Component Tokens"
+  },
+  {
+    "name": "Stark",
+    "description": "Validates implementation.",
+    "framework": "UX Lifecycle",
+    "stage": "Implementation",
+    "uxTool": "Component Tokens"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Formats developer docs.",
+    "framework": "UX Lifecycle",
+    "stage": "Implementation",
+    "uxTool": "Component Tokens"
+  },
+  {
+    "name": "Zeplin AI",
+    "description": "Generates spec documentation.",
+    "framework": "UX Lifecycle",
+    "stage": "Implementation",
+    "uxTool": "Dev Specs"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Annotates components.",
+    "framework": "UX Lifecycle",
+    "stage": "Implementation",
+    "uxTool": "Dev Specs"
+  },
+  {
+    "name": "Stark",
+    "description": "Validates implementation.",
+    "framework": "UX Lifecycle",
+    "stage": "Implementation",
+    "uxTool": "Dev Specs"
+  },
+  {
+    "name": "ChatGPT",
+    "description": "Formats developer docs.",
+    "framework": "UX Lifecycle",
+    "stage": "Implementation",
+    "uxTool": "Dev Specs"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Validates UI against checklist.",
+    "framework": "UX Lifecycle",
+    "stage": "Deployment",
+    "uxTool": "QA Dashboards"
+  },
+  {
+    "name": "Notion AI",
+    "description": "Writes launch plans.",
+    "framework": "UX Lifecycle",
+    "stage": "Deployment",
+    "uxTool": "QA Dashboards"
+  },
+  {
+    "name": "Amplitude",
+    "description": "Monitors consistency and issues.",
+    "framework": "UX Lifecycle",
+    "stage": "Deployment",
+    "uxTool": "QA Dashboards"
+  },
+  {
+    "name": "Stark",
+    "description": "Flags accessibility deviations.",
+    "framework": "UX Lifecycle",
+    "stage": "Deployment",
+    "uxTool": "QA Dashboards"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Validates UI against checklist.",
+    "framework": "UX Lifecycle",
+    "stage": "Deployment",
+    "uxTool": "Launch Plans"
+  },
+  {
+    "name": "Notion AI",
+    "description": "Writes launch plans.",
+    "framework": "UX Lifecycle",
+    "stage": "Deployment",
+    "uxTool": "Launch Plans"
+  },
+  {
+    "name": "Amplitude",
+    "description": "Monitors consistency and issues.",
+    "framework": "UX Lifecycle",
+    "stage": "Deployment",
+    "uxTool": "Launch Plans"
+  },
+  {
+    "name": "Stark",
+    "description": "Flags accessibility deviations.",
+    "framework": "UX Lifecycle",
+    "stage": "Deployment",
+    "uxTool": "Launch Plans"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Clusters heuristics issues.",
+    "framework": "UX Lifecycle",
+    "stage": "Evaluation",
+    "uxTool": "Heuristic Review"
+  },
+  {
+    "name": "Hotjar AI",
+    "description": "Highlights user pain points.",
+    "framework": "UX Lifecycle",
+    "stage": "Evaluation",
+    "uxTool": "Heuristic Review"
+  },
+  {
+    "name": "Amplitude",
+    "description": "Summarizes KPIs.",
+    "framework": "UX Lifecycle",
+    "stage": "Evaluation",
+    "uxTool": "Heuristic Review"
+  },
+  {
+    "name": "Mixpanel",
+    "description": "Evaluates retention trends.",
+    "framework": "UX Lifecycle",
+    "stage": "Evaluation",
+    "uxTool": "Heuristic Review"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Clusters heuristics issues.",
+    "framework": "UX Lifecycle",
+    "stage": "Evaluation",
+    "uxTool": "User Feedback"
+  },
+  {
+    "name": "Hotjar AI",
+    "description": "Highlights user pain points.",
+    "framework": "UX Lifecycle",
+    "stage": "Evaluation",
+    "uxTool": "User Feedback"
+  },
+  {
+    "name": "Amplitude",
+    "description": "Summarizes KPIs.",
+    "framework": "UX Lifecycle",
+    "stage": "Evaluation",
+    "uxTool": "User Feedback"
+  },
+  {
+    "name": "Mixpanel",
+    "description": "Evaluates retention trends.",
+    "framework": "UX Lifecycle",
+    "stage": "Evaluation",
+    "uxTool": "User Feedback"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Clusters heuristics issues.",
+    "framework": "UX Lifecycle",
+    "stage": "Evaluation",
+    "uxTool": "KPIs"
+  },
+  {
+    "name": "Hotjar AI",
+    "description": "Highlights user pain points.",
+    "framework": "UX Lifecycle",
+    "stage": "Evaluation",
+    "uxTool": "KPIs"
+  },
+  {
+    "name": "Amplitude",
+    "description": "Summarizes KPIs.",
+    "framework": "UX Lifecycle",
+    "stage": "Evaluation",
+    "uxTool": "KPIs"
+  },
+  {
+    "name": "Mixpanel",
+    "description": "Evaluates retention trends.",
+    "framework": "UX Lifecycle",
+    "stage": "Evaluation",
+    "uxTool": "KPIs"
+  },
+  {
+    "name": "UX Pilot",
+    "description": "Clusters heuristics issues.",
+    "framework": "UX Lifecycle",
+    "stage": "Evaluation",
+    "uxTool": "Retention Metrics"
+  },
+  {
+    "name": "Hotjar AI",
+    "description": "Highlights user pain points.",
+    "framework": "UX Lifecycle",
+    "stage": "Evaluation",
+    "uxTool": "Retention Metrics"
+  },
+  {
+    "name": "Amplitude",
+    "description": "Summarizes KPIs.",
+    "framework": "UX Lifecycle",
+    "stage": "Evaluation",
+    "uxTool": "Retention Metrics"
+  },
+  {
+    "name": "Mixpanel",
+    "description": "Evaluates retention trends.",
+    "framework": "UX Lifecycle",
+    "stage": "Evaluation",
+    "uxTool": "Retention Metrics"
+  }
+]

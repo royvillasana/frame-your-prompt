@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, FolderOpen, Calendar, MessageSquare, Tag } from "lucide-react";
+import { Plus, FolderOpen, ChevronRight, Loader2, ArrowLeft } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -28,7 +29,17 @@ interface ProjectSelectionStepProps {
 
 export const ProjectSelectionStep = ({ onNewProject, onExistingProject, onCustomPrompt, skipToStage = false }: ProjectSelectionStepProps) => {
   const { user } = useAuth();
+  const location = useLocation();
   const [isNewProject, setIsNewProject] = useState<boolean | null>(null);
+
+  // Check if we should skip to project creation
+  useEffect(() => {
+    if (location.state?.skipToProjectCreate) {
+      setIsNewProject(true);
+      // Clear the state to prevent re-triggering
+      window.history.replaceState({}, document.title);
+    }
+  }, [location]);
   const [projectName, setProjectName] = useState("");
   const [projectDescription, setProjectDescription] = useState("");
   const [projects, setProjects] = useState<Project[]>([]);
@@ -91,6 +102,82 @@ export const ProjectSelectionStep = ({ onNewProject, onExistingProject, onCustom
     }
   };
 
+  if (isNewProject === false) {
+    return (
+      <Card className="bg-gradient-card shadow-medium">
+        <CardHeader>
+          <div className="flex justify-between items-center">
+            <div>
+              <CardTitle>Select a Project</CardTitle>
+              <CardDescription>Choose an existing project to continue working on</CardDescription>
+            </div>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => setIsNewProject(null)}
+              className="gap-2"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {loading ? (
+            <div className="flex justify-center py-8">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+          ) : projects.length === 0 ? (
+            <div className="text-center py-8">
+              <FolderOpen className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+              <h3 className="text-lg font-medium mb-2">No projects found</h3>
+              <p className="text-muted-foreground mb-4">Get started by creating your first project</p>
+              <Button onClick={() => setIsNewProject(true)}>
+                <Plus className="mr-2 h-4 w-4" />
+                New Project
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {projects.map((project) => (
+                <div 
+                  key={project.id}
+                  onClick={() => onExistingProject(project)}
+                  className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 cursor-pointer transition-colors"
+                >
+                  <div className="flex items-center space-x-4">
+                    <div className="p-2 rounded-lg bg-primary/10">
+                      <FolderOpen className="h-5 w-5 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="font-medium">{project.name}</h3>
+                      <p className="text-sm text-muted-foreground line-clamp-1">
+                        {project.description || 'No description'}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    {project.generated_prompts?.[0]?.count > 0 && (
+                      <Badge variant="outline" className="text-xs">
+                        {project.generated_prompts[0].count} prompts
+                      </Badge>
+                    )}
+                    {project.selected_framework && project.selected_framework !== "None" && (
+                      <Badge variant="secondary" className="text-xs">
+                        {project.selected_framework}
+                      </Badge>
+                    )}
+                    <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    );
+  }
+
   if (isNewProject === null) {
     return (
       <Card className="bg-gradient-card shadow-medium">
@@ -117,7 +204,21 @@ export const ProjectSelectionStep = ({ onNewProject, onExistingProject, onCustom
                 </p>
               </CardContent>
             </Card>
-
+            {/* Existing Project Card */}
+            <Card 
+              className="cursor-pointer hover:shadow-md transition-all duration-200 bg-gradient-to-br from-purple-50 to-purple-50/50 border-2 border-purple-100 hover:border-purple-300 hover:scale-[1.02]"
+              onClick={() => setIsNewProject(false)}
+            >
+              <CardContent className="p-6 flex flex-col items-center justify-center h-full">
+                <div className="bg-purple-100 p-3 rounded-full mb-4">
+                  <FolderOpen className="h-8 w-8 text-purple-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-center mb-2">Existing Project</h3>
+                <p className="text-sm text-muted-foreground text-center">
+                  Continue working on a project you already have created
+                </p>
+              </CardContent>
+            </Card>
             {/* Custom Prompt Card - New Addition */}
             <Card 
               className="cursor-pointer hover:shadow-md transition-all duration-200 bg-gradient-to-br from-green-50 to-green-50/50 border-2 border-green-100 hover:border-green-300 hover:scale-[1.02]"
@@ -133,22 +234,6 @@ export const ProjectSelectionStep = ({ onNewProject, onExistingProject, onCustom
                 <h3 className="text-lg font-semibold text-center mb-2">Custom Prompt</h3>
                 <p className="text-sm text-muted-foreground text-center">
                   Create a custom prompt with advanced variables and personalization
-                </p>
-              </CardContent>
-            </Card>
-
-            {/* Existing Project Card */}
-            <Card 
-              className="cursor-pointer hover:shadow-md transition-all duration-200 bg-gradient-to-br from-purple-50 to-purple-50/50 border-2 border-purple-100 hover:border-purple-300 hover:scale-[1.02]"
-              onClick={() => setIsNewProject(false)}
-            >
-              <CardContent className="p-6 flex flex-col items-center justify-center h-full">
-                <div className="bg-purple-100 p-3 rounded-full mb-4">
-                  <FolderOpen className="h-8 w-8 text-purple-600" />
-                </div>
-                <h3 className="text-lg font-semibold text-center mb-2">Existing Project</h3>
-                <p className="text-sm text-muted-foreground text-center">
-                  Continue working on a project you already have created
                 </p>
               </CardContent>
             </Card>

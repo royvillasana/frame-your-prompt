@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Brain, Menu, X, Sparkles, User, LogOut } from "lucide-react";
+import { Brain, Menu, X, Sparkles, User, LogOut, FolderOpen, MessageSquare } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import logoHeader from "@/assets/logo_header.png";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,18 +15,32 @@ import {
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [profileImage, setProfileImage] = useState<string | null>(null);
   const location = useLocation();
   const { user, signOut } = useAuth();
+
+  // Load profile image from localStorage when user changes
+  useEffect(() => {
+    if (user) {
+      const storedImage = localStorage.getItem('profileImage');
+      if (storedImage) {
+        setProfileImage(storedImage);
+      }
+    } else {
+      setProfileImage(null);
+    }
+  }, [user]);
 
   const isActive = (path: string) => location.pathname === path;
 
   const navItems = [
     { name: "Generator", path: "/generator" },
-    { name: "Prompts", path: "/prompt-library" },
-    { name: "Library", path: "/library" },
+    { name: "Public Library", path: "/library" },
     { name: "Pricing", path: "/pricing" },
     { name: "Learn", path: "/learn" },
   ];
+
+  // No auth-specific items in main nav - moved to profile dropdown
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -66,8 +81,17 @@ const Header = () => {
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="relative h-8 w-8 rounded-full">
-                  <User className="h-4 w-4" />
+                <Button variant="ghost" size="sm" className="relative h-10 w-10 rounded-full p-0">
+                  {profileImage ? (
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={profileImage} alt="Profile" />
+                      <AvatarFallback>
+                        <User className="h-4 w-4" />
+                      </AvatarFallback>
+                    </Avatar>
+                  ) : (
+                    <User className="h-4 w-4" />
+                  )}
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56" align="end" forceMount>
@@ -78,13 +102,25 @@ const Header = () => {
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                  <Link to="/profile">
+                  <Link to="/profile" className="w-full">
                     <User className="mr-2 h-4 w-4" />
                     <span>Profile</span>
                   </Link>
                 </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/projects" className="w-full">
+                    <FolderOpen className="mr-2 h-4 w-4" />
+                    <span>My Projects</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/prompts" className="w-full">
+                    <MessageSquare className="mr-2 h-4 w-4" />
+                    <span>My Custom Prompts</span>
+                  </Link>
+                </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={signOut}>
+                <DropdownMenuItem onClick={signOut} className="w-full">
                   <LogOut className="mr-2 h-4 w-4" />
                   <span>Sign Out</span>
                 </DropdownMenuItem>

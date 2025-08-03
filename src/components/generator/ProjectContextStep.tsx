@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { StepCard } from "./StepCard";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -6,6 +6,7 @@ import { FileUpload } from "@/components/ui/file-upload";
 import { ArrowRight, Sparkles, ArrowLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { AIToolSelector } from "@/components/ai/AIToolSelector";
 
 interface ProjectContextStepProps {
   onNext: (context: ProjectContext) => void;
@@ -26,6 +27,7 @@ export interface ProjectContext {
   projectDescription?: string;
   contextFiles?: File[];
   documentContent?: string;
+  selectedAITool?: string;
 }
 
 export const ProjectContextStep = ({ 
@@ -44,14 +46,25 @@ export const ProjectContextStep = ({
   const [documentContent, setDocumentContent] = useState<string>("");
   const [isProcessing, setIsProcessing] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [selectedAITool, setSelectedAITool] = useState<string | null>(null);
   const { toast } = useToast();
 
   // Track if we have existing context from props
   const [hasExistingContext, setHasExistingContext] = useState(!!(initialContext?.projectDescription || initialContext?.documentContent));
   const [hasEdited, setHasEdited] = useState(false);
 
+  // Set default AI tool when the selected tool changes
   useEffect(() => {
-    // Only initialize from initialContext if we haven't edited yet
+    if (selectedTool) {
+      // Default to 'chatgpt' as the selected AI tool
+      setSelectedAITool('chatgpt');
+    } else {
+      setSelectedAITool(null);
+    }
+  }, [selectedTool]);
+
+  // Initialize from initialContext if we haven't edited yet
+  useEffect(() => {
     if (initialContext && !hasEdited) {
       setProjectDescription(initialContext.projectDescription || "");
       setDocumentContent(initialContext.documentContent || "");
@@ -64,10 +77,15 @@ export const ProjectContextStep = ({
       projectDescription: projectDescription.trim(),
       contextFiles: contextFiles.length > 0 ? contextFiles : undefined,
       documentContent: documentContent,
+      selectedAITool: selectedAITool || undefined,
     };
     
     // Always send the current context, regardless of previous state
     onNext(contextToSend);
+  };
+  
+  const handleAIToolSelect = (toolName: string) => {
+    setSelectedAITool(toolName);
   };
 
   const handleFilesSelected = async (files: File[]) => {
@@ -225,6 +243,22 @@ export const ProjectContextStep = ({
           <div className="text-sm bg-muted/30 p-3 rounded">
             {contextInfo}
           </div>
+          
+          {/* AI Tool Selector - Only show if we have tools or are loading */}
+          {(selectedTool) && (
+            <div className="mt-4">
+              <h3 className="text-sm font-medium mb-2">AI Assistant</h3>
+              <p className="text-sm text-muted-foreground mb-3">
+                Select an AI tool to help with your {selectedTool || 'selected task'}
+              </p>
+              <AIToolSelector
+                uxToolId={selectedTool}
+                selectedTool={selectedAITool}
+                onSelectTool={setSelectedAITool}
+                className="mb-6"
+              />
+            </div>
+          )}
           
           {hasExistingContext && !hasEdited && (
             <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded">

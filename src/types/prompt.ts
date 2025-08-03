@@ -10,15 +10,15 @@ export interface CustomPrompt {
   id?: string;
   title: string;
   content: string;
-  projectId?: string;
+  project_id?: string;  // Now matches the TEXT type in the database
   platform?: string;
   notes?: string;
   tags?: string[];
   variables?: PromptVariable[];
-  isPublic?: boolean;
-  userId?: string;
-  createdAt?: string;
-  updatedAt?: string;
+  is_public?: boolean;
+  user_id?: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export const PLATFORMS = [

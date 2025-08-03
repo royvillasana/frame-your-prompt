@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Zap, Crown, User, AlertTriangle } from "lucide-react";
+import { Zap, Crown, User, AlertTriangle, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface UsageData {
@@ -30,35 +30,41 @@ export const UsageLimitCard = () => {
   }, [user]);
 
   const checkUsage = async () => {
+    if (!user) return;
+    
     try {
-      // Check if user has API keys
-      const { data: profile } = await supabase
+      setLoading(true);
+      
+      // Check if user has API keys using Supabase client
+      const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('openai_api_key, perplexity_api_key')
-        .eq('user_id', user?.id)
-        .maybeSingle();
+        .eq('user_id', user.id)
+        .single();
 
+      if (profileError) throw profileError;
+      
       const hasApiKey = !!(profile?.openai_api_key || profile?.perplexity_api_key);
-
-      // Get usage info without incrementing counter
-      const { data: usage } = await supabase
+      const today = new Date().toISOString().split('T')[0];
+      
+      // Get usage info using Supabase client
+      const { data: usage, error: usageError } = await supabase
         .from('ai_usage')
         .select('*')
-        .eq('user_id', user?.id)
+        .eq('user_id', user.id)
         .eq('ai_model', 'gpt-4o-mini')
-        .eq('last_reset_date', new Date().toISOString().split('T')[0])
-        .maybeSingle();
+        .eq('last_reset_date', today);
 
-      let userType: 'guest' | 'registered_free' | 'registered_premium' = 'registered_free';
+      if (usageError) throw usageError;
+
+      // Determine user type and limits
+      let userType: 'guest' | 'registered_free' | 'registered_premium' = 'guest';
       let monthlyLimit = 6;
-      let currentUsage = usage?.prompts_used || 0;
+      let currentUsage = usage?.[0]?.prompts_used || 0;
 
-      if (hasApiKey) {
-        userType = 'registered_premium';
-        monthlyLimit = 999999;
-      } else {
-        userType = 'registered_free';
-        monthlyLimit = 6;
+      if (user) {
+        userType = hasApiKey ? 'registered_premium' : 'registered_free';
+        monthlyLimit = hasApiKey ? 999999 : 6;
       }
 
       setUsageData({
@@ -76,7 +82,20 @@ export const UsageLimitCard = () => {
     }
   };
 
-  if (loading || !usageData) {
+  if (loading) {
+    return (
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle className="text-lg flex items-center gap-2">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            Loading usage data...
+          </CardTitle>
+        </CardHeader>
+      </Card>
+    );
+  }
+
+  if (!usageData) {
     return null;
   }
 
@@ -117,25 +136,30 @@ export const UsageLimitCard = () => {
   return (
     <Card className={`${typeInfo.bgColor} border-2`}>
       <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className={typeInfo.color}>{typeInfo.icon}</span>
-            <CardTitle className="text-base">Plan {typeInfo.label}</CardTitle>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+            <div className="flex items-center gap-2">
+              <span className={typeInfo.color}>{typeInfo.icon}</span>
+              <CardTitle className="text-base m-0">Plan {typeInfo.label}</CardTitle>
+            </div>
+            <CardDescription className="text-sm m-0">
+              {typeInfo.description}
+            </CardDescription>
           </div>
+          
           {usageData.user_type === 'registered_free' && (
-            <Button 
-              size="sm" 
-              onClick={() => navigate('/profile')}
-              className="gap-1"
-            >
-              <Zap className="h-3 w-3" />
-              Upgrade
-            </Button>
+            <div className="w-full sm:w-auto">
+              <Button 
+                size="sm" 
+                onClick={() => navigate('/profile')}
+                className="gap-1 w-full sm:w-auto"
+              >
+                <Zap className="h-3 w-3" />
+                Upgrade
+              </Button>
+            </div>
           )}
         </div>
-        <CardDescription className="text-sm">
-          {typeInfo.description}
-        </CardDescription>
       </CardHeader>
       
       <CardContent className="pt-0">
