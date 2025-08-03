@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import Layout from "./components/Layout";
 import HomePage from "./pages/HomePage";
 import Generator from "./pages/Generator";
+import PromptGeneratorV2 from "./pages/PromptGeneratorV2";
 import Library from "./pages/Library";
 import Pricing from "./pages/Pricing";
 import Learn from "./pages/Learn";
@@ -75,10 +76,16 @@ const App = () => {
           
           {/* Protected routes */}
           <Route
-            path="/generator"
-            element={
+            path="/generator" element={
               <ProtectedRoute>
                 <Generator />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/generator-v2" element={
+              <ProtectedRoute>
+                <PromptGeneratorV2 />
               </ProtectedRoute>
             }
           />

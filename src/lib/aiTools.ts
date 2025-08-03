@@ -138,6 +138,16 @@ export const getAIToolsForUXTool = async (
   }
 };
 
+// Stage name mappings to handle variations
+const stageNameMappings: Record<string, string[]> = {
+  'Empathize': ['Empathize', 'Discovery', 'Research'],
+  'Define': ['Define', 'Analysis'],
+  'Ideate': ['Ideate', 'Ideation', 'Brainstorming'],
+  'Prototype': ['Prototype', 'Prototyping', 'Design'],
+  'Test': ['Test', 'Testing', 'Usability Testing'],
+  'Implement': ['Implement', 'Implementation', 'Development']
+};
+
 // Get all unique UX tools for a stage and framework
 export const getUXToolsForStage = async (
   stage: string, 
@@ -159,11 +169,40 @@ export const getUXToolsForStage = async (
       return [];
     }
     
-    // Get unique UX tools for the specified stage
+    // Get all unique stage names in the tools data
+    const allStages = [...new Set(tools.map(t => t.stage).filter(Boolean))];
+    console.log('All available stages in tools data:', allStages);
+    
+    // Find the canonical stage name that matches our input
+    const normalizedInputStage = stage.toLowerCase();
+    let matchedStage = allStages.find(s => s.toLowerCase() === normalizedInputStage);
+    
+    // If no direct match, try to find a matching stage in our mappings
+    if (!matchedStage) {
+      for (const [canonicalStage, variations] of Object.entries(stageNameMappings)) {
+        if (variations.some(v => v.toLowerCase() === normalizedInputStage)) {
+          // Try to find a matching stage in the tools data
+          matchedStage = allStages.find(s => 
+            s.toLowerCase() === canonicalStage.toLowerCase() ||
+            variations.some(v => v.toLowerCase() === s.toLowerCase())
+          );
+          if (matchedStage) break;
+        }
+      }
+    }
+    
+    if (!matchedStage) {
+      console.warn(`No matching stage found for "${stage}" in framework "${framework}". Available stages: ${allStages.join(', ')}`);
+      return [];
+    }
+    
+    console.log(`Matched stage "${stage}" to "${matchedStage}" in tools data`);
+    
+    // Get unique UX tools for the matched stage
     const uniqueTools = new Set<string>();
     
     for (const tool of tools) {
-      if (tool.stage && tool.stage.toLowerCase() === stage.toLowerCase() && tool.uxTool) {
+      if (tool.stage && tool.stage.toLowerCase() === matchedStage.toLowerCase() && tool.uxTool) {
         uniqueTools.add(tool.uxTool);
       }
     }
@@ -171,9 +210,9 @@ export const getUXToolsForStage = async (
     const result = Array.from(uniqueTools).sort();
     
     if (result.length === 0) {
-      console.warn(`No tools found for stage "${stage}" in framework "${framework}". Available stages: ${[...new Set(tools.map(t => t.stage))].join(', ')}`);
+      console.warn(`No tools found for stage "${matchedStage}" in framework "${framework}". Available stages: ${allStages.join(', ')}`);
     } else {
-      console.log(`Found ${result.length} unique UX tools for "${stage}" in "${framework}":`, result);
+      console.log(`Found ${result.length} unique UX tools for "${matchedStage}" in "${framework}":`, result);
     }
     
     return result;

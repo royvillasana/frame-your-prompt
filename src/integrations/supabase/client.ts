@@ -41,11 +41,8 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
     persistSession: true,
     detectSessionInUrl: true,
     storage,
-    debug: false, // Disable debug logs
+    debug: process.env.NODE_ENV === 'development',
     flowType: 'pkce', // Use PKCE flow for better security
-    // Don't automatically refresh the session, we'll handle it manually
-    autoRefreshToken: false,
-    persistSession: false
   },
   global: {
     headers: {
