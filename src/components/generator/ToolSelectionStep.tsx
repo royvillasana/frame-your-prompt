@@ -105,11 +105,11 @@ const getToolsByFrameworkAndStage = (framework: string, stage: string) => {
       "Check": ["test"]
     },
     "google-design-sprint": {
-      "Understand (Mon)": ["research"],
-      "Ideate (Tue)": ["ideate"],
-      "Decide (Wed)": ["define"],
-      "Prototype (Thu)": ["prototype"],
-      "Test (Fri)": ["test"]
+      "Understand": ["research"],
+      "Ideate": ["ideate"],
+      "Decide": ["define"],
+      "Prototype": ["prototype"],
+      "Test": ["test"]
     },
     "human-centered-design": {
       "Research": ["research"],
@@ -193,7 +193,7 @@ const validateToolMappings = () => {
     "design-thinking": ["Empathize", "Define", "Ideate", "Prototype", "Test", "Implement"],
     "double-diamond": ["Discover", "Define", "Develop", "Deliver"],
     "lean-ux": ["Think", "Make", "Check"],
-    "google-design-sprint": ["Understand (Mon)", "Ideate (Tue)", "Decide (Wed)", "Prototype (Thu)", "Test (Fri)"],
+    "google-design-sprint": ["Understand", "Ideate", "Decide", "Prototype", "Test"],
     "human-centered-design": ["Research", "Ideation", "Prototyping", "Implementation"],
     "jobs-to-be-done": ["Define the job", "Map the process", "Identify opportunities", "Design solutions"],
     "agile-ux": ["UX Sprint Planning", "Design Sprint", "Validation", "Iteration"],

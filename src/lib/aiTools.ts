@@ -138,14 +138,105 @@ export const getAIToolsForUXTool = async (
   }
 };
 
-// Stage name mappings to handle variations
+// Stage name mappings to handle variations across different frameworks
 const stageNameMappings: Record<string, string[]> = {
-  'Empathize': ['Empathize', 'Discovery', 'Research'],
-  'Define': ['Define', 'Analysis'],
-  'Ideate': ['Ideate', 'Ideation', 'Brainstorming'],
-  'Prototype': ['Prototype', 'Prototyping', 'Design'],
-  'Test': ['Test', 'Testing', 'Usability Testing'],
-  'Implement': ['Implement', 'Implementation', 'Development']
+  // Design Thinking stages
+  'Empathize': ['Empathize', 'Empathy', 'Discovery', 'Research', 'User Research'],
+  'Define': ['Define', 'Definition', 'Analysis', 'Synthesis', 'Problem Definition'],
+  'Ideate': ['Ideate', 'Ideation', 'Brainstorming', 'Generate Ideas'],
+  'Prototype': ['Prototype', 'Prototyping', 'Design', 'Create', 'Build'],
+  'Test': ['Test', 'Testing', 'Usability Testing', 'Validate', 'Validation', 'Evaluate'],
+  'Implement': ['Implement', 'Implementation', 'Development', 'Deploy', 'Deliver'],
+  
+  // Google Design Sprint stages
+  'Understand': ['Understand', 'Understand (Mon)', 'Discovery', 'Empathize', 'Research', 'Learn'],
+  'Ideate': ['Ideate', 'Ideate (Tue)', 'Brainstorming', 'Ideation', 'Generate'],
+  'Decide': ['Decide', 'Decide (Wed)', 'Define', 'Analysis', 'Synthesis', 'Converge'],
+  'Prototype': ['Prototype', 'Prototype (Thu)', 'Design', 'Prototyping', 'Create'],
+  'Test': ['Test', 'Test (Fri)', 'Usability Testing', 'Validate', 'Interview'],
+  
+  // Lean UX stages
+  'Think': ['Think', 'Plan', 'Define', 'Hypothesize', 'Research', 'Understand'],
+  'Make': ['Make', 'Build', 'Prototype', 'Design', 'Create', 'Experiment'],
+  'Check': ['Check', 'Test', 'Validate', 'Learn', 'Measure', 'Evaluate'],
+  
+  // Double Diamond stages
+  'Discover': ['Discover', 'Research', 'Explore', 'Empathize', 'Understand'],
+  'Define': ['Define', 'Synthesize', 'Problem Definition', 'Focus'],
+  'Develop': ['Develop', 'Ideate', 'Brainstorm', 'Create', 'Prototype'],
+  'Deliver': ['Deliver', 'Test', 'Implement', 'Launch', 'Validate'],
+  
+  // Human-Centered Design stages
+  'Research': ['Research', 'Discover', 'Empathize', 'Understand', 'Observe'],
+  'Ideation': ['Ideation', 'Ideate', 'Brainstorm', 'Generate', 'Create'],
+  'Prototyping': ['Prototyping', 'Prototype', 'Design', 'Build', 'Make'],
+  'Implementation': ['Implementation', 'Implement', 'Deliver', 'Launch', 'Test']
+};
+
+// Framework-specific stage mappings
+const frameworkStageMappings: Record<string, Record<string, string[]>> = {
+  'design-thinking': {
+    'Empathize': ['Empathize', 'Empathy', 'Discovery', 'Research', 'User Research'],
+    'Define': ['Define', 'Definition', 'Analysis', 'Synthesis', 'Problem Definition'],
+    'Ideate': ['Ideate', 'Ideation', 'Brainstorming', 'Generate Ideas'],
+    'Prototype': ['Prototype', 'Prototyping', 'Design', 'Create', 'Build'],
+    'Test': ['Test', 'Testing', 'Usability Testing', 'Validate', 'Validation', 'Evaluate'],
+    'Implement': ['Implement', 'Implementation', 'Development', 'Deploy', 'Deliver']
+  },
+  'google-design-sprint': {
+    'Understand': ['Understand', 'Understand (Mon)', 'Discovery', 'Empathize', 'Research', 'Learn'],
+    'Ideate': ['Ideate', 'Ideate (Tue)', 'Brainstorming', 'Ideation', 'Generate'],
+    'Decide': ['Decide', 'Decide (Wed)', 'Define', 'Analysis', 'Synthesis', 'Converge'],
+    'Prototype': ['Prototype', 'Prototype (Thu)', 'Design', 'Prototyping', 'Create'],
+    'Test': ['Test', 'Test (Fri)', 'Usability Testing', 'Validate', 'Interview']
+  },
+  'lean-ux': {
+    'Think': ['Think', 'Plan', 'Define', 'Hypothesize', 'Research', 'Understand'],
+    'Make': ['Make', 'Build', 'Prototype', 'Design', 'Create', 'Experiment'],
+    'Check': ['Check', 'Test', 'Validate', 'Learn', 'Measure', 'Evaluate']
+  },
+  'double-diamond': {
+    'Discover': ['Discover', 'Research', 'Explore', 'Empathize', 'Understand'],
+    'Define': ['Define', 'Synthesize', 'Problem Definition', 'Focus'],
+    'Develop': ['Develop', 'Ideate', 'Brainstorm', 'Create', 'Prototype'],
+    'Deliver': ['Deliver', 'Test', 'Implement', 'Launch', 'Validate']
+  },
+  'human-centered-design': {
+    'Research': ['Research', 'Discover', 'Empathize', 'Understand', 'Observe'],
+    'Ideation': ['Ideation', 'Ideate', 'Brainstorm', 'Generate', 'Create'],
+    'Prototyping': ['Prototyping', 'Prototype', 'Design', 'Build', 'Make'],
+    'Implementation': ['Implementation', 'Implement', 'Deliver', 'Launch', 'Test']
+  },
+  'jobs-to-be-done': {
+    'Job Discovery': ['Job Discovery', 'Research', 'Discover', 'Empathize', 'Understand', 'Define'],
+    'Job Mapping': ['Job Mapping', 'Analysis', 'Synthesize', 'Map', 'Process'],
+    'Solution Ideation': ['Solution Ideation', 'Ideate', 'Brainstorm', 'Generate', 'Create', 'Ideation'],
+    'Validation': ['Validation', 'Test', 'Validate', 'Evaluate', 'Measure', 'Check']
+  },
+  'ux-honeycomb': {
+    'Facets': ['Facets', 'Honeycomb', 'UX Honeycomb', 'UX Dimensions', 'UX Elements'],
+    'Useful': ['Useful', 'Utility', 'Functionality'],
+    'Usable': ['Usable', 'Usability', 'Ease of Use'],
+    'Desirable': ['Desirable', 'Desire', 'Appeal', 'Aesthetics'],
+    'Findable': ['Findable', 'Findability', 'Navigation', 'Discovery'],
+    'Accessible': ['Accessible', 'Accessibility', 'Inclusive Design'],
+    'Credible': ['Credible', 'Credibility', 'Trust', 'Reliability'],
+    'Valuable': ['Valuable', 'Value', 'ROI', 'Business Value']
+  },
+  'heart-framework': {
+    'Metrics': ['Metrics', 'HEART', 'HEART Framework', 'Framework'],
+    'Happiness': ['Happiness', 'Satisfaction', 'User Satisfaction', 'Delight'],
+    'Engagement': ['Engagement', 'Engage', 'Interaction', 'Usage'],
+    'Adoption': ['Adoption', 'Adopt', 'New Users', 'Acquisition'],
+    'Retention': ['Retention', 'Retain', 'Churn', 'Loyalty'],
+    'Task Success': ['Task Success', 'Completion', 'Success Rate', 'Efficiency']
+  },
+  'hooked-model': {
+    'Trigger': ['Trigger', 'Cue', 'Prompt', 'Signal'],
+    'Action': ['Action', 'Behavior', 'Activity', 'Interaction'],
+    'Variable Reward': ['Variable Reward', 'Reward', 'Incentive', 'Benefit', 'Pleasure'],
+    'Investment': ['Investment', 'Effort', 'Contribution', 'Commitment']
+  }
 };
 
 // Get all unique UX tools for a stage and framework
@@ -159,10 +250,13 @@ export const getUXToolsForStage = async (
       return [];
     }
     
-    console.log(`Getting UX tools for stage: ${stage}, framework: ${framework}`);
+    console.log(`Getting UX tools for stage: "${stage}", framework: "${framework}"`);
+    
+    // Normalize framework ID
+    const normalizedFramework = framework.toLowerCase().replace(/\s+/g, '-');
     
     // Only load tools for the specified framework for better performance
-    const tools = await loadAITools(framework.toLowerCase());
+    const tools = await loadAITools(normalizedFramework);
     
     if (!tools || tools.length === 0) {
       console.warn('No tools available for filtering');
@@ -173,20 +267,40 @@ export const getUXToolsForStage = async (
     const allStages = [...new Set(tools.map(t => t.stage).filter(Boolean))];
     console.log('All available stages in tools data:', allStages);
     
-    // Find the canonical stage name that matches our input
-    const normalizedInputStage = stage.toLowerCase();
+    // Try to find a direct match first
+    const normalizedInputStage = stage.trim().toLowerCase();
     let matchedStage = allStages.find(s => s.toLowerCase() === normalizedInputStage);
     
-    // If no direct match, try to find a matching stage in our mappings
+    // If no direct match, try to find a matching stage using framework-specific mappings
     if (!matchedStage) {
-      for (const [canonicalStage, variations] of Object.entries(stageNameMappings)) {
+      const frameworkStages = frameworkStageMappings[normalizedFramework] || {};
+      
+      // First, try to find a direct mapping for the input stage
+      for (const [canonicalStage, variations] of Object.entries(frameworkStages)) {
         if (variations.some(v => v.toLowerCase() === normalizedInputStage)) {
           // Try to find a matching stage in the tools data
-          matchedStage = allStages.find(s => 
+          const potentialMatch = allStages.find(s => 
             s.toLowerCase() === canonicalStage.toLowerCase() ||
             variations.some(v => v.toLowerCase() === s.toLowerCase())
           );
-          if (matchedStage) break;
+          if (potentialMatch) {
+            matchedStage = potentialMatch;
+            console.log(`Matched stage "${stage}" to "${matchedStage}" using framework-specific mapping`);
+            break;
+          }
+        }
+      }
+      
+      // If still no match, try to find any stage that contains the input stage
+      if (!matchedStage) {
+        const partialMatch = allStages.find(s => 
+          s.toLowerCase().includes(normalizedInputStage) ||
+          normalizedInputStage.includes(s.toLowerCase())
+        );
+        
+        if (partialMatch) {
+          matchedStage = partialMatch;
+          console.log(`Matched stage "${stage}" to "${matchedStage}" using partial matching`);
         }
       }
     }
@@ -196,9 +310,9 @@ export const getUXToolsForStage = async (
       return [];
     }
     
-    console.log(`Matched stage "${stage}" to "${matchedStage}" in tools data`);
+    console.log(`Using stage: "${matchedStage}" for tools lookup`);
     
-    // Get unique UX tools for the matched stage
+    // Get unique UX tools for the matched stage (case-insensitive match)
     const uniqueTools = new Set<string>();
     
     for (const tool of tools) {
@@ -212,7 +326,7 @@ export const getUXToolsForStage = async (
     if (result.length === 0) {
       console.warn(`No tools found for stage "${matchedStage}" in framework "${framework}". Available stages: ${allStages.join(', ')}`);
     } else {
-      console.log(`Found ${result.length} unique UX tools for "${matchedStage}" in "${framework}":`, result);
+      console.log(`Found ${result.length} unique UX tools for "${matchedStage}" in "${framework}"`);
     }
     
     return result;
