@@ -204,7 +204,21 @@ export const ProjectSelectionStep = ({ onNewProject, onExistingProject, onCustom
                 </p>
               </CardContent>
             </Card>
-
+            {/* Existing Project Card */}
+            <Card 
+              className="cursor-pointer hover:shadow-md transition-all duration-200 bg-gradient-to-br from-purple-50 to-purple-50/50 border-2 border-purple-100 hover:border-purple-300 hover:scale-[1.02]"
+              onClick={() => setIsNewProject(false)}
+            >
+              <CardContent className="p-6 flex flex-col items-center justify-center h-full">
+                <div className="bg-purple-100 p-3 rounded-full mb-4">
+                  <FolderOpen className="h-8 w-8 text-purple-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-center mb-2">Existing Project</h3>
+                <p className="text-sm text-muted-foreground text-center">
+                  Continue working on a project you already have created
+                </p>
+              </CardContent>
+            </Card>
             {/* Custom Prompt Card - New Addition */}
             <Card 
               className="cursor-pointer hover:shadow-md transition-all duration-200 bg-gradient-to-br from-green-50 to-green-50/50 border-2 border-green-100 hover:border-green-300 hover:scale-[1.02]"
@@ -220,22 +234,6 @@ export const ProjectSelectionStep = ({ onNewProject, onExistingProject, onCustom
                 <h3 className="text-lg font-semibold text-center mb-2">Custom Prompt</h3>
                 <p className="text-sm text-muted-foreground text-center">
                   Create a custom prompt with advanced variables and personalization
-                </p>
-              </CardContent>
-            </Card>
-
-            {/* Existing Project Card */}
-            <Card 
-              className="cursor-pointer hover:shadow-md transition-all duration-200 bg-gradient-to-br from-purple-50 to-purple-50/50 border-2 border-purple-100 hover:border-purple-300 hover:scale-[1.02]"
-              onClick={() => setIsNewProject(false)}
-            >
-              <CardContent className="p-6 flex flex-col items-center justify-center h-full">
-                <div className="bg-purple-100 p-3 rounded-full mb-4">
-                  <FolderOpen className="h-8 w-8 text-purple-600" />
-                </div>
-                <h3 className="text-lg font-semibold text-center mb-2">Existing Project</h3>
-                <p className="text-sm text-muted-foreground text-center">
-                  Continue working on a project you already have created
                 </p>
               </CardContent>
             </Card>

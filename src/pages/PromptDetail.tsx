@@ -30,7 +30,7 @@ const PromptDetail = () => {
     try {
       // Load prompt
       const { data: promptData, error: promptError } = await supabase
-        .from('generated_prompts')
+        .from('custom_prompts')
         .select('*')
         .eq('id', promptId)
         .eq('user_id', user?.id)
@@ -39,16 +39,20 @@ const PromptDetail = () => {
       if (promptError) throw promptError;
       setPrompt(promptData);
 
-      // Load associated project
-      if (promptData.project_id) {
+      // Load associated project if it's not the custom prompt project
+      if (promptData.project_id && promptData.project_id !== 'custom_prompt') {
         const { data: projectData, error: projectError } = await supabase
           .from('projects')
           .select('*')
           .eq('id', promptData.project_id)
           .single();
 
-        if (projectError) throw projectError;
-        setProject(projectData);
+        if (projectError) {
+          console.warn('Error loading project:', projectError);
+          // Don't throw the error, just continue without the project data
+        } else {
+          setProject(projectData);
+        }
       }
     } catch (error: any) {
       toast.error("Error loading prompt details");
@@ -95,8 +99,8 @@ const PromptDetail = () => {
       
       // Update prompt with new response
       const { error: updateError } = await supabase
-        .from('generated_prompts')
-        .update({ ai_response: data.aiResponse })
+        .from('custom_prompts')
+        .update({ content: data.aiResponse })
         .eq('id', promptId);
 
       if (updateError) throw updateError;
@@ -149,7 +153,7 @@ const PromptDetail = () => {
 
     try {
       const { error } = await supabase
-        .from('generated_prompts')
+        .from('custom_prompts')
         .delete()
         .eq('id', promptId)
         .eq('user_id', user?.id);
