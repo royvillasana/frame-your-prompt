@@ -27,31 +27,69 @@ const PromptDetail = () => {
   }, [user, promptId]);
 
   const loadPromptDetails = async () => {
+    if (!promptId || !user?.id) return;
+    
     try {
-      // Load prompt
-      const { data: promptData, error: promptError } = await supabase
+      // Try to load from custom_prompts first
+      const { data: customPromptData, error: customPromptError } = await supabase
         .from('custom_prompts')
         .select('*')
         .eq('id', promptId)
-        .eq('user_id', user?.id)
-        .single();
+        .eq('user_id', user.id)
+        .maybeSingle();
 
-      if (promptError) throw promptError;
-      setPrompt(promptData);
+      if (customPromptError) {
+        console.error('Error loading custom prompt:', customPromptError);
+        throw customPromptError;
+      }
 
-      // Load associated project if it's not the custom prompt project
-      if (promptData.project_id && promptData.project_id !== 'custom_prompt') {
-        const { data: projectData, error: projectError } = await supabase
-          .from('projects')
+      // If not found in custom_prompts, try generated_prompts
+      if (!customPromptData) {
+        const { data: generatedPromptData, error: generatedPromptError } = await supabase
+          .from('generated_prompts')
           .select('*')
-          .eq('id', promptData.project_id)
-          .single();
+          .eq('id', promptId)
+          .eq('user_id', user.id)
+          .maybeSingle();
 
-        if (projectError) {
-          console.warn('Error loading project:', projectError);
-          // Don't throw the error, just continue without the project data
-        } else {
-          setProject(projectData);
+        if (generatedPromptError) {
+          console.error('Error loading generated prompt:', generatedPromptError);
+          throw generatedPromptError;
+        }
+
+        if (!generatedPromptData) {
+          throw new Error('Prompt not found');
+        }
+
+        setPrompt(generatedPromptData);
+        
+        // Load associated project if it exists
+        if (generatedPromptData.project_id) {
+          const { data: projectData, error: projectError } = await supabase
+            .from('projects')
+            .select('*')
+            .eq('id', generatedPromptData.project_id)
+            .maybeSingle();
+
+          if (!projectError && projectData) {
+            setProject(projectData);
+          }
+        }
+      } else {
+        // Handle custom prompt data
+        setPrompt(customPromptData);
+        
+        // Load associated project if it's not the custom prompt project
+        if (customPromptData.project_id && customPromptData.project_id !== 'custom_prompt') {
+          const { data: projectData, error: projectError } = await supabase
+            .from('projects')
+            .select('*')
+            .eq('id', customPromptData.project_id)
+            .maybeSingle();
+
+          if (!projectError && projectData) {
+            setProject(projectData);
+          }
         }
       }
     } catch (error: any) {
