@@ -1022,13 +1022,13 @@ Make the prompt concise yet comprehensive enough to get high-quality results. Th
           className="w-full"
           defaultValue="easy"
         >
-          <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto mb-8">
+          <TabsList className="border grid w-full grid-cols-2 mx-auto mb-2 h-12">
             <TabsTrigger value="easy" className="flex items-center gap-2">
-              <Zap className="h-4 w-4" />
+              <Zap className="h-4 w-10" />
               Easy Flow
             </TabsTrigger>
             <TabsTrigger value="advanced" className="flex items-center gap-2">
-              <Settings className="h-4 w-4" />
+              <Settings className="h-4 w-10" />
               Advanced (B2B)
             </TabsTrigger>
           </TabsList>
