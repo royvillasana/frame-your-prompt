@@ -2,9 +2,10 @@ import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Copy, RefreshCw, Save, Download, Sparkles, RotateCcw, Library } from "lucide-react";
+import { Copy, RefreshCw, Save, Download, Sparkles, RotateCcw, Library, Zap, Settings } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { ProjectContextStep, ProjectContext } from "@/components/generator/ProjectContextStep";
@@ -973,6 +974,24 @@ Make the prompt concise yet comprehensive enough to get high-quality results. Th
     }
   }, [user, navigate, location.state]);
 
+  // State for active tab
+  const [activeFlow, setActiveFlow] = useState<'easy' | 'advanced'>('easy');
+
+  // Update the URL hash when the active flow changes
+  useEffect(() => {
+    window.location.hash = activeFlow;
+  }, [activeFlow]);
+
+  // Set the active flow based on URL hash on initial load
+  useEffect(() => {
+    const hash = window.location.hash.replace('#', '');
+    if (hash === 'advanced') {
+      setActiveFlow('advanced');
+    } else {
+      setActiveFlow('easy');
+    }
+  }, []);
+
   return (
     <div className="min-h-screen bg-gradient-subtle py-12">
       <LoadingPromptGeneration 
@@ -997,7 +1016,56 @@ Make the prompt concise yet comprehensive enough to get high-quality results. Th
           <UsageLimitCard />
         </div>
 
-        {renderCurrentStep()}
+        <Tabs 
+          value={activeFlow} 
+          onValueChange={(value) => setActiveFlow(value as 'easy' | 'advanced')}
+          className="w-full"
+          defaultValue="easy"
+        >
+          <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto mb-8">
+            <TabsTrigger value="easy" className="flex items-center gap-2">
+              <Zap className="h-4 w-4" />
+              Easy Flow
+            </TabsTrigger>
+            <TabsTrigger value="advanced" className="flex items-center gap-2">
+              <Settings className="h-4 w-4" />
+              Advanced (B2B)
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="easy" className="mt-0">
+            {renderCurrentStep()}
+          </TabsContent>
+
+          <TabsContent value="advanced" className="mt-0">
+            <Card className="bg-muted/50">
+              <CardHeader>
+                <CardTitle>Advanced Generator (Coming Soon)</CardTitle>
+                <CardDescription>
+                  The advanced generator with B2B features is under development.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <p className="text-sm text-muted-foreground">
+                    This will include additional features for B2B use cases, such as:
+                  </p>
+                  <ul className="list-disc pl-5 space-y-2 text-sm text-muted-foreground">
+                    <li>Advanced framework customization</li>
+                    <li>Team collaboration features</li>
+                    <li>Enterprise integration options</li>
+                    <li>Custom template management</li>
+                  </ul>
+                  <div className="pt-4">
+                    <p className="text-sm text-muted-foreground mb-2">
+                      For now, please use the Easy Flow or check back later for updates.
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
