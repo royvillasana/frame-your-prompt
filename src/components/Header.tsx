@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Brain, Menu, X, Sparkles, User, LogOut, FolderOpen, MessageSquare } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import logoHeader from "@/assets/logo_header.png";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,8 +15,21 @@ import {
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [profileImage, setProfileImage] = useState<string | null>(null);
   const location = useLocation();
   const { user, signOut } = useAuth();
+
+  // Load profile image from localStorage when user changes
+  useEffect(() => {
+    if (user) {
+      const storedImage = localStorage.getItem('profileImage');
+      if (storedImage) {
+        setProfileImage(storedImage);
+      }
+    } else {
+      setProfileImage(null);
+    }
+  }, [user]);
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -67,8 +81,17 @@ const Header = () => {
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="relative h-8 w-8 rounded-full">
-                  <User className="h-4 w-4" />
+                <Button variant="ghost" size="sm" className="relative h-10 w-10 rounded-full p-0">
+                  {profileImage ? (
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={profileImage} alt="Profile" />
+                      <AvatarFallback>
+                        <User className="h-4 w-4" />
+                      </AvatarFallback>
+                    </Avatar>
+                  ) : (
+                    <User className="h-4 w-4" />
+                  )}
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56" align="end" forceMount>
