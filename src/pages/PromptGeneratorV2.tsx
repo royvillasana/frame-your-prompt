@@ -94,28 +94,43 @@ export default function PromptGeneratorV2() {
   }, [user]);
 
   const loadUserProjects = async () => {
+    if (!user) {
+      console.log('No user found, skipping project load');
+      return;
+    }
+    
     try {
       setLoading(true);
+      console.log('Loading projects for user:', user.id);
       
-      // Start with the minimal set of columns we know should exist
-      let selectColumns = 'id, name, created_at';
-      
-      // Try to get all projects with minimal columns first
+      // Select all columns that might be needed
       const { data, error } = await supabase
         .from('projects')
-        .select(selectColumns)
-        .eq('user_id', user?.id)
+        .select('*')
+        .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
       
-      console.log('Successfully loaded projects with minimal columns:', data);
-      setProjects(data || []);
+      console.log('Successfully loaded projects:', data);
+      // Ensure we have an array even if data is null/undefined
+      const projects = Array.isArray(data) ? data : [];
+      setProjects(projects);
+      
+      // If there are projects, log the first one for debugging
+      if (projects.length > 0) {
+        console.log('First project in list:', projects[0]);
+      } else {
+        console.log('No projects found for user');
+      }
     } catch (error) {
       console.error('Error loading projects:', error);
       toast({
         title: 'Error',
-        description: 'Failed to load your projects',
+        description: 'Failed to load your projects. Please try again.',
         variant: 'destructive',
       });
     } finally {
@@ -503,6 +518,13 @@ ${selectedTool || 'Not specified'}`;
           .insert([promptData]);
           
         if (error) throw error;
+        
+        // For custom prompts, navigate to the prompts list
+        toast({
+          title: 'Prompt saved',
+          description: 'Your custom prompt has been saved to your library.',
+        });
+        navigate('/prompts');
       } else {
         // For generated prompts, use the generated_prompts table schema
         const promptData = {
@@ -520,20 +542,29 @@ ${selectedTool || 'Not specified'}`;
           created_at: new Date().toISOString(),
         };
         
-        const { error } = await supabase
+        const { data, error } = await supabase
           .from('generated_prompts')
-          .insert([promptData]);
+          .insert([promptData])
+          .select()
+          .single();
           
         if (error) throw error;
+        
+        // For project prompts, show a toast with a button to view the project
+        toast({
+          title: 'Prompt saved successfully',
+          description: 'Your prompt has been saved to the project.',
+          action: selectedProject?.id ? (
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => navigate(`/projects/${selectedProject.id}`)}
+            >
+              View Project
+            </Button>
+          ) : undefined,
+        });
       }
-      
-      toast({
-        title: 'Prompt saved',
-        description: 'Your prompt has been saved to your library.',
-      });
-      
-      // Navigate to the prompts list
-      navigate('/prompts');
       
     } catch (error) {
       console.error('Error saving prompt:', error);
@@ -549,7 +580,6 @@ ${selectedTool || 'Not specified'}`;
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <h1 className="text-3xl font-bold mb-6">Prompt Generator</h1>
       
       {loading ? (
         <div className="flex items-center justify-center py-12">

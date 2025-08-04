@@ -1,13 +1,17 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import PromptGeneratorV2 from "./PromptGeneratorV2";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Copy, RefreshCw, Save, Download, Sparkles, RotateCcw, Library, Zap, Settings } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-import { useAuth } from "@/hooks/useAuth";
+import { Copy, RefreshCw, Save, Download, Sparkles, RotateCcw, Library, Zap, Settings, Loader2 } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
+import { getAIToolsForUXTool, getUXToolsForStage, loadAITools } from "@/lib/aiTools";
+import { useAuth } from "@/hooks/use-auth";
 import { ProjectContextStep, ProjectContext } from "@/components/generator/ProjectContextStep";
 import { ProjectStageStep } from "@/components/generator/ProjectStageStep";
 import { FrameworkStep } from "@/components/generator/FrameworkStep";
@@ -17,6 +21,7 @@ import { UsageLimitCard } from "@/components/generator/UsageLimitCard";
 import { LoadingPromptGeneration } from "@/components/generator/LoadingPromptGeneration";
 import ReactMarkdown from "react-markdown";
 import { ProjectBasicInfoStep, ProjectBasicInfo } from "@/components/generator/ProjectBasicInfoStep";
+import { ResultStep } from "@/components/generator/ResultStep";
 
 type Step = "project" | "basic-info" | "stage" | "framework" | "tool" | "context" | "result";
 
@@ -96,11 +101,154 @@ const getFrameworkContext = (framework: string, stage: string, tool: string) => 
   return `Framework: ${framework}\nStage: ${stage}\nRecommended Tools: ${stageInfo.tools.join(', ')}\nAI Use Cases: ${stageInfo.aiUse.join(', ')}\nSelected Tool: ${tool}`;
 };
 
+// Framework ID to display name mapping
+const FRAMEWORKS = [
+  { id: 'design-thinking', name: 'Design Thinking' },
+  { id: 'double-diamond', name: 'Double Diamond' },
+  { id: 'google-design-sprint', name: 'Design Sprint' },
+  { id: 'lean-ux', name: 'Lean UX' },
+  { id: 'agile-ux', name: 'Agile UX' },
+  { id: 'human-centered-design', name: 'Human-Centered Design' },
+  { id: 'jobs-to-be-done', name: 'Jobs to be Done' },
+  { id: 'ux-honeycomb', name: 'UX Honeycomb' },
+  { id: 'ucd-iso-9241', name: 'UCD ISO 9241' },
+  { id: 'heart-framework', name: 'HEART Framework' },
+  { id: 'hooked-model', name: 'Hooked Model' },
+];
+
+// Design Thinking framework stages
+const STAGES = [
+  'Empathize',
+  'Define',
+  'Ideate',
+  'Prototype',
+  'Test',
+  'Implement'
+];
+
+interface AITool {
+  name: string;
+  description: string;
+  framework: string;
+  stage: string;
+  uxTool: string;
+}
+
 const Generator = () => {
   const { toast } = useToast();
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  
+  // Advanced prompt generator state
+  const [selectedFramework, setSelectedFramework] = useState('');
+  const [selectedStage, setSelectedStage] = useState('');
+  const [selectedTool, setSelectedTool] = useState('');
+  const [context, setContext] = useState('');
+  const [generatedPrompt, setGeneratedPrompt] = useState('');
+  const [availableTools, setAvailableTools] = useState<string[]>([]);
+  const [aiTools, setAITools] = useState<AITool[]>([]);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [aiResponse, setAiResponse] = useState('');
+  const [isGeneratingAI, setIsGeneratingAI] = useState(false);
+  const [isGeneratingPrompt, setIsGeneratingPrompt] = useState(false);
+  const [currentProject, setCurrentProject] = useState<any>(null);
+  const [projectContext, setProjectContext] = useState<ProjectContext | null>(null);
+  const [projectStage, setProjectStage] = useState('');
+  const [frameworkStage, setFrameworkStage] = useState('');
+  const [lastUsedFramework, setLastUsedFramework] = useState<{framework: string, stage: string} | null>(null);
+  
+  // Load AI tools on component mount
+  useEffect(() => {
+    const loadAIToolsData = async () => {
+      try {
+        const tools = await loadAITools();
+        setAITools(tools);
+      } catch (error) {
+        console.error('Error loading AI tools:', error);
+        toast({
+          title: 'Error',
+          description: 'Failed to load AI tools. Some features may be limited.',
+          variant: 'destructive',
+        });
+      }
+    };
+    
+    loadAIToolsData();
+  }, [toast]);
+  
+  // Update available tools when framework or stage changes
+  useEffect(() => {
+    if (selectedFramework && selectedStage) {
+      const tools = getUXToolsForStage(selectedFramework, selectedStage, aiTools);
+      setAvailableTools(tools);
+      setSelectedTool(''); // Reset selected tool when framework or stage changes
+    } else {
+      setAvailableTools([]);
+      setSelectedTool('');
+    }
+  }, [selectedFramework, selectedStage, aiTools]);
+  
+  // Handle clearing the advanced form
+  const handleClearAdvanced = () => {
+    setSelectedFramework('');
+    setSelectedStage('');
+    setSelectedTool('');
+    setContext('');
+    setGeneratedPrompt('');
+  };
+  
+  // Handle generating the advanced prompt
+  const handleGenerateAdvanced = async () => {
+    if (!selectedFramework || !selectedStage || !selectedTool || !context) {
+      toast({
+        title: 'Missing information',
+        description: 'Please fill in all fields before generating a prompt.',
+        variant: 'destructive',
+      });
+      return;
+    }
+    
+    setIsGenerating(true);
+    
+    try {
+      // Simulate API call or complex prompt generation
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      const toolInfo = aiTools.find(tool => 
+        tool.framework === selectedFramework && 
+        tool.stage === selectedStage && 
+        tool.uxTool === selectedTool
+      );
+      
+      const frameworkInfo = FRAMEWORKS.find(f => f.id === selectedFramework);
+      
+      const prompt = `**${frameworkInfo?.name} - ${selectedStage} Stage**\n\n` +
+        `**UX Tool:** ${selectedTool}\n` +
+        (toolInfo ? `**Description:** ${toolInfo.description}\n\n` : '\n') +
+        `**Project Context:**\n${context}\n\n` +
+        `**Instructions:**\n1. Apply the ${selectedTool} technique to analyze the project context.\n` +
+        `2. Focus on the ${selectedStage} stage of the ${frameworkInfo?.name} framework.\n` +
+        `3. Provide a detailed analysis with actionable insights.\n` +
+        `4. Include specific recommendations based on the context provided.`;
+      
+      setGeneratedPrompt(prompt);
+      
+      toast({
+        title: 'Prompt generated',
+        description: 'Your prompt has been successfully generated!',
+      });
+    } catch (error) {
+      console.error('Error generating prompt:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to generate prompt. Please try again.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsGenerating(false);
+    }
+  };
   const [currentStep, setCurrentStep] = useState<Step>("project");
   
   // Debug auth state
@@ -119,17 +267,7 @@ const Generator = () => {
       navigate(location.pathname, { replace: true, state: {} });
     }
   }, [location, navigate]);
-  const [currentProject, setCurrentProject] = useState<any>(null);
-  const [projectContext, setProjectContext] = useState<ProjectContext | null>(null);
-  const [projectStage, setProjectStage] = useState("");
-  const [selectedFramework, setSelectedFramework] = useState("");
-  const [frameworkStage, setFrameworkStage] = useState("");
-  const [lastUsedFramework, setLastUsedFramework] = useState<{framework: string, stage: string} | null>(null);
-  const [selectedTool, setSelectedTool] = useState("");
-  const [generatedPrompt, setGeneratedPrompt] = useState("");
-  const [aiResponse, setAiResponse] = useState("");
-  const [isGeneratingAI, setIsGeneratingAI] = useState(false);
-  const [isGeneratingPrompt, setIsGeneratingPrompt] = useState(false);
+  // State already declared above
   const [basicInfo, setBasicInfo] = useState<ProjectBasicInfo | null>(null);
   const [selectedAITool, setSelectedAITool] = useState<string>('chatgpt'); // Default to ChatGPT
 
@@ -983,12 +1121,14 @@ Make the prompt concise yet comprehensive enough to get high-quality results. Th
     }
   }, [user, authLoading, navigate, location]);
 
-  // State for active tab
-  const [activeFlow, setActiveFlow] = useState<'easy' | 'advanced'>('easy');
+  // State for active tab - initialize with undefined first, then set based on URL hash
+  const [activeFlow, setActiveFlow] = useState<'easy' | 'advanced' | undefined>();
 
   // Update the URL hash when the active flow changes
   useEffect(() => {
-    window.location.hash = activeFlow;
+    if (activeFlow) {
+      window.location.hash = activeFlow;
+    }
   }, [activeFlow]);
 
   // Set the active flow based on URL hash on initial load
@@ -998,6 +1138,8 @@ Make the prompt concise yet comprehensive enough to get high-quality results. Th
       setActiveFlow('advanced');
     } else {
       setActiveFlow('easy');
+      // Ensure the URL reflects the default tab
+      if (!hash) window.location.hash = 'easy';
     }
   }, []);
 
@@ -1017,80 +1159,128 @@ Make the prompt concise yet comprehensive enough to get high-quality results. Th
 
   return (
     <div className="min-h-screen bg-gradient-subtle py-12">
-      <LoadingPromptGeneration 
-        isLoading={isGeneratingPrompt}
-        framework={selectedFramework}
-        tool={selectedTool}
-        industry={basicInfo?.industry || ""}
-      />
-      
       <div className="container px-4 max-w-4xl">
         <div className="text-center mb-12">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <Sparkles className="h-8 w-8 text-primary" />
-            <h1 className="text-4xl font-bold">Prompt Generator</h1>
-          </div>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          <h1 className="text-4xl font-bold">Prompt Generator</h1>
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto mt-2">
             Generate personalized AI prompts for UX following a step-by-step process
           </p>
         </div>
 
-        <div className="mb-8">
-          <UsageLimitCard />
-        </div>
-
         <Tabs 
-          value={activeFlow} 
+          value={activeFlow || 'easy'} 
           onValueChange={(value) => setActiveFlow(value as 'easy' | 'advanced')}
           className="w-full"
-          defaultValue="easy"
         >
-          <TabsList className="border grid w-full grid-cols-2 mx-auto mb-2 h-12">
-            <TabsTrigger value="easy" className="flex items-center gap-2">
-              <Zap className="h-4 w-10" />
-              Easy Flow
+          <TabsList className="border grid w-full h-12 grid-cols-2">
+            <TabsTrigger value="easy" className="gap-2">
+              <Sparkles className="h-4 w-4" />
+              Easy
             </TabsTrigger>
-            <TabsTrigger value="advanced" className="flex items-center gap-2">
-              <Settings className="h-4 w-10" />
-              Advanced (B2B)
+            <TabsTrigger value="advanced" className="gap-2">
+              <Settings className="h-4 w-4" />
+              Advanced
             </TabsTrigger>
           </TabsList>
-
-          <TabsContent value="easy" className="mt-0">
-            {renderCurrentStep()}
-          </TabsContent>
-
-          <TabsContent value="advanced" className="mt-0">
-            <Card className="bg-muted/50">
+          
+          <TabsContent value="easy">
+            <Card>
               <CardHeader>
-                <CardTitle>Advanced Generator (Coming Soon)</CardTitle>
+                <CardTitle>Easy Prompt Generator</CardTitle>
                 <CardDescription>
-                  The advanced generator with B2B features is under development.
+                  Follow these simple steps to create your perfect UX prompt
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  <p className="text-sm text-muted-foreground">
-                    This will include additional features for B2B use cases, such as:
-                  </p>
-                  <ul className="list-disc pl-5 space-y-2 text-sm text-muted-foreground">
-                    <li>Advanced framework customization</li>
-                    <li>Team collaboration features</li>
-                    <li>Enterprise integration options</li>
-                    <li>Custom template management</li>
-                  </ul>
-                  <div className="pt-4">
-                    <p className="text-sm text-muted-foreground mb-2">
-                      For now, please use the Easy Flow or check back later for updates.
-                    </p>
-                  </div>
+                <div className="space-y-6">
+                  {currentStep === "project" && (
+                    <ProjectSelectionStep 
+                      onNewProject={() => setCurrentStep("basic-info")}
+                      onExistingProject={(project) => handleProjectSelect(project)}
+                      onCustomPrompt={() => navigate('/prompts/new')}
+                    />
+                  )}
+                  
+                  {currentStep === "basic-info" && basicInfo && (
+                    <ProjectBasicInfoStep 
+                      initialInfo={basicInfo}
+                      onNext={handleBasicInfoComplete}
+                      onBack={() => setCurrentStep("project")}
+                    />
+                  )}
+                  
+                  {currentStep === "stage" && (
+                    <ProjectStageStep 
+                      currentStage={projectStage}
+                      onSelect={handleStageComplete}
+                      onBack={() => setCurrentStep("basic-info")}
+                    />
+                  )}
+                  
+                  {currentStep === "framework" && selectedFramework && (
+                    <FrameworkStep 
+                      framework={selectedFramework}
+                      stage={frameworkStage}
+                      onSelect={handleFrameworkComplete}
+                      onBack={() => setCurrentStep("stage")}
+                    />
+                  )}
+                  
+                  {currentStep === "tool" && selectedTool && (
+                    <ToolSelectionStep 
+                      context={{
+                        industry: basicInfo?.industry || "",
+                        productType: basicInfo?.productType || "",
+                        projectDescription: projectContext?.projectDescription || ""
+                      }}
+                      projectStage={projectStage || ""}
+                      framework={selectedFramework || ""}
+                      frameworkStage={frameworkStage || ""}
+                      onNext={handleToolComplete}
+                      onBack={() => setCurrentStep("framework")}
+                    />
+                  )}
+                  
+                  {currentStep === "context" && projectContext && (
+                    <ProjectContextStep 
+                      onNext={handleContextComplete}
+                      onBack={() => setCurrentStep("tool")}
+                      onGenerate={handleGenerateAI}
+                      initialContext={projectContext}
+                      basicInfo={{
+                        name: currentProject?.name || "",
+                        description: projectContext?.projectDescription || ""
+                      }}
+                      projectStage={projectStage || ""}
+                      framework={selectedFramework || ""}
+                      frameworkStage={frameworkStage || ""}
+                      selectedTool={selectedTool || ""}
+                    />
+                  )}
+                  
+                  {currentStep === "result" && generatedPrompt && (
+                    <ResultStep 
+                      prompt={generatedPrompt}
+                      onRegenerate={handleRegenerate}
+                      onSave={savePromptToProject}
+                      onBack={() => setCurrentStep("context")}
+                      aiResponse={aiResponse}
+                      isGeneratingAI={isGeneratingAI}
+                      onGenerateAI={generateAIResponse}
+                    />
+                  )}
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+          
+          <TabsContent value="advanced" className="mt-4">
+            <PromptGeneratorV2 />
           </TabsContent>
         </Tabs>
       </div>
     </div>
   );
 };
+
 export default Generator;
