@@ -98,10 +98,18 @@ const getFrameworkContext = (framework: string, stage: string, tool: string) => 
 
 const Generator = () => {
   const { toast } = useToast();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [currentStep, setCurrentStep] = useState<Step>("project");
+  
+  // Debug auth state
+  console.log('Generator - Auth State:', { 
+    user, 
+    authLoading,
+    currentStep,
+    locationState: location.state 
+  });
 
   // Check for skipToProjectCreate in location state
   useEffect(() => {
@@ -968,11 +976,12 @@ Make the prompt concise yet comprehensive enough to get high-quality results. Th
   }, [location.state]);
 
   useEffect(() => {
-    if (!user) {
-      navigate("/auth");
-      return;
+    // Only redirect if we're done loading and there's no user
+    if (!authLoading && !user) {
+      console.log('No user found, redirecting to /auth');
+      navigate("/auth", { state: { from: location.pathname } });
     }
-  }, [user, navigate, location.state]);
+  }, [user, authLoading, navigate, location]);
 
   // State for active tab
   const [activeFlow, setActiveFlow] = useState<'easy' | 'advanced'>('easy');
@@ -991,6 +1000,20 @@ Make the prompt concise yet comprehensive enough to get high-quality results. Th
       setActiveFlow('easy');
     }
   }, []);
+
+  // Show loading state while checking auth
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  // If not authenticated, show nothing until redirect happens
+  if (!user) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-subtle py-12">
