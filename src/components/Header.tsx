@@ -35,6 +35,7 @@ const Header = () => {
   const isActive = (path: string) => location.pathname === path;
 
   const navItems = [
+    { name: "Generator v3.0", path: "/generator-v3" },
     { name: "Generator", path: "/generator" },
     { name: "Public Library", path: "/library" },
     { name: "Pricing", path: "/pricing" },

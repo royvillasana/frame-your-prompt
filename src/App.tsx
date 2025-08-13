@@ -7,6 +7,8 @@ import Layout from "./components/Layout";
 import HomePage from "./pages/HomePage";
 import Generator from "./pages/Generator";
 import PromptGeneratorV2 from "./pages/PromptGeneratorV2";
+import GeneratorV3 from "./pages/GeneratorV3";
+import WorkflowStudio from "./pages/WorkflowStudio";
 import Library from "./pages/Library";
 import Pricing from "./pages/Pricing";
 import Learn from "./pages/Learn";
@@ -86,6 +88,20 @@ const App = () => {
             path="/generator-v2" element={
               <ProtectedRoute>
                 <PromptGeneratorV2 />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/generator-v3" element={
+              <ProtectedRoute>
+                <GeneratorV3 />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/workflow-studio/:projectId" element={
+              <ProtectedRoute>
+                <WorkflowStudio />
               </ProtectedRoute>
             }
           />
