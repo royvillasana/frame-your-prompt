@@ -12,6 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -78,6 +79,7 @@ const Header = () => {
 
         {/* Desktop CTA */}
         <div className="hidden md:flex items-center space-x-3">
+          <ThemeToggle />
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -168,6 +170,9 @@ const Header = () => {
               </Link>
             ))}
             <div className="pt-4 space-y-2">
+              <div className="flex justify-center pb-2">
+                <ThemeToggle />
+              </div>
               {user ? (
                 <>
                   <Link to="/profile" className="block" onClick={() => setIsMenuOpen(false)}>
